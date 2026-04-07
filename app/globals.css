@@ -1,8 +1,76 @@
 @import "tailwindcss";
+@import "@heroui/styles";
+
+@font-face {
+  font-family: GothamBlack;
+  src: url("../public/fonts/Gotham-Black.otf");
+}
+
+@font-face {
+  font-family: GothamBold;
+  src: url("../public/fonts/Gotham-Bold.otf");
+}
+
+@font-face {
+  font-family: GothamRegular;
+  src: url("../public/fonts/Gotham-Book.otf");
+}
+
+@font-face {
+  font-family: GothamLight;
+  src: url("../public/fonts/Gotham-Light.otf");
+}
+
+@font-face {
+  font-family: GothamMedium;
+  src: url("../public/fonts/Gotham-Medium.otf");
+}
+
+@font-face {
+  font-family: GothamThin;
+  src: url("../public/fonts/Gotham-Thin.otf");
+}
+
+@font-face {
+  font-family: GothamUltra;
+  src: url("../public/fonts/Gotham-Ultra.otf");
+}
+
+@font-face {
+  font-family: GothamXLight;
+  src: url("../public/fonts/Gotham-XLight.otf");
+}
+
+/*  */
+
+@font-face {
+  font-family: JuraBold;
+  src: url("../public/fonts/Jura-Bold.ttf");
+}
+
+@font-face {
+  font-family: JuraLight;
+  src: url("../public/fonts/Jura-Light.ttf");
+}
+
+@font-face {
+  font-family: JuraMedium;
+  src: url("../public/fonts/Jura-Medium.ttf");
+}
+
+@font-face {
+  font-family: JuraRegular;
+  src: url("../public/fonts/Jura-Regular.ttf");
+}
+
+@font-face {
+  font-family: JuraSemibold;
+  src: url("../public/fonts/Jura-SemiBold.ttf");
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: white;
+  --foreground: black;
 }
 
 @theme inline {
@@ -10,17 +78,138 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-gotham-black: GothamBlack;
+  --font-gotham-bold: GothamBold;
+  --font-gotham-regular: GothamRegular;
+  --font-gotham-light: GothamLight;
+  --font-gotham-medium: GothamMedium;
+  --font-gotham-thin: GothamThin;
+  --font-gotham-ultra: GothamUltra;
+  --font-gotham-xlight: GothamXLight;
+  /*  */
+  --font-jura-bold: JuraBold;
+  --font-jura-light: JuraLight;
+  --font-jura-medium: JuraMedium;
+  --font-jura-regular: JuraRegular;
+  --font-jura-semibold: JuraSemibold;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Configure Dark Mode later */
+
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+} */
+
+/*
+ * HeroUI Theme Customization
+ * Add this to your global.css after importing @heroui/styles
+ * Only includes base variables from variables.css
+ * @see https://heroui.com/docs/react/getting-started/theming
+ */
+
+:root,
+.light,
+.default,
+[data-theme="light"],
+[data-theme="default"] {
+  /* Theme Colors (Light Mode) */
+  /* --accent: oklch(62.04% 0.195 248.13);
+  --accent-foreground: oklch(99.11% 0 0);
+  --background: oklch(97.02% 0 248.13);
+  --border: oklch(90% 0 248.13);
+  --danger: oklch(65.32% 0.2328 25.06);
+  --danger-foreground: oklch(99.11% 0 0);
+  --default: oklch(94% 0 248.13);
+  --default-foreground: oklch(21.03% 0.0059 248.13); */
+  /* --field-background: oklch(100% 0 248.13); */
+  /* --field-foreground: oklch(21.03% 0 248.13);
+  --field-placeholder: oklch(55.17% 0 248.13);
+  --focus: oklch(62.04% 0.195 248.13);
+  --foreground: oklch(21.03% 0 248.13);
+  --muted: oklch(55.17% 0 248.13);
+  --overlay: oklch(100% 0 248.13);
+  --overlay-foreground: oklch(21.03% 0 248.13);
+  --scrollbar: oklch(87.1% 0 248.13);
+  --segment: oklch(100% 0 248.13);
+  --segment-foreground: oklch(21.03% 0 248.13);
+  --separator: oklch(92% 0 248.13); */
+  /* --success: oklch(73.29% 0.1935 150.13);
+  --success-foreground: oklch(21.03% 0.0059 150.13);
+  --surface: oklch(100% 0 248.13);
+  --surface-foreground: oklch(21.03% 0 248.13);
+  --surface-secondary: oklch(95.24% 0 248.13);
+  --surface-secondary-foreground: oklch(21.03% 0 248.13);
+  --surface-tertiary: oklch(93.73% 0 248.13);
+  --surface-tertiary-foreground: oklch(21.03% 0 248.13);
+  --warning: oklch(78.19% 0.1585 71.65);
+  --warning-foreground: oklch(21.03% 0.0059 71.65); */
+
+  /* Border Radius */
+  /* --radius: 0.125rem;
+  --field-radius: 0.75rem; */
+
+  /* Font Family */
+  /* Make sure to load Inter font in your app */
+  /* --font-sans: var(--font-inter); */
+}
+
+.dark,
+[data-theme="dark"] {
+  /* color-scheme: dark; */
+  /* Theme Colors (Dark Mode) */
+  /* --accent: oklch(62.04% 0.195 248.13);
+  --accent-foreground: oklch(99.11% 0 0);
+  --background: oklch(12% 0 248.13);
+  --border: oklch(28% 0 248.13);
+  --danger: oklch(59.4% 0.1967 23.95);
+  --danger-foreground: oklch(99.11% 0 0);
+  --default: oklch(27.4% 0 248.13);
+  --default-foreground: oklch(99.11% 0 0); */
+  /* --field-background: oklch(21.03% 0 248.13); */
+  /* --field-foreground: oklch(99.11% 0 248.13);
+  --field-placeholder: oklch(70.5% 0 248.13);
+  --focus: oklch(62.04% 0.195 248.13);
+  --foreground: oklch(99.11% 0 248.13);
+  --muted: oklch(70.5% 0 248.13);
+  --overlay: oklch(21.03% 0 248.13);
+  --overlay-foreground: oklch(99.11% 0 248.13);
+  --scrollbar: oklch(70.5% 0 248.13);
+  --segment: oklch(39.64% 0 248.13);
+  --segment-foreground: oklch(99.11% 0 248.13);
+  --separator: oklch(25% 0 248.13);
+  --success: oklch(73.29% 0.1935 150.13);
+  --success-foreground: oklch(21.03% 0.0059 150.13);
+  --surface: oklch(21.03% 0 248.13);
+  --surface-foreground: oklch(99.11% 0 248.13);
+  --surface-secondary: oklch(25.7% 0 248.13);
+  --surface-secondary-foreground: oklch(99.11% 0 248.13);
+  --surface-tertiary: oklch(27.21% 0 248.13);
+  --surface-tertiary-foreground: oklch(99.11% 0 248.13);
+  --warning: oklch(82.03% 0.1388 75.66);
+  --warning-foreground: oklch(21.03% 0.0059 75.66); */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: GothamRegular;
+}
+
+#nprogress .bar {
+  background: #183222 !important;
+  height: 2px !important;
+}
+
+#nprogress .peg {
+  box-shadow:
+    0 0 10px #183222,
+    0 0 5px #183222 !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #183222 !important;
+  border-left-color: #183222 !important;
 }
