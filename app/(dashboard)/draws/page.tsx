@@ -48,9 +48,75 @@ function DrawView() {
       </span>
 
       <div className="grid md:grid-cols-3 gap-3 shrink-0">
-        <Card />
-        <Card />
-        <Card />
+        <Card
+          title="YTD Sales"
+          amount="GHS 35,285,997.91"
+          subtitle={
+            <div className="flex space-x-1 text-black">
+              <span className="font-gotham-regular text-[0.65rem]">
+                {"from"}
+              </span>
+
+              <span className="font-gotham-black text-[0.65rem]">
+                {" 50,262 players, 726,591 coupons "}
+              </span>
+
+              <span className="font-gotham-regular text-[0.65rem]">
+                {"with"}
+              </span>
+
+              <span className="font-gotham-black text-[0.65rem]">
+                {" 20,143,593 stakes"}
+              </span>
+            </div>
+          }
+        />
+        <Card
+          title="YTD Winings"
+          amount="GHS 20,979,398.00"
+          subtitle={
+            <div className="flex space-x-1 text-black">
+              <span className="font-gotham-black text-[0.65rem]">
+                {"claimed: "}
+              </span>
+
+              <span className="font-gotham-regular text-[0.65rem]">
+                {"GHS 20,834,783.60"}
+              </span>
+
+              <span className="font-gotham-black text-[0.65rem]">
+                {" unclaimed: "}
+              </span>
+
+              <span className="font-gotham-regular text-[0.65rem]">
+                {"GHS 144,614.40"}
+              </span>
+            </div>
+          }
+        />
+        <Card
+          title="YTD Gross Gaming Revenue"
+          amount="GHS 35,285,997.91"
+          subtitle={
+            <div className="flex space-x-1 text-black">
+              <span className="font-gotham-regular text-[0.65rem]">
+                {"with"}
+              </span>
+
+              <span className="font-gotham-black text-[0.65rem]">
+                {" Retention Rate "}
+              </span>
+
+              <span className="font-gotham-regular text-[0.65rem]">
+                {"value of"}
+              </span>
+
+              <span className="font-gotham-black text-[0.65rem]">
+                {" GHS 1,577,128.91"}
+              </span>
+            </div>
+          }
+        />
       </div>
 
       <div className="h-[500px] sm:h-full sm:flex-1 sm:min-h-0 mt-2">
@@ -164,29 +230,25 @@ function DrawView() {
 
 export default DrawView;
 
-const Card = () => {
+const Card = ({
+  title,
+  amount,
+  subtitle,
+}: {
+  title: string;
+  amount: string;
+  subtitle: React.ReactNode;
+}) => {
   return (
     <div className="border rounded-sm p-5">
       <div className="flex flex-col items-start space-y-1">
         <span className="font-gotham-black text-[0.65rem] text-gray-500">
-          {"YTD Sales"}
+          {title}
         </span>
 
-        <span className="font-jura-bold text-2xl">GHS 34,049,630.48</span>
+        <span className="font-jura-bold text-2xl">{amount}</span>
 
-        <div className="flex space-x-1 text-black">
-          <span className="font-gotham-regular text-[0.65rem]">{"from"}</span>
-
-          <span className="font-gotham-black text-[0.65rem]">
-            {" 50,262 players, 726,591 coupons "}
-          </span>
-
-          <span className="font-gotham-regular text-[0.65rem]">{"with"}</span>
-
-          <span className="font-gotham-black text-[0.65rem]">
-            {" 20,143,593 stakes"}
-          </span>
-        </div>
+        {subtitle}
       </div>
     </div>
   );

@@ -2,36 +2,71 @@ import { Separator } from "@heroui/react";
 import CustomDatePicker from "@/components/custom-date-picker";
 import Badge from "../../../../public/images/badge.webp";
 import Image from "next/image";
+import CustomSelectComponent from "@/components/custom-select-component";
 
 function ThirdSalesSegment() {
   return (
     <div className="flex flex-col space-y-3 md:min-h-0 md:overflow-hidden">
       {/* Top Wins Card */}
-      <MiniCard />
+      <MiniCard
+        title="Wins"
+        amount="GHS 290,282.40"
+        subtitle={
+          <div className="flex space-x-1 text-gray-500">
+            <span className="font-gotham-regular text-[0.65rem]">{"from"}</span>
+            <span className="font-gotham-black text-[0.65rem]">
+              {"247 players"}
+            </span>
+          </div>
+        }
+      />
       <div className="h-[400px] md:h-auto md:flex-1 md:min-h-0 md:overflow-hidden">
         <div className="border rounded-sm flex flex-col h-full">
           <div className="px-5 pt-4 shrink-0">
             <span className="font-gotham-black text-xs text-gray-500 uppercase">
               Winnings
             </span>
-            <div className="grid grid-cols-2 space-x-4">
+            <div className="grid grid-cols-2 space-x-4 items-center">
               <CustomDatePicker
                 label="Draw Date"
                 className="border rounded-sm border-gray-300"
               />
-              <CustomDatePicker
+              <CustomSelectComponent
                 label="Game"
-                className="border rounded-sm border-gray-300"
+                labelClassName="text-[0.6rem] text-gray-500 font-gotham-black"
+                initialItemKey="all"
+                showDropDownIcon
+                className="translate-y-[3.7px]"
+                list={[
+                  { key: "all", label: "All" },
+                  { key: "morningVag", label: "Morning VAG" },
+                  { key: "noonrush", label: "5/90 Noonrush" },
+                  { key: "luckyTuesday", label: "5/90 Lucky Tuesday" },
+                ]}
+                onSelectionChange={(val) => {}}
               />
             </div>
           </div>
 
           <Separator className="mt-4 shrink-0" />
 
-          {/* INTERNAL SCROLL AREA */}
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             <div className="px-5 py-4 space-y-4">
-              <MiniEventInfo />
+              <MiniEventInfo
+                title="Morning VAG"
+                values={[43, 5, 90, 56, 70]}
+                event="828"
+              />
+              <MiniEventInfo
+                title="5/90 Noonrush"
+                values={[43, 5, 90, 56, 70]}
+                event="135"
+              />
+              <MiniEventInfo
+                title="5/90 Lucky Tuesday"
+                values={[43, 5, 90, 56, 70]}
+                event="928"
+              />
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <PermItem key={i} />
               ))}
@@ -40,50 +75,80 @@ function ThirdSalesSegment() {
         </div>
       </div>
       {/* Bottom Card */}
-      <MiniCard />
+      <MiniCard
+        title="Today's Claims"
+        amount="GHS 255,806.40"
+        subtitle={
+          <div className="flex space-x-1 text-gray-500">
+            <span className="font-gotham-regular text-[0.65rem]">
+              {"Claims"}
+            </span>
+            <span className="font-gotham-black text-[0.65rem]">
+              {"withrawn"}
+            </span>
+            <span className="font-gotham-regular text-[0.65rem]">
+              {"today is"}
+            </span>
+            <span className="font-gotham-black text-[0.65rem]">
+              {"GHS 156,942.60"}
+            </span>
+          </div>
+        }
+      />
     </div>
   );
 }
 
 export default ThirdSalesSegment;
 
-const MiniCard = () => {
+const MiniCard = ({
+  title,
+  amount,
+  subtitle,
+}: {
+  title: string;
+  amount: string;
+  subtitle: React.ReactNode;
+}) => {
   return (
     <div className="border rounded-sm p-5">
       <div className="flex flex-col items-start">
         <span className="font-gotham-black text-[0.65rem] text-gray-500">
-          {"Wins"}
+          {title}
         </span>
-        <span className="font-jura-bold text-2xl">GHS 81,448.80</span>
-        <div className="flex space-x-1 text-gray-500">
-          <span className="font-gotham-regular text-[0.65rem]">{"from"}</span>
-          <span className="font-gotham-black text-[0.65rem]">
-            {"247 players"}
-          </span>
-        </div>
+        <span className="font-jura-bold text-2xl">{amount}</span>
+        {subtitle}
       </div>
     </div>
   );
 };
 
-const MiniEventInfo = () => {
+const MiniEventInfo = ({
+  title,
+  event,
+  values,
+}: {
+  title: string;
+  event: string;
+  values: number[];
+}) => {
   return (
     <div className="grid grid-cols-2 gap-4 items-start">
       <div className="flex flex-col">
-        <span className="text-xs font-gotham-black">Morning VAG</span>
+        <span className="text-xs font-gotham-black">{title}</span>
         <div className="space-x-1 text-[0.65rem]">
           <span className="font-gotham-light text-gray-700">Event #</span>
-          <span className="font-jura-bold">239</span>
+          <span className="font-jura-bold">{event}</span>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2 justify-start">
-        {[1, 2, 3, 4, 5].map((item, index) => (
+        {values.map((item, index) => (
           <div
             key={index}
             className="bg-gray-800 p-2 text-white font-jura-bold text-xs min-w-[24px] text-center rounded-sm"
           >
-            {"42"}
+            {item}
           </div>
         ))}
       </div>

@@ -2,7 +2,7 @@
 
 import CustomInputComponent from "@/components/custom-input-component";
 import CustomTable, { TableRow } from "@/components/custom-table";
-import { CloseButton, Separator } from "@heroui/react";
+import { Avatar, CloseButton, Separator } from "@heroui/react";
 import { useState } from "react";
 import { BiSearch } from "react-icons/bi";
 
@@ -66,32 +66,37 @@ function SecondSalesSegment() {
         <div className="h-full">
           <CustomTable
             columns={[
-              { key: "coupon", label: "Coupon #", sortable: true },
-              { key: "play", label: "Play", sortable: true },
-              { key: "stakes", label: "Stakes", sortable: false },
-              { key: "amount", label: "Amount", sortable: true },
-              { key: "time", label: "Time", sortable: false },
+              { key: "retailer", label: "Retailer", sortable: true },
+              { key: "topUp", label: "Top-Up", sortable: true },
+              { key: "sales", label: "Sales", sortable: false },
             ]}
             data={
               [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => {
                 return {
-                  coupon: (
-                    <div className="flex flex-col items-start space-y-1">
-                      <span>{"108008322026040116090725615"}</span>
-                      <span className="text-[10px] font-gotham-black text-gray-400">
-                        {"ODOGu one"}
-                      </span>
+                  retailer: (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                      <Avatar size="lg" className="w-8 h-8">
+                        <Avatar.Image alt="" src="" />
+                        <Avatar.Fallback className="bg-[#F8A824] text-sm font-gotham-bold">
+                          G
+                        </Avatar.Fallback>
+                      </Avatar>
+                      <div className="flex flex-col items-start space-y-1">
+                        <span className="text-[12px]">{"Gloria Aballa"}</span>
+                        <span className="text-[10px] font-gotham-medium text-gray-500">
+                          {"+233 (0)54 969 8956"}
+                        </span>
+                      </div>
                     </div>
                   ),
-                  play: "Perm 2",
-                  stakes: "11",
-                  amount: (
+                  topUp: (
+                    <span className="font-jura-bold text-sm">{"4:13 PM"}</span>
+                  ),
+                  sales: (
                     <span className="font-jura-bold text-sm">
                       {"GHS 30.00"}
                     </span>
-                  ),
-                  time: (
-                    <span className="font-jura-bold text-sm">{"4:13 PM"}</span>
                   ),
                 };
               }) ?? []
