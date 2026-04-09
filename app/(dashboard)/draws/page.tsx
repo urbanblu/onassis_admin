@@ -6,11 +6,34 @@ import DrawNumbersIcon from "@/public/images/draw-numbers-icon.webp";
 import Image from "next/image";
 import React from "react";
 import DrawDrawer from "./_components/draw-drawer";
+import { useQuery } from "@tanstack/react-query";
+import FinancialsService from "@/api/financials";
+import GamesService from "@/api/games";
 
 function DrawView() {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageSize, setCurrentPageSize] = useState(20);
   const [isDrawOpen, setDrawnIsOpen] = React.useState(false);
+  const [selectedEventId, setSelectedEventId] = React.useState<string | null>(
+    null,
+  );
+  const [drawerMode, setDrawerMode] = React.useState<
+    "pre" | "post1" | "post2" | null
+  >(null);
+
+  const { data: dash, isPending: dashPending } = useQuery({
+    queryKey: ["financials", "draws-and-winnings-dashboard"],
+    queryFn: FinancialsService.fetchDrawsAndWinningsDashboard,
+  });
+
+  const { data: tableData, isPending: tablePending } = useQuery({
+    queryKey: ["games", "draws-and-winnings-table", currentPage, currentPageSize],
+    queryFn: () =>
+      GamesService.fetchDrawsAndWinningsTable({
+        page: currentPage,
+        page_size: currentPageSize,
+      }),
+  });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -18,28 +41,61 @@ function DrawView() {
 
   const handlePageSizeChange = (size: number) => {
     setCurrentPageSize(size);
+    setCurrentPage(1);
   };
 
-  const handleRowClick = (row: TableRow, index: number) => {};
+  const handleRowClick = (_row: TableRow, _index: number) => {};
 
   const handleSort = (column: string, direction: "asc" | "desc") => {
-    console.log("Sort by:", column, direction);
+    void column;
+    void direction;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onPreDrawClick = (value: any) => {
+  const onPreDrawClick = (eventId: string) => {
+    setSelectedEventId(eventId);
+    setDrawerMode("pre");
     setDrawnIsOpen(true);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onPostDraw1Click = (value: any) => {
+  const onPostDraw1Click = (eventId: string) => {
+    setSelectedEventId(eventId);
+    setDrawerMode("post1");
     setDrawnIsOpen(true);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onPostDraw2Click = (value: any) => {
+  const onPostDraw2Click = (eventId: string) => {
+    setSelectedEventId(eventId);
+    setDrawerMode("post2");
     setDrawnIsOpen(true);
   };
+
+  const closeDrawer = () => {
+    setDrawnIsOpen(false);
+    setSelectedEventId(null);
+    setDrawerMode(null);
+  };
+
+  const rows = tableData?.results ?? [];
+  const pagination = tableData
+    ? {
+        pageNumber: currentPage,
+        pageSize: currentPageSize,
+        totalCount: tableData.count,
+      }
+    : {
+        pageNumber: 1,
+        pageSize: currentPageSize,
+        totalCount: 0,
+      };
+
+  const loading = dashPending || tablePending;
+
+  const ytdSales = dash?.ytd_sales;
+  const ytdWin = dash?.ytd_winnings;
+  const ytdGgr = dash?.ytd_ggr;
+  const ytdPlayers = ytdSales?.unique_players;
+  const ytdCoupons = ytdSales?.total_coupons;
+  const ytdStakes = ytdSales?.total_stakes;
 
   return (
     <div className="flex flex-col px-7 pb-5 space-y-3 h-auto sm:h-[calc(100vh-6rem)] sm:overflow-hidden">
@@ -50,69 +106,60 @@ function DrawView() {
       <div className="grid md:grid-cols-3 gap-3 shrink-0">
         <Card
           title="YTD Sales"
-          amount="GHS 35,285,997.91"
+          amount={ytdSales?.total_sales ?? "—"}
           subtitle={
-            <div className="flex space-x-1 text-black">
-              <span className="font-gotham-regular text-[0.65rem]">
-                {"from"}
-              </span>
-
+            <div className="flex flex-wrap gap-x-1 text-black">
+              <span className="font-gotham-regular text-[0.65rem]">{"from"}</span>
               <span className="font-gotham-black text-[0.65rem]">
-                {" 50,262 players, 726,591 coupons "}
+                {ytdPlayers != null && ytdCoupons != null
+                  ? ` ${ytdPlayers.toLocaleString("en-GH")} players, ${ytdCoupons.toLocaleString("en-GH")} coupons `
+                  : " — "}
               </span>
-
-              <span className="font-gotham-regular text-[0.65rem]">
-                {"with"}
-              </span>
-
+              <span className="font-gotham-regular text-[0.65rem]">{"with"}</span>
               <span className="font-gotham-black text-[0.65rem]">
-                {" 20,143,593 stakes"}
+                {ytdStakes != null
+                  ? ` ${ytdStakes.toLocaleString("en-GH")} stakes`
+                  : " —"}
               </span>
             </div>
           }
         />
         <Card
           title="YTD Winings"
-          amount="GHS 20,979,398.00"
+          amount={ytdWin?.total_winnings ?? "—"}
           subtitle={
-            <div className="flex space-x-1 text-black">
+            <div className="flex flex-wrap gap-x-1 text-black">
               <span className="font-gotham-black text-[0.65rem]">
                 {"claimed: "}
               </span>
-
               <span className="font-gotham-regular text-[0.65rem]">
-                {"GHS 20,834,783.60"}
+                {ytdWin?.claimed ?? "—"}
               </span>
-
               <span className="font-gotham-black text-[0.65rem]">
                 {" unclaimed: "}
               </span>
-
               <span className="font-gotham-regular text-[0.65rem]">
-                {"GHS 144,614.40"}
+                {ytdWin?.unclaimed ?? "—"}
               </span>
             </div>
           }
         />
         <Card
           title="YTD Gross Gaming Revenue"
-          amount="GHS 35,285,997.91"
+          amount={ytdGgr?.gross_gaming_revenue ?? "—"}
           subtitle={
-            <div className="flex space-x-1 text-black">
+            <div className="flex flex-wrap gap-x-1 text-black">
               <span className="font-gotham-regular text-[0.65rem]">
-                {"with"}
+                {"with Retention Rate "}
               </span>
-
               <span className="font-gotham-black text-[0.65rem]">
-                {" Retention Rate "}
+                {ytdGgr?.retention_rate ?? "—"}
               </span>
-
               <span className="font-gotham-regular text-[0.65rem]">
-                {"value of"}
+                {" value "}
               </span>
-
               <span className="font-gotham-black text-[0.65rem]">
-                {" GHS 1,577,128.91"}
+                {ytdGgr?.retention_value ?? "—"}
               </span>
             </div>
           }
@@ -134,87 +181,77 @@ function DrawView() {
               { key: "payoutRatio", label: "Payout Ratio", sortable: false },
             ]}
             data={
-              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => {
-                return {
-                  event: "265",
-                  drawDate: "Thu, 02 Apr 2026",
-                  eventName: (
-                    <span className="font-gotham-bold text-xs">
-                      Fortune Thursday
-                    </span>
-                  ),
-                  drawTime: (
-                    <span className="text-sm font-jura-bold">20:15:12</span>
-                  ),
-                  preDraw: (
-                    <span
-                      className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onPreDrawClick(item);
-                      }}
-                    >
-                      GHS 231,088.71
-                    </span>
-                  ),
-                  drawNumbers: (
-                    <div className="flex space-x-2 items-center">
-                      <span className="rounded bg-transparent border-[1.5px] p-1">
-                        12
+              rows.map((r) => ({
+                event: String(r.event_no),
+                drawDate: r.draw_date,
+                eventName: (
+                  <span className="font-gotham-bold text-xs">{r.event_name}</span>
+                ),
+                drawTime: (
+                  <span className="text-sm font-jura-bold">{r.draw_time}</span>
+                ),
+                preDraw: (
+                  <span
+                    className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onPreDrawClick(r.event_id);
+                    }}
+                  >
+                    {r.pre_draw}
+                  </span>
+                ),
+                drawNumbers: (
+                  <div className="flex space-x-2 items-center flex-wrap">
+                    {r.draw_numbers.map((n, i) => (
+                      <span
+                        key={i}
+                        className="rounded bg-transparent border-[1.5px] p-1"
+                      >
+                        {n}
                       </span>
-                      <span className="rounded bg-transparent border-[1.5px] p-1">
-                        27
-                      </span>
-                      <span className="rounded bg-transparent border-[1.5px] p-1">
-                        41
-                      </span>
-                      <span className="rounded bg-transparent border-[1.5px] p-1">
-                        45
-                      </span>
-                      <span className="rounded bg-transparent border-[1.5px] p-1">
-                        66
-                      </span>
-                      <Image
-                        src={DrawNumbersIcon}
-                        alt="DrawNumbersIcon"
-                        className="h-5 w-5"
-                      />
-                    </div>
-                  ),
-                  postDraw1: (
-                    <span
-                      className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onPostDraw1Click(item);
-                      }}
-                    >
-                      GHS 1,819.33
-                    </span>
-                  ),
-                  postDraw2: (
-                    <span
-                      className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onPostDraw2Click(item);
-                      }}
-                    >
-                      GHS 6.45
-                    </span>
-                  ),
-                  payoutRatio: (
-                    <span className="text-sm font-jura-bold">59.44%</span>
-                  ),
-                };
-              }) ?? []
+                    ))}
+                    <Image
+                      src={DrawNumbersIcon}
+                      alt="DrawNumbersIcon"
+                      className="h-5 w-5"
+                    />
+                  </div>
+                ),
+                postDraw1: (
+                  <span
+                    className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onPostDraw1Click(r.event_id);
+                    }}
+                  >
+                    {r.post_draw_1}
+                  </span>
+                ),
+                postDraw2: (
+                  <span
+                    className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onPostDraw2Click(r.event_id);
+                    }}
+                  >
+                    {r.post_draw_2}
+                  </span>
+                ),
+                payoutRatio: (
+                  <span className="text-sm font-jura-bold">{r.payout_ratio}</span>
+                ),
+              })) ?? []
             }
+            pagination={pagination}
             pageSize={currentPageSize}
             onPageChange={handlePageChange}
             onPageSizeChange={handlePageSizeChange}
             onRowClick={handleRowClick}
             onSort={handleSort}
-            loading={false}
+            loading={loading}
             isRefetching={false}
           />
         </div>
@@ -222,7 +259,9 @@ function DrawView() {
 
       <DrawDrawer
         isOpen={isDrawOpen}
-        onCloseTap={() => setDrawnIsOpen(false)}
+        onCloseTap={closeDrawer}
+        eventId={selectedEventId}
+        drawerMode={drawerMode}
       />
     </div>
   );

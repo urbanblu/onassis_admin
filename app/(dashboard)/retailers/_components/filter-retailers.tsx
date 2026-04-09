@@ -4,7 +4,7 @@ import React from "react";
 import { IoFilter } from "react-icons/io5";
 
 type Props = {
-  onFilterTap?: (payload: { name: string; phoneNumber: string }) => void;
+  onFilterTap?: (payload: { search: string }) => void;
 };
 
 function FilterRetailers(payload: Props) {
@@ -46,11 +46,15 @@ function FilterRetailers(payload: Props) {
                   );
 
                   const finalData = {
-                    name: data.name as string,
-                    phoneNumber: data.phoneNumber as string,
+                    search: (
+                      (data.name as string | undefined)?.trim() ||
+                      (data.phoneNumber as string | undefined)?.trim() ||
+                      ""
+                    ),
                   };
 
                   payload.onFilterTap?.(finalData);
+                  setDrawerOpen(false);
                 }}
               >
                 <div className="flex flex-col space-y-3">

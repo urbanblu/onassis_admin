@@ -2,6 +2,8 @@ import { IAuth, ILogInRequest } from "@/interfaces/auth.interface";
 import Axios from "..";
 import ApiError, { handleApiError } from "@/utils/api_error";
 import { InternalAxiosRequestConfig } from "axios";
+import { IUser } from "@/interfaces/user.interface";
+import useAuth from "@/stores/auth.store";
 
 class AuthService {
   static login = async (payload: ILogInRequest): Promise<IAuth> => {
@@ -42,6 +44,23 @@ class AuthService {
 
   static request = async (originalRequest: InternalAxiosRequestConfig) => {
     return Axios.request(originalRequest);
+  };
+
+  static fetchProfile = async (): Promise<IUser> => {
+    const { auth } = useAuth.getState();
+    console.log("auth", auth);
+    try {
+      const response = await Axios({
+        url: `/api/v1/auth/me`,
+        method: "GET",
+      });
+
+      console.log("response", response);
+
+      return response.data as unknown as IUser;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   };
 }
 

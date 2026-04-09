@@ -7,6 +7,7 @@ import {
   CloseIcon,
   cn,
   Drawer,
+  Popover,
   Separator,
 } from "@heroui/react";
 import Image from "next/image";
@@ -19,11 +20,16 @@ import NotificationIcon from "../public/images/notification-icon.webp";
 import GearIcon from "../public/images/gear-icon.webp";
 import LogoutIcon from "../public/images/logout-icon.webp";
 import HamburgerIcon from "../public/images/hamburger.webp";
+import useAuth from "@/stores/auth.store";
 
 function GlobalNavbar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const lastSegment = pathname.split("/").pop();
   const [drawerIsOpen, setDrawerOpen] = React.useState(false);
+  const [profilePopupOpen, setProfilePopupOpen] = React.useState(false);
+  const [logoutPopupOpen, setLogoutPopupOpen] = React.useState(false);
+  const { removeAuth, auth } = useAuth();
+
   const router = useRouter();
 
   const handleLinkOnTap = (payload: { label: string; href: string }) => {
@@ -34,6 +40,11 @@ function GlobalNavbar({ children }: { children: React.ReactNode }) {
 
     router.replace(payload.href);
     setDrawerOpen(false);
+  };
+
+  const handleLogout = () => {
+    removeAuth();
+    router.replace("/login");
   };
 
   const navItems = [
@@ -84,15 +95,95 @@ function GlobalNavbar({ children }: { children: React.ReactNode }) {
               src={GearIcon}
               alt="gear-icon"
               className="h-5 w-5 cursor-pointer"
+              onClick={() => {
+                router.push("/settings");
+              }}
             />
-            <div className="rounded-full p-0.5 border-2 border-blue-600">
-              <Avatar size="sm" className="cursor-pointer" />
-            </div>
-            <Image
-              src={LogoutIcon}
-              alt="logout-icon"
-              className="h-5 w-5 cursor-pointer"
-            />
+            <Popover
+              isOpen={profilePopupOpen}
+              onOpenChange={setProfilePopupOpen}
+            >
+              <Popover.Trigger>
+                <div
+                  className="rounded-full p-0.5 border-2 border-blue-600"
+                  onClick={() => {
+                    setProfilePopupOpen(!profilePopupOpen);
+                  }}
+                >
+                  <Avatar size="sm" className="cursor-pointer">
+                    {auth?.user?.photo ? (
+                      <Avatar.Image alt="me.png" src={auth?.user?.photo} />
+                    ) : (
+                      <Avatar.Fallback>{`${auth?.user?.first_name?.charAt(0)} ${auth?.user?.last_name?.charAt(0)}`}</Avatar.Fallback>
+                    )}
+                  </Avatar>
+                </div>
+              </Popover.Trigger>
+              <Popover.Content
+                className="rounded-sm shadow-sm border w-[230px] mt-2 mr-15 left-auto! right-0!"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  left: "auto",
+                }}
+              >
+                <Popover.Dialog className="w-full p-0">
+                  <Button
+                    className="font-gotham-black text-start text-xs w-full bg-transparent hover:bg-gray-100 transition-all rounded-none p-0 text-black px-3.5 py-2.5"
+                    onClick={() => {
+                      setProfilePopupOpen(false);
+                      handleLogout();
+                    }}
+                  >
+                    <span className="w-full">Logout</span>
+                  </Button>
+                </Popover.Dialog>
+              </Popover.Content>
+            </Popover>
+
+            <Popover isOpen={logoutPopupOpen} onOpenChange={setLogoutPopupOpen}>
+              <Popover.Trigger>
+                <Image
+                  src={LogoutIcon}
+                  alt="logout-icon"
+                  className="h-5 w-5 cursor-pointer"
+                  onClick={() => {
+                    setLogoutPopupOpen(!logoutPopupOpen);
+                  }}
+                />
+              </Popover.Trigger>
+              <Popover.Content
+                className="rounded-sm shadow-sm border w-[230px] mt-2 mr-5 left-auto! right-0!"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  left: "auto",
+                }}
+              >
+                <Popover.Dialog className="w-full p-0">
+                  <Button
+                    className="font-gotham-black text-start text-xs w-full bg-transparent hover:bg-gray-100 transition-all rounded-none p-0 text-black"
+                    onClick={() => {
+                      setLogoutPopupOpen(false);
+                    }}
+                  >
+                    <div className="flex flex-col items-start space-y-2 w-full py-2.5 px-3.5">
+                      <span>Onassis Cash</span>
+                    </div>
+                  </Button>
+                  <Button
+                    className="font-gotham-black text-start text-xs w-full bg-transparent hover:bg-gray-100 transition-all rounded-none p-0 text-black"
+                    onClick={() => {
+                      setLogoutPopupOpen(false);
+                    }}
+                  >
+                    <div className="flex flex-col items-start space-y-2 w-full py-2.5 px-3.5">
+                      <span>Onassis Hosts</span>
+                    </div>
+                  </Button>
+                </Popover.Dialog>
+              </Popover.Content>
+            </Popover>
           </div>
           <Drawer>
             <Button

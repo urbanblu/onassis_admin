@@ -14,8 +14,35 @@ export const handleApiError = (
   let message = "An error occurred, please try again later";
 
   if (axios.isAxiosError(error)) {
-    if (error?.response?.data.message) {
-      message = error?.response?.data.message;
+    const responseData = error?.response?.data as
+      | {
+          message?: string;
+          error?: string[] | string;
+          errors?: Record<string, string[] | string>;
+          detail?: string;
+        }
+      | undefined;
+
+    if (Array.isArray(responseData?.error) && responseData.error.length > 0) {
+      message = responseData.error.join(", ");
+    } else if (typeof responseData?.error === "string" && responseData.error) {
+      message = responseData.error;
+    } else if (responseData?.errors && typeof responseData.errors === "object") {
+      const flattened = Object.entries(responseData.errors).flatMap(
+        ([field, value]) => {
+          if (Array.isArray(value)) {
+            return value.map((v) => `${field}: ${v}`);
+          }
+          return [`${field}: ${value}`];
+        },
+      );
+      if (flattened.length > 0) {
+        message = flattened.join(", ");
+      }
+    } else if (responseData?.detail) {
+      message = responseData.detail;
+    } else if (responseData?.message) {
+      message = responseData.message;
     } else if (error.message) {
       message = error.message;
     }

@@ -45,7 +45,11 @@ Axios.interceptors.response.use(
     }
 
     // if access token expires
-    if (error?.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error?.response?.status === 401 &&
+      !originalRequest._retry &&
+      auth?.refresh
+    ) {
       originalRequest._retry = true;
 
       try {

@@ -11,8 +11,49 @@ import TopUpTable from "./_components/topup-table";
 import SalesTable from "./_components/sales-table";
 import WinningsTable from "./_components/winnings-table";
 import CashoutTable from "./_components/cashout-table";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import WritersService from "@/api/writers";
+import { formatGhs } from "@/utils/currency";
+
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 function RetailerDetailView() {
+  const params = useParams();
+  const writerId = typeof params?.id === "string" ? params.id : "";
+
+  const { data: profile, isPending } = useQuery({
+    queryKey: ["writers", "profile", writerId],
+    queryFn: () => WritersService.fetchWriterProfile(writerId),
+    enabled: !!writerId,
+  });
+
+  if (!writerId) {
+    return (
+      <div className="p-6 text-sm text-gray-600">Invalid writer id.</div>
+    );
+  }
+
+  if (isPending || !profile) {
+    return (
+      <div className="p-6 text-sm text-gray-600">Loading writer…</div>
+    );
+  }
+
+  const initial = profile.name.charAt(0).toUpperCase();
+  const ytdSalesNum = parseFloat(String(profile.ytd_sales));
+  const thisMonthSalesNum = parseFloat(String(profile.this_month_sales));
+  const avgTop = parseFloat(String(profile.avg_topup));
+
   return (
     <div className="w-full lg:flex-1 lg:min-h-0 lg:overflow-hidden flex flex-col">
       <div className="p-4 grid grid-cols-1 lg:grid-cols-5 gap-4 w-full lg:h-full lg:min-h-0 items-stretch">
@@ -23,46 +64,58 @@ function RetailerDetailView() {
                 <Avatar size="md" className="w-12 h-12">
                   <Avatar.Image alt="" src="" />
                   <Avatar.Fallback className="bg-[#F8A824] text-lg text-white font-gotham-bold">
-                    OL
+                    {initial}
                   </Avatar.Fallback>
                 </Avatar>
-                <span className="text-sm font-gotham-black">Test Writer</span>
+                <span className="text-sm font-gotham-black">{profile.name}</span>
                 <FaRegEdit className="w-3.5 h-3.5 text-blue-500" />
               </div>
 
-              <LeftInfoItem title="ID:" value="000009" />
-              <LeftInfoItem title="Gender:" value="N/A" />
-              <LeftInfoItem title="D.O.B:" value="N/A" />
-              <LeftInfoItem title="Mobile:" value="+233 (0)10 000 000" />
-              <LeftInfoItem title="Email:" value="N/A" />
+              <LeftInfoItem title="ID:" value={profile.writer_id_display} />
+              <LeftInfoItem title="Gender:" value={profile.gender} />
+              <LeftInfoItem title="D.O.B:" value={profile.date_of_birth} />
+              <LeftInfoItem title="Mobile:" value={profile.mobile} />
+              <LeftInfoItem title="Email:" value={profile.email} />
             </div>
 
             <Separator />
-            <LeftInfoItem title="Status:" value="No Use" />
+            <LeftInfoItem title="Status:" value={profile.status} />
             <Separator />
 
-            <LeftInfoItem title="Serial #:" value="N/A" />
-            <LeftInfoItem title="Terminal #:" value="N/A" />
-            <LeftInfoItem title="State:" value="N/A" />
+            <LeftInfoItem title="Serial #:" value={profile.serial_number} />
+            <LeftInfoItem title="Terminal #:" value={profile.terminal_number} />
+            <LeftInfoItem title="State:" value={profile.device_state} />
 
             <Separator />
 
-            <LeftInfoItem title="DoP #:" value="198" />
-            <LeftInfoItem title="DoT #:" value="N/A" />
-            <LeftInfoItem title="LT Avg. Sale:" value="GHS 0.00" />
+            <LeftInfoItem
+              title="DoP #:"
+              value={String(profile.days_on_platform)}
+            />
+            <LeftInfoItem
+              title="DoT #:"
+              value={String(profile.days_of_tickets)}
+            />
+            <LeftInfoItem
+              title="LT Avg. Sale:"
+              value={formatGhs(parseFloat(profile.lt_avg_sale) || 0)}
+            />
 
             <Separator />
-            <LeftInfoItem title="Signed Up:" value="Fri, 19 Sep 2025" />
+            <LeftInfoItem
+              title="Signed Up:"
+              value={formatDate(profile.sign_up_date)}
+            />
             <Separator />
             <MiniCard
               label="Sales Wallet"
-              amount="GHS 0.00"
-              account="ACC0000101"
+              amount={`GHS ${profile.sales_wallet_balance}`}
+              account={profile.sales_wallet_id}
             />
             <MiniCard
               label="Claim Wallet"
-              amount="GHS 0.00"
-              account="ACC0000102"
+              amount={`GHS ${profile.claims_wallet_balance}`}
+              account={profile.claims_wallet_id}
             />
           </div>
         </div>
@@ -78,14 +131,14 @@ function RetailerDetailView() {
                 />
               }
               title="YTD Sales"
-              value="GHS 0.00"
+              value={formatGhs(Number.isFinite(ytdSalesNum) ? ytdSalesNum : 0)}
               subtitle={
                 <div className="flex space-x-1 text-gray-500">
-                  <span className="font-gotham-black text-xs">
-                    {"Net Sales"}
-                  </span>
+                  <span className="font-gotham-black text-xs">{"This month"}</span>
                   <span className="font-jura-bold text-xs">
-                    {"GHS 21,480,019.43"}
+                    {formatGhs(
+                      Number.isFinite(thisMonthSalesNum) ? thisMonthSalesNum : 0,
+                    )}
                   </span>
                 </div>
               }
@@ -99,14 +152,12 @@ function RetailerDetailView() {
                 />
               }
               title="YTD Top-Ups"
-              value="GHS 0.00"
+              value={formatGhs(parseFloat(String(profile.ytd_topups)) || 0)}
               subtitle={
                 <div className="flex space-x-1 text-gray-500">
-                  <span className="font-gotham-black text-xs">
-                    {"Net Sales"}
-                  </span>
+                  <span className="font-gotham-black text-xs">{"This month"}</span>
                   <span className="font-jura-bold text-xs">
-                    {"GHS 21,480,019.43"}
+                    {formatGhs(parseFloat(String(profile.this_month_topups)) || 0)}
                   </span>
                 </div>
               }
@@ -120,27 +171,27 @@ function RetailerDetailView() {
                 />
               }
               title="YTD Winnings"
-              value="GHS 0.00"
+              value={formatGhs(parseFloat(String(profile.ytd_winnings)) || 0)}
               subtitle={
                 <div className="flex space-x-1 text-gray-500">
-                  <span className="font-gotham-black text-xs">
-                    {"Net Sales"}
-                  </span>
+                  <span className="font-gotham-black text-xs">{"This month"}</span>
                   <span className="font-jura-bold text-xs">
-                    {"GHS 21,480,019.43"}
+                    {formatGhs(
+                      parseFloat(String(profile.this_month_winnings)) || 0,
+                    )}
                   </span>
                 </div>
               }
             />
             <TopCard
               title="Ranking"
-              value="Tier III"
+              value={profile.ranking_tier}
               subtitle={
                 <div className="flex space-x-1 text-gray-500">
-                  <span className="font-gotham-black text-xs">
-                    {"Avg. Top-Up"}
+                  <span className="font-gotham-black text-xs">{"Avg. Top-Up"}</span>
+                  <span className="font-jura-bold text-xs">
+                    {formatGhs(Number.isFinite(avgTop) ? avgTop : 0)}
                   </span>
-                  <span className="font-jura-bold text-xs">{"GHS 0.00"}</span>
                 </div>
               }
             />
@@ -173,19 +224,19 @@ function RetailerDetailView() {
               </Tabs.ListContainer>
 
               <Tabs.Panel id="topups" className="lg:flex-1 lg:min-h-0 min-w-0">
-                <TopUpTable />
+                <TopUpTable writerId={writerId} />
               </Tabs.Panel>
               <Tabs.Panel id="sales" className="lg:flex-1 lg:min-h-0 min-w-0">
-                <SalesTable />
+                <SalesTable writerId={writerId} />
               </Tabs.Panel>
               <Tabs.Panel
                 id="winnings"
                 className="lg:flex-1 lg:min-h-0 min-w-0"
               >
-                <WinningsTable />
+                <WinningsTable writerId={writerId} />
               </Tabs.Panel>
               <Tabs.Panel id="cashout" className="lg:flex-1 lg:min-h-0 min-w-0">
-                <CashoutTable />
+                <CashoutTable writerId={writerId} />
               </Tabs.Panel>
             </Tabs>
           </div>

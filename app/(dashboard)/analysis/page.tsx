@@ -1,13 +1,13 @@
 "use client";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import WritersPerformace from "./_components/writers-performance";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CloseButton } from "@heroui/react";
 import RetentionRatePerformance from "./_components/rate-performace";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function AnalysisPageView() {
+function AnalysisPageView() {
   const router = useRouter();
   const [tabSelection, setTabSelection] = useState("writers performance");
   const searchParams = useSearchParams();
@@ -128,5 +128,17 @@ export default function AnalysisPageView() {
         </motion.div>
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function AnalysisPageWithSuspense() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-5 px-7 text-sm text-gray-500">Loading analysis…</div>
+      }
+    >
+      <AnalysisPageView />
+    </Suspense>
   );
 }

@@ -44,6 +44,7 @@ type Props = {
   showSuffixIcon?: boolean;
   showLabel?: boolean;
   showPlaceholder?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 function CustomInputComponent({
@@ -64,6 +65,7 @@ function CustomInputComponent({
   showSuffixIcon = true,
   showPreficIcon = true,
   defaultValue,
+  onChange,
 }: Props) {
   const [showing, showPassword] = useState<boolean>(false);
   const [hasSubmittedParentForm, setHasSubmittedParentForm] = useState(false);
@@ -145,7 +147,10 @@ function CustomInputComponent({
     if (!showLabel) return;
 
     if (type == "email") return "Email";
-    if (type == "password") return "Password";
+    if (type == "password") {
+      if (showLabel && label) return label;
+      return "Password";
+    }
 
     return label;
   })();
@@ -162,6 +167,7 @@ function CustomInputComponent({
     <TextField
       isRequired={isRequired}
       name={name}
+      defaultValue={defaultValue}
       validationBehavior="native"
       type={
         type == "password"
@@ -209,9 +215,9 @@ function CustomInputComponent({
               <InputGroup.Input
                 id={id}
                 ref={setInputElement}
-                defaultValue={defaultValue}
                 minLength={minLength}
                 placeholder={placeholderText}
+                onChange={onChange}
                 className="placeholder:text-xs focus:outline-none focus:ring-0 shadow-none text-xs"
               />
               {!!endContent && endContent}

@@ -1,7 +1,6 @@
 "use client";
 
 import CustomInputComponent from "@/components/custom-input-component";
-import { ToastContainer } from "react-toastify";
 import ToastService from "@/utils/toast-service";
 import { Button, Form, Spinner } from "@heroui/react";
 import Image from "next/image";
@@ -17,16 +16,30 @@ function LoginView() {
   const router = useRouter();
   const { auth, setAuth } = useAuth();
 
-  const loginRequest = useMutation({
-    mutationFn: AuthService.login,
+  const profileRequest = useMutation({
+    mutationFn: AuthService.fetchProfile,
     onMutate: () => {},
     onError: (error) => {
       ToastService.error({ text: error.message });
     },
     onSuccess: async (result) => {
-      setAuth(result);
+      setAuth({ user: result!, access: auth!.access, refresh: auth!.refresh });
       router.replace("/sales");
       ToastService.success({ text: "Login Successful" });
+    },
+  });
+
+  const loginRequest = useMutation({
+    mutationFn: AuthService.login,
+    onMutate: () => {},
+    onSuccess: async (result) => {
+      if (result) {
+        setAuth({ user: undefined, ...result! });
+        profileRequest.mutate();
+      }
+    },
+    onError: (error) => {
+      ToastService.error({ text: error.message });
     },
   });
 
@@ -78,7 +91,7 @@ function LoginView() {
               <CustomInputComponent type="password" name="password" />
             </div>
             <Button
-              isPending={loginRequest.isPending}
+              isPending={loginRequest.isPending || profileRequest.isPending}
               className="w-full bg-black rounded-none py-6 text-xs mt-2 font-gotham-medium"
               type="submit"
             >
@@ -100,8 +113,6 @@ function LoginView() {
           </div>
         </div>
       </div>
-
-      <ToastContainer />
     </div>
   );
 }

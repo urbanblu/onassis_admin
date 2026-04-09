@@ -1,21 +1,83 @@
+"use client";
+
 import { Separator } from "@heroui/react";
 import CustomDatePicker from "@/components/custom-date-picker";
 import Badge from "../../../../public/images/badge.webp";
 import Image from "next/image";
 import CustomSelectComponent from "@/components/custom-select-component";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import type { DateValue } from "@internationalized/date";
+import SalesService from "@/api/sales";
+import GamesService from "@/api/games";
+import { formatGhs } from "@/utils/currency";
+import type { IWinnerRow } from "@/interfaces/sales.interface";
 
 function ThirdSalesSegment() {
+  const [selectedDate, setSelectedDate] = useState<string>();
+  const [selectedGameKey, setSelectedGameKey] = useState("all");
+
+  const { data: todayWins } = useQuery({
+    queryKey: ["sales", "today-wins"],
+    queryFn: SalesService.fetchTodayWins,
+  });
+
+  const { data: todayClaims } = useQuery({
+    queryKey: ["sales", "today-claims"],
+    queryFn: SalesService.fetchTodayClaims,
+  });
+
+  const { data: winningEvents } = useQuery({
+    queryKey: ["sales", "winning-events", selectedDate ?? "today"],
+    queryFn: () => SalesService.fetchWinningEvents(selectedDate),
+  });
+
+  const { data: winnersList } = useQuery({
+    queryKey: ["sales", "winners-list", selectedDate ?? "today"],
+    queryFn: () => SalesService.fetchWinnersList(selectedDate),
+  });
+
+  const { data: gameTypes = [] } = useQuery({
+    queryKey: ["games", "types", "sales-third"],
+    queryFn: () => GamesService.fetchGameTypes({ is_active: true }),
+  });
+
+  const gameOptions = useMemo(() => {
+    return [
+      { key: "all", label: "All" },
+      ...gameTypes.map((g) => ({ key: g.code, label: g.name })),
+    ];
+  }, [gameTypes]);
+
+  const selectedGameName =
+    gameOptions.find((g) => g.key === selectedGameKey)?.label ?? "All";
+
+  const visibleEvents = useMemo(() => {
+    const events = winningEvents?.events ?? [];
+    if (selectedGameKey === "all") return events;
+    return events.filter((event) =>
+      event.event_name.toLowerCase().includes(selectedGameName.toLowerCase()),
+    );
+  }, [winningEvents?.events, selectedGameKey, selectedGameName]);
+
+  const visibleWinners = useMemo(() => {
+    const winners = winnersList?.winners ?? [];
+    if (selectedGameKey === "all") return winners;
+    return winners.filter((winner) =>
+      winner.event_name.toLowerCase().includes(selectedGameName.toLowerCase()),
+    );
+  }, [winnersList?.winners, selectedGameKey, selectedGameName]);
+
   return (
     <div className="flex flex-col space-y-3 md:min-h-0 md:overflow-hidden">
-      {/* Top Wins Card */}
       <MiniCard
         title="Wins"
-        amount="GHS 290,282.40"
+        amount={formatGhs(todayWins?.total_win_amount ?? 0)}
         subtitle={
           <div className="flex space-x-1 text-gray-500">
             <span className="font-gotham-regular text-[0.65rem]">{"from"}</span>
             <span className="font-gotham-black text-[0.65rem]">
-              {"247 players"}
+              {`${(todayWins?.unique_players ?? 0).toLocaleString("en-GH")} players`}
             </span>
           </div>
         }
@@ -30,6 +92,9 @@ function ThirdSalesSegment() {
               <CustomDatePicker
                 label="Draw Date"
                 className="border rounded-sm border-gray-300"
+                onDatePicked={(date: DateValue) =>
+                  setSelectedDate(date.toString())
+                }
               />
               <CustomSelectComponent
                 label="Game"
@@ -37,13 +102,8 @@ function ThirdSalesSegment() {
                 initialItemKey="all"
                 showDropDownIcon
                 className="translate-y-[3.7px]"
-                list={[
-                  { key: "all", label: "All" },
-                  { key: "morningVag", label: "Morning VAG" },
-                  { key: "noonrush", label: "5/90 Noonrush" },
-                  { key: "luckyTuesday", label: "5/90 Lucky Tuesday" },
-                ]}
-                onSelectionChange={(val) => {}}
+                list={gameOptions}
+                onSelectionChange={(item) => setSelectedGameKey(item.key)}
               />
             </div>
           </div>
@@ -52,45 +112,55 @@ function ThirdSalesSegment() {
 
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             <div className="px-5 py-4 space-y-4">
-              <MiniEventInfo
-                title="Morning VAG"
-                values={[43, 5, 90, 56, 70]}
-                event="828"
-              />
-              <MiniEventInfo
-                title="5/90 Noonrush"
-                values={[43, 5, 90, 56, 70]}
-                event="135"
-              />
-              <MiniEventInfo
-                title="5/90 Lucky Tuesday"
-                values={[43, 5, 90, 56, 70]}
-                event="928"
-              />
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <PermItem key={i} />
-              ))}
+              {visibleEvents.length === 0 ? (
+                <div className="py-4 flex items-center justify-center text-xs">
+                  Event not available
+                </div>
+              ) : (
+                visibleEvents.map((event) => (
+                  <MiniEventInfo
+                    key={event.event_id}
+                    title={event.event_name}
+                    values={event.winning_numbers}
+                    event={String(event.event_no)}
+                  />
+                ))
+              )}
+
+              <Separator className="my-2" />
+
+              {visibleWinners.length === 0 ? (
+                <div className="py-4 flex items-center justify-center text-xs">
+                  Winnings not available
+                </div>
+              ) : (
+                visibleWinners.map((winner, index) => (
+                  <PermItem
+                    key={`${winner.player_phone}-${index}`}
+                    winner={winner}
+                  />
+                ))
+              )}
             </div>
           </div>
         </div>
       </div>
-      {/* Bottom Card */}
       <MiniCard
         title="Today's Claims"
-        amount="GHS 255,806.40"
+        amount={formatGhs(todayClaims?.total_claims ?? 0)}
         subtitle={
           <div className="flex space-x-1 text-gray-500">
             <span className="font-gotham-regular text-[0.65rem]">
               {"Claims"}
             </span>
             <span className="font-gotham-black text-[0.65rem]">
-              {"withrawn"}
+              {"withdrawn"}
             </span>
             <span className="font-gotham-regular text-[0.65rem]">
               {"today is"}
             </span>
             <span className="font-gotham-black text-[0.65rem]">
-              {"GHS 156,942.60"}
+              {formatGhs(todayClaims?.claims_withdrawn ?? 0)}
             </span>
           </div>
         }
@@ -156,34 +226,39 @@ const MiniEventInfo = ({
   );
 };
 
-const PermItem = () => {
+const PermItem = ({ winner }: { winner: IWinnerRow }) => {
+  const firstLine = winner.numbers_staked?.[0] ?? [];
   return (
     <div>
       <Separator className="my-3" />
       <div className="flex justify-between px-5 mt-5">
         <div className="flex flex-col">
           <div className="flex space-x-2 items-center">
-            <div className="border p-1 font-jura-bold text-xs min-w-[24px] text-center rounded-sm">
-              {"69"}
-            </div>
-            <div className="border p-1 font-jura-bold text-xs min-w-[24px] text-center rounded-sm">
-              {"38"}
-            </div>
+            {firstLine.map((num, index) => (
+              <div
+                key={`${num}-${index}`}
+                className="border p-1 font-jura-bold text-xs min-w-[24px] text-center rounded-sm"
+              >
+                {num}
+              </div>
+            ))}
             <Image src={Badge} alt="badge.png" className="h-5 w-5" />
           </div>
           <div>
             <span className="text-[0.6rem] font-gotham-regular">
-              Perm 2 | Morning VAG
+              {`Event #${winner.event_no} | ${winner.event_name}`}
             </span>
           </div>
         </div>
         <div className="flex flex-col items-end">
-          <span className="font-jura-bold text-sm mb-1">GHS 480.00</span>
-          <span className="text-[0.6rem] font-gotham-regular">
-            +233 (0)20 146 2738
+          <span className="font-jura-bold text-sm mb-1">
+            {formatGhs(winner.win_amount)}
           </span>
           <span className="text-[0.6rem] font-gotham-regular">
-            Alex Baah Yeboah
+            {winner.player_phone}
+          </span>
+          <span className="text-[0.6rem] font-gotham-regular">
+            {winner.writer_name}
           </span>
         </div>
       </div>

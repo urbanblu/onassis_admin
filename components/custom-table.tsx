@@ -67,6 +67,31 @@ function CustomTable({
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
+  const getVisiblePages = () => {
+    if (totalPages <= 7) return pages;
+
+    const current = internalCurrentPage;
+    const visible: Array<number | "ellipsis-left" | "ellipsis-right"> = [1];
+
+    const left = Math.max(2, current - 1);
+    const right = Math.min(totalPages - 1, current + 1);
+
+    if (left > 2) {
+      visible.push("ellipsis-left");
+    }
+
+    for (let p = left; p <= right; p += 1) {
+      visible.push(p);
+    }
+
+    if (right < totalPages - 1) {
+      visible.push("ellipsis-right");
+    }
+
+    visible.push(totalPages);
+    return visible;
+  };
+
   const start = (internalCurrentPage - 1) * pagination.pageSize + 1;
   const end = Math.min(
     internalCurrentPage * pagination.pageSize,
@@ -96,19 +121,20 @@ function CustomTable({
   return (
     <div className={`flex flex-col sm:h-full min-w-0 ${className}`}>
       <div className="sm:flex-1 sm:min-h-0 min-w-0 flex flex-col">
-        <Table className="sm:h-full w-full min-w-0">
-          <Table.ScrollContainer className="w-full min-w-0 overflow-x-auto overflow-y-auto max-h-[min(58dvh,26rem)] md:max-h-[min(62dvh,30rem)] lg:max-h-none lg:h-full lg:overflow-y-auto">
+        <Table className="w-full min-w-0 rounded-sm bg-transparent border sm:h-full flex flex-col">
+          <Table.ScrollContainer className="w-full min-w-0 flex-1 min-h-0 overflow-x-auto overflow-y-auto max-h-[min(58dvh,26rem)] md:max-h-[min(62dvh,30rem)] lg:max-h-[min(62dvh,30rem)] lg:overflow-y-auto">
             <Table.Content
               aria-label="Custom data table"
-              className="w-full min-w-[720px] [&_td]:text-xs"
+              className="w-full min-w-[720px] rounded-sm bg-transparent [&_td]:text-xs"
             >
-              <Table.Header className="sticky top-0 z-10">
+              <Table.Header className="sticky top-0 z-10 bg-[#F9FAFB] border-b">
                 {columns.map((column) => (
                   <Table.Column
                     key={column.key}
                     id={column.key}
                     isRowHeader={columns[0].key === column.key}
                     allowsSorting={column.sortable}
+                    className="bg-[#F9FAFB]"
                   >
                     <div className="flex items-center gap-1">
                       <span className="text-xs font-gotham-bold">
@@ -145,14 +171,14 @@ function CustomTable({
                       <Table.Row
                         key={index}
                         id={index}
-                        className="hover:bg-gray-50 cursor-pointer transition-all"
+                        className="hover:bg-gray-50 cursor-pointer transition-all rounded-sm border"
                         onAction={() => {
                           onRowClick?.(row, index);
                         }}
                       >
                         {columns.map((column) => (
                           <Table.Cell key={column.key}>
-                            <div className="flex items-center justify-between gap-2 w-full min-w-0">
+                            <div className="flex items-center justify-between gap-2 w-full min-w-0 rounded-sm px-2 py-1 bg-transparent">
                               <span className="truncate flex-1 min-w-0">
                                 {row[column.key]}
                               </span>
@@ -167,7 +193,7 @@ function CustomTable({
           </Table.ScrollContainer>
 
           {!loading && (
-            <Table.Footer>
+            <Table.Footer className="border-t">
               <Pagination size="sm">
                 <Pagination.Summary>
                   {start} to {end} of {pagination.totalCount} results
@@ -184,16 +210,26 @@ function CustomTable({
                       Prev
                     </Pagination.Previous>
                   </Pagination.Item>
-                  {pages.map((p) => (
-                    <Pagination.Item key={p}>
-                      <Pagination.Link
-                        isActive={p === internalCurrentPage}
-                        onPress={() => handlePageChange(p)}
-                      >
-                        {p}
-                      </Pagination.Link>
-                    </Pagination.Item>
-                  ))}
+                  {getVisiblePages().map((item, index) => {
+                    if (typeof item !== "number") {
+                      return (
+                        <Pagination.Item key={`${item}-${index}`}>
+                          <Pagination.Ellipsis />
+                        </Pagination.Item>
+                      );
+                    }
+
+                    return (
+                      <Pagination.Item key={item}>
+                        <Pagination.Link
+                          isActive={item === internalCurrentPage}
+                          onPress={() => handlePageChange(item)}
+                        >
+                          {item}
+                        </Pagination.Link>
+                      </Pagination.Item>
+                    );
+                  })}
                   <Pagination.Item>
                     <Pagination.Next
                       isDisabled={internalCurrentPage >= totalPages}

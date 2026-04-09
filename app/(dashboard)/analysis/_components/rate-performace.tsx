@@ -1,19 +1,98 @@
+"use client";
+
 import { Separator, Tabs } from "@heroui/react";
 import { BiMoney } from "react-icons/bi";
 import Image from "next/image";
 import CollectionIcon from "@/public/images/collection-icon.webp";
 import PayoutIcon from "@/public/images/payout-icon.webp";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { useQuery } from "@tanstack/react-query";
+import FinancialsService from "@/api/financials";
+import { formatGhs } from "@/utils/currency";
 
 function RetentionRatePerformance() {
+  const { data: salesCard } = useQuery({
+    queryKey: ["financials", "sales-card"],
+    queryFn: FinancialsService.fetchSalesCard,
+  });
+  const { data: netTopupsCard } = useQuery({
+    queryKey: ["financials", "net-topups-card"],
+    queryFn: FinancialsService.fetchNetTopupsCard,
+  });
+  const { data: writersAtWorkCard } = useQuery({
+    queryKey: ["financials", "writers-at-work-card"],
+    queryFn: FinancialsService.fetchWritersAtWorkCard,
+  });
+  const { data: winsCard } = useQuery({
+    queryKey: ["financials", "wins-card"],
+    queryFn: FinancialsService.fetchWinsCard,
+  });
+  const { data: liquidationCard } = useQuery({
+    queryKey: ["financials", "liquidation-card"],
+    queryFn: FinancialsService.fetchLiquidationCard,
+  });
+  const { data: settlementsCard } = useQuery({
+    queryKey: ["financials", "settlements-card"],
+    queryFn: FinancialsService.fetchSettlementsCard,
+  });
+
   return (
     <div className="flex flex-col space-y-4">
       <div className="grid md:grid-cols-1 lg:grid-cols-4 gap-4">
         <div className="lg:col-span-3">
           <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((item, index) => {
-              return <PrimaryCard key={index} />;
-            })}
+            <PrimaryCard
+              label="Sales"
+              value={salesCard?.total_sales ?? "N/A"}
+              subLabel="Net Sales"
+              subValue={
+                salesCard != null
+                  ? formatGhs(salesCard.total_sales_amount)
+                  : "N/A"
+              }
+            />
+            <PrimaryCard
+              label="Net Top-Ups"
+              value={netTopupsCard?.net_topups ?? "N/A"}
+              subLabel="Gross Top-Ups"
+              subValue={netTopupsCard?.gross_topups ?? "N/A"}
+            />
+            <PrimaryCard
+              label="Writers@Work"
+              value={
+                writersAtWorkCard != null
+                  ? `${writersAtWorkCard.active_writers.toLocaleString("en-GH")}`
+                  : "N/A"
+              }
+              subLabel="Total Writers"
+              subValue={
+                writersAtWorkCard != null
+                  ? `${writersAtWorkCard.total_writers.toLocaleString("en-GH")}`
+                  : "N/A"
+              }
+            />
+            <PrimaryCard
+              label="Wins"
+              value={winsCard?.total_wins ?? "N/A"}
+              subLabel="No. of Winning Stakes"
+              subValue={
+                winsCard != null
+                  ? `${winsCard.winning_stakes.toLocaleString("en-GH")}`
+                  : "N/A"
+              }
+            />
+            <PrimaryCard
+              label="Liquidation"
+              value={liquidationCard?.total_liquidation ?? "N/A"}
+              subLabel="Unclaimed Coupons"
+              subValue={liquidationCard?.unclaimed_coupons ?? "N/A"}
+            />
+            <PrimaryCard
+              label="Settlements"
+              value={settlementsCard?.total_settlements ?? "N/A"}
+              subLabel="Claim Wallet Bal."
+              subValue={settlementsCard?.claim_wallet_balance ?? "N/A"}
+            />
           </div>
         </div>
         <div className="lg:col-span-1">
@@ -34,7 +113,7 @@ function RetentionRatePerformance() {
                 <span className="text-xs font-gotham-black text-gray-500">
                   YTD RR:{" "}
                 </span>
-                <span className="text-xs font-jura-bold">6.93%</span>
+                <span className="text-xs font-jura-bold">{"—"}</span>
               </div>
             </div>
 
@@ -67,7 +146,9 @@ function RetentionRatePerformance() {
 
           <div className="flex-1 flex items-center justify-center rounded-sm">
             <div className="flex flex-col items-center space-y-2">
-              <span className="text-xs">Data not available</span>
+              <span className="text-xs text-gray-500">
+                Trend chart not wired (graph integration deferred)
+              </span>
             </div>
           </div>
         </div>
@@ -78,19 +159,29 @@ function RetentionRatePerformance() {
 
 export default RetentionRatePerformance;
 
-const PrimaryCard = () => {
+const PrimaryCard = ({
+  label,
+  value,
+  subLabel,
+  subValue,
+}: {
+  label: string;
+  value: string;
+  subLabel: string;
+  subValue: string;
+}) => {
   return (
     <div className="flex flex-col border rounded-sm">
       <div className="flex justify-between items-center p-4">
-        <span className="text-sm font-gotham-black">Sales</span>
+        <span className="text-sm font-gotham-black">{label}</span>
         <BiMoney />
       </div>
       <Separator />
       <div className="flex flex-col items-start p-4">
-        <span className="font-jura-bold text-2xl">GHS 81,448.80</span>
+        <span className="font-jura-bold text-2xl">{value}</span>
         <div className="flex space-x-1 text-gray-500">
-          <span className="font-gotham-black text-xs">{"Net Sales"}</span>
-          <span className="font-jura-bold text-xs">{"GHS 21,480,019.43"}</span>
+          <span className="font-gotham-black text-xs">{subLabel}</span>
+          <span className="font-jura-bold text-xs">{subValue}</span>
         </div>
       </div>
     </div>

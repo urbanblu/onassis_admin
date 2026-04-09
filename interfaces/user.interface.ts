@@ -1,4 +1,4 @@
-export type UserRole =
+export type IUserRole =
   | "superuser"
   | "operations_manager"
   | "director"
@@ -6,12 +6,14 @@ export type UserRole =
   | "administrator"
   | "finance_manager";
 
-export interface User {
+export interface IUser {
   id: string;
   email: string;
-  first_name?: string;
-  last_name?: string;
-  user_type: string;
-  role: UserRole;
-  created_at: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  phone: string | null;
+  role: string;
+  is_active: boolean;
+  photo: string | null;
 }

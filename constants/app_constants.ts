@@ -3,7 +3,7 @@ export default class AppConstants {
   static readonly STAGE = "test";
   static readonly PRODUCTION = "production";
 
-  static readonly PASSWORD_MIN_LENGTH = 5;
+  static readonly PASSWORD_MIN_LENGTH = 1;
 
   static readonly TEST = {} as const;
 }

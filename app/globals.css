@@ -198,6 +198,12 @@ body {
   font-family: GothamRegular;
 }
 
+@layer components {
+  .spinner--accent {
+    color: black;
+  }
+}
+
 #nprogress .bar {
   background: #183222 !important;
   height: 2px !important;

@@ -1,25 +1,22 @@
 import React from "react";
+import type { ILmcFinancial } from "@/interfaces/lmc.interface";
 
-function FinancialTab() {
+function FinancialTab({ financial }: { financial: ILmcFinancial }) {
   return (
     <div className="flex flex-col items-center space-y-5">
       <div className="flex flex-col items-center">
         <span className="text-[0.6rem] font-gotham-bold text-gray-500">
           Balance
         </span>
-        <span className="text-sm font-jura-bold">GHS 2,375.38</span>
+        <span className="text-sm font-jura-bold">
+          GHS {financial.wallet_balance}
+        </span>
       </div>
 
-      <div className="flex flex-col items-center">
-        <span className="text-[0.6rem] font-gotham-bold text-gray-500">
-          This Month
-        </span>
-        <span className="text-sm font-gotham-black">April 2026</span>
-      </div>
       <div className="flex flex-col w-full mt-2 space-y-1">
-        <InfoItem label="Top-Ups" value="43" />
-        <InfoItem label="Sales" value="43" />
-        <InfoItem label="Commisions" value="43" />
+        <InfoItem label="Top-Ups" value={financial.monthly_topups} />
+        <InfoItem label="Sales" value={financial.monthly_sales} />
+        <InfoItem label="Commissions" value={financial.monthly_commissions} />
       </div>
     </div>
   );

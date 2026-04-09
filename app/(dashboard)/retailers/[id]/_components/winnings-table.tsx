@@ -2,23 +2,48 @@
 
 import CustomTable from "@/components/custom-table";
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import WritersService from "@/api/writers";
+import { formatGhs } from "@/utils/currency";
 
-function WinningsTable() {
+function WinningsTable({ writerId }: { writerId: string }) {
+  const [currentPage, setCurrentPage] = useState(1);
   const [currentPageSize, setCurrentPageSize] = useState(20);
 
+  const { data, isPending, isFetching } = useQuery({
+    queryKey: ["writers", writerId, "winnings", currentPage, currentPageSize],
+    queryFn: () =>
+      WritersService.fetchWriterWinnings(writerId, {
+        page: currentPage,
+        page_size: currentPageSize,
+      }),
+    enabled: !!writerId,
+  });
+
   const handlePageChange = (page: number) => {
-    void page;
+    setCurrentPage(page);
   };
 
   const handlePageSizeChange = (size: number) => {
     setCurrentPageSize(size);
+    setCurrentPage(1);
   };
 
   const handleRowClick = () => {};
 
   const handleSort = (column: string, direction: "asc" | "desc") => {
-    console.log("Sort by:", column, direction);
+    void column;
+    void direction;
   };
+
+  const rows = data?.results ?? [];
+  const pagination = data
+    ? {
+        pageNumber: currentPage,
+        pageSize: currentPageSize,
+        totalCount: data.count,
+      }
+    : { pageNumber: 1, pageSize: currentPageSize, totalCount: 0 };
 
   return (
     <div className="flex flex-col min-w-0 lg:h-full lg:min-h-0">
@@ -33,27 +58,24 @@ function WinningsTable() {
           { key: "stakeAmount", label: "Stake Amount", sortable: false },
           { key: "amountWon", label: "Amount Won", sortable: false },
         ]}
-        data={
-          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => {
-            return {
-              ticket: "TCK123456",
-              coupon: "CPN654321",
-              event: "465",
-              game: "Ultimate Sunday",
-              play: "Multiple",
-              datetime: "2024-06-01 15:44:21",
-              stakeAmount: "GHS 150.00",
-              amountWon: "GHS 900.00",
-            };
-          }) ?? []
-        }
+        data={rows.map((r) => ({
+          ticket: r.ticket_id,
+          coupon: r.ticket_number,
+          event: String(r.event_number),
+          game: r.game,
+          play: r.play,
+          datetime: r.datetime,
+          stakeAmount: formatGhs(parseFloat(String(r.stake_amount)) || 0),
+          amountWon: formatGhs(parseFloat(String(r.amount_won)) || 0),
+        }))}
+        pagination={pagination}
         pageSize={currentPageSize}
         onPageChange={handlePageChange}
         onPageSizeChange={handlePageSizeChange}
         onRowClick={handleRowClick}
         onSort={handleSort}
-        loading={false}
-        isRefetching={false}
+        loading={isPending}
+        isRefetching={isFetching}
       />
     </div>
   );

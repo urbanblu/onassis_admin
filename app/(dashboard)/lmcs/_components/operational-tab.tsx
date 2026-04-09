@@ -1,20 +1,27 @@
 import { Separator } from "@heroui/react";
 import React from "react";
+import type { ILmcOperational } from "@/interfaces/lmc.interface";
 
-function OperationalTab() {
+function OperationalTab({ operational }: { operational: ILmcOperational }) {
   return (
     <div className="flex flex-col space-y-1.5">
-      <InfoItem label="Active:" value="43" />
-      <InfoItem label="Passive:" value="43" />
-      <InfoItem label="Inactive:" value="43" />
-      <InfoItem label="Recover:" value="43" />
-      <InfoItem label="No Use:" value="43" />
+      <InfoItem label="Active:" value={String(operational.active)} />
+      <InfoItem label="Passive:" value={String(operational.passive)} />
+      <InfoItem label="Inactive:" value={String(operational.inactive)} />
+      <InfoItem label="Recover:" value={String(operational.recover)} />
+      <InfoItem label="No Use:" value={String(operational.no_use)} />
       <Separator className="bg-black" />
-      <span className="text-sm font-gotham-bold">Writers</span>
+      <span className="text-sm font-gotham-bold">
+        Writers ({operational.writers_total})
+      </span>
       <Separator className="bg-black" />
-      <InfoItem label="POS Issued:" value="43" labelClassName="text-black" />
-      <InfoItem label="POS Trading:" value="43" />
-      <InfoItem label="POS Recovery:" value="43" labelClassName="text-red" />
+      <InfoItem label="POS Issued:" value={String(operational.pos_issued)} labelClassName="text-black" />
+      <InfoItem label="POS Trading:" value={String(operational.pos_trading)} />
+      <InfoItem
+        label="POS Recovery:"
+        value={String(operational.pos_recovery)}
+        labelClassName="text-red"
+      />
     </div>
   );
 }

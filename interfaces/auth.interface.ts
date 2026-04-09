@@ -1,9 +1,9 @@
-import { User } from "./user.interface";
+import { IUser } from "./user.interface";
 
 export interface IAuth {
   access: string;
   refresh: string;
-  user?: User;
+  user?: IUser;
 }
 
 export interface ILogInRequest {
