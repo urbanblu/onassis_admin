@@ -59,7 +59,6 @@ function WinningsTable({ writerId }: { writerId: string }) {
           { key: "amountWon", label: "Amount Won", sortable: false },
         ]}
         data={rows.map((r) => ({
-          ticket: r.ticket_id,
           ticket: r.ticket_number,
           event: String(r.event_number),
           game: r.game,

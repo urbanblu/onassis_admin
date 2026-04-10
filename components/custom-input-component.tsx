@@ -8,7 +8,6 @@ import {
   Label,
   TextField,
 } from "@heroui/react";
-import type { ValidationError } from "@react-types/shared";
 import React, { useCallback, useRef, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { IoMdEyeOff } from "react-icons/io";
@@ -35,7 +34,7 @@ type Props = {
   defaultValue?: string;
   className?: string;
   validate?:
-    | ((value: string) => ValidationError | true | null | undefined)
+    | ((value: string) => string | string[] | true | null | undefined)
     | undefined;
   isRequired?: boolean;
   minLength?: number;
