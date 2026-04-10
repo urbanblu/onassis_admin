@@ -49,7 +49,7 @@ function SalesTable({ writerId }: { writerId: string }) {
     <div className="flex flex-col min-w-0 lg:h-full lg:min-h-0">
       <CustomTable
         columns={[
-          { key: "couponId", label: "Coupon ID", sortable: true },
+          { key: "ticketId", label: "Ticket ID", sortable: true },
           { key: "date", label: "Date", sortable: false },
           { key: "time", label: "Time", sortable: true },
           { key: "event", label: "Event #", sortable: true },
@@ -59,7 +59,7 @@ function SalesTable({ writerId }: { writerId: string }) {
           { key: "stakes", label: "Stakes", sortable: false },
         ]}
         data={rows.map((r) => ({
-          couponId: r.ticket_no,
+          ticketId: r.ticket_no,
           date: r.date,
           time: r.time,
           event: String(r.event_number),

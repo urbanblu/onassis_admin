@@ -105,14 +105,14 @@ function FirstSalesSegment() {
 
   const loading = salesPending || gamesPending || ticketsPending;
   const headerAmount = todaySales ? formatGhs(todaySales.total_sales) : "—";
-  const couponLine = todaySales
-    ? `${todaySales.ticket_count.toLocaleString("en-GH")} coupons`
+  const ticketLine = todaySales
+    ? `${todaySales.ticket_count.toLocaleString("en-GH")} tickets`
     : "—";
 
   const tableData: TableRow[] = filteredTickets.map((ticket) => {
     const first = ticket.stakes[0];
     return {
-      coupon: (
+      ticket: (
         <div className="flex flex-col items-start space-y-1">
           <span>{ticket.ticket_no}</span>
           <span className="text-[10px] font-gotham-black text-gray-400">
@@ -129,7 +129,9 @@ function FirstSalesSegment() {
       ),
       time: (
         <div className="flex space-x-2 items-center">
-          <span className="font-jura-bold text-sm">{formatTime(ticket.time)}</span>
+          <span className="font-jura-bold text-sm">
+            {formatTime(ticket.time)}
+          </span>
           <Popover>
             <CloseButton className="bg-transparent">
               <IoMdMore size={30} />
@@ -206,7 +208,7 @@ function FirstSalesSegment() {
                 <div className="font-jura-bold text-lg">{headerAmount}</div>
                 <div className="font-gotham-bold text-gray-500">
                   <span className="font-gotham-regular">{"from "}</span>
-                  <span>{couponLine}</span>
+                  <span>{ticketLine}</span>
                 </div>
               </div>
             </div>
@@ -230,7 +232,7 @@ function FirstSalesSegment() {
         <div className="h-full">
           <CustomTable
             columns={[
-              { key: "coupon", label: "Coupon #", sortable: true },
+              { key: "ticket", label: "Ticket #", sortable: true },
               { key: "play", label: "Play", sortable: true },
               { key: "stakes", label: "Stakes", sortable: false },
               { key: "amount", label: "Amount", sortable: true },

@@ -84,8 +84,8 @@ function RetentionRatePerformance() {
             <PrimaryCard
               label="Liquidation"
               value={liquidationCard?.total_liquidation ?? "N/A"}
-              subLabel="Unclaimed Coupons"
-              subValue={liquidationCard?.unclaimed_coupons ?? "N/A"}
+              subLabel="Unclaimed Tickets"
+              subValue={liquidationCard?.unclaimed_tickets ?? "N/A"}
             />
             <PrimaryCard
               label="Settlements"

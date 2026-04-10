@@ -87,3 +87,20 @@ export interface IDrawEventTicketsResponse {
   event: IDrawEventTicketsEventHeader;
   tickets: IPaginatedResults<IDrawEventTicketRow>;
 }
+
+export interface IDrawEvent {
+  event_id: string;
+  id: string;
+  event_no: number;
+  event_name: string;
+  name: string;
+  game_type: { id: string; name: string; code: string } | null;
+  game_type_name: string;
+  draw_date: string;
+  draw_time: string;
+  status: string;
+}
+
+export interface ICreateDrawResultPayload {
+  numbers: number[];
+}

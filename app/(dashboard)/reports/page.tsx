@@ -26,7 +26,7 @@ const REPORT_DATA = [
       "Bank Transfers",
       "Christmas Bonus Report",
       "Commission Payments",
-      "Coupon Query",
+      "Ticket Query",
       "Daily Sales",
       "Daily Sales & Winnings",
       "Finance - Payout",
@@ -42,7 +42,7 @@ const REPORT_DATA = [
   {
     key: "General",
     values: [
-      "Coupon Status",
+      "Ticket Status",
       "Active Writers",
       "Terminal history",
       "Winning Stakes Report",

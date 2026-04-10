@@ -6,6 +6,7 @@ import DrawNumbersIcon from "@/public/images/draw-numbers-icon.webp";
 import Image from "next/image";
 import React from "react";
 import DrawDrawer from "./_components/draw-drawer";
+import CreateDrawDrawer from "./_components/create-draw-drawer";
 import { useQuery } from "@tanstack/react-query";
 import FinancialsService from "@/api/financials";
 import GamesService from "@/api/games";
@@ -27,7 +28,12 @@ function DrawView() {
   });
 
   const { data: tableData, isPending: tablePending } = useQuery({
-    queryKey: ["games", "draws-and-winnings-table", currentPage, currentPageSize],
+    queryKey: [
+      "games",
+      "draws-and-winnings-table",
+      currentPage,
+      currentPageSize,
+    ],
     queryFn: () =>
       GamesService.fetchDrawsAndWinningsTable({
         page: currentPage,
@@ -94,14 +100,17 @@ function DrawView() {
   const ytdWin = dash?.ytd_winnings;
   const ytdGgr = dash?.ytd_ggr;
   const ytdPlayers = ytdSales?.unique_players;
-  const ytdCoupons = ytdSales?.total_coupons;
+  const ytdTickets = ytdSales?.total_tickets;
   const ytdStakes = ytdSales?.total_stakes;
 
   return (
     <div className="flex flex-col px-7 pb-5 space-y-3 h-auto sm:h-[calc(100vh-6rem)] sm:overflow-hidden">
-      <span className="text-sm sm:text-lg transition-all font-gotham-black uppercase shrink-0">
-        DRAWS & WINNINGS
-      </span>
+      <div className="flex items-center justify-between shrink-0">
+        <span className="text-sm sm:text-lg transition-all font-gotham-black uppercase">
+          DRAWS & WINNINGS
+        </span>
+        <CreateDrawDrawer />
+      </div>
 
       <div className="grid md:grid-cols-3 gap-3 shrink-0">
         <Card
@@ -109,13 +118,17 @@ function DrawView() {
           amount={ytdSales?.total_sales ?? "—"}
           subtitle={
             <div className="flex flex-wrap gap-x-1 text-black">
-              <span className="font-gotham-regular text-[0.65rem]">{"from"}</span>
+              <span className="font-gotham-regular text-[0.65rem]">
+                {"from"}
+              </span>
               <span className="font-gotham-black text-[0.65rem]">
-                {ytdPlayers != null && ytdCoupons != null
-                  ? ` ${ytdPlayers.toLocaleString("en-GH")} players, ${ytdCoupons.toLocaleString("en-GH")} coupons `
+                {ytdPlayers != null && ytdTickets != null
+                  ? ` ${ytdPlayers.toLocaleString("en-GH")} players, ${ytdTickets.toLocaleString("en-GH")} tickets `
                   : " — "}
               </span>
-              <span className="font-gotham-regular text-[0.65rem]">{"with"}</span>
+              <span className="font-gotham-regular text-[0.65rem]">
+                {"with"}
+              </span>
               <span className="font-gotham-black text-[0.65rem]">
                 {ytdStakes != null
                   ? ` ${ytdStakes.toLocaleString("en-GH")} stakes`
@@ -185,7 +198,9 @@ function DrawView() {
                 event: String(r.event_no),
                 drawDate: r.draw_date,
                 eventName: (
-                  <span className="font-gotham-bold text-xs">{r.event_name}</span>
+                  <span className="font-gotham-bold text-xs">
+                    {r.event_name}
+                  </span>
                 ),
                 drawTime: (
                   <span className="text-sm font-jura-bold">{r.draw_time}</span>
@@ -241,7 +256,9 @@ function DrawView() {
                   </span>
                 ),
                 payoutRatio: (
-                  <span className="text-sm font-jura-bold">{r.payout_ratio}</span>
+                  <span className="text-sm font-jura-bold">
+                    {r.payout_ratio}
+                  </span>
                 ),
               })) ?? []
             }

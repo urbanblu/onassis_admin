@@ -50,7 +50,7 @@ function WinningsTable({ writerId }: { writerId: string }) {
       <CustomTable
         columns={[
           { key: "ticket", label: "Ticket #", sortable: true },
-          { key: "coupon", label: "Coupon #", sortable: true },
+          { key: "ticket", label: "Ticket #", sortable: true },
           { key: "event", label: "Event #", sortable: false },
           { key: "game", label: "Game", sortable: true },
           { key: "play", label: "Play", sortable: false },
@@ -60,7 +60,7 @@ function WinningsTable({ writerId }: { writerId: string }) {
         ]}
         data={rows.map((r) => ({
           ticket: r.ticket_id,
-          coupon: r.ticket_number,
+          ticket: r.ticket_number,
           event: String(r.event_number),
           game: r.game,
           play: r.play,

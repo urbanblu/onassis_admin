@@ -33,7 +33,13 @@ function DrawDrawer({
   const fetchPreTickets = drawerMode === "pre" && !!eventId && isOpen;
 
   const { data: ticketPayload, isPending } = useQuery({
-    queryKey: ["games", "draw-event-tickets", eventId, currentPage, currentPageSize],
+    queryKey: [
+      "games",
+      "draw-event-tickets",
+      eventId,
+      currentPage,
+      currentPageSize,
+    ],
     queryFn: () =>
       GamesService.fetchDrawEventTickets(eventId!, {
         page: currentPage,
@@ -85,7 +91,7 @@ function DrawDrawer({
   }));
 
   const tableRows: TableRow[] = results.map((t) => ({
-    coupon: t.ticket_no,
+    ticket: t.ticket_no,
     stake: String(t.stake_count),
     stakeValue: t.stake_value,
     Datetime: t.datetime,
@@ -202,7 +208,11 @@ function DrawDrawer({
                       <div className="h-full overflow-hidden">
                         <CustomTable
                           columns={[
-                            { key: "coupon", label: "Coupon #", sortable: false },
+                            {
+                              key: "ticket",
+                              label: "Ticket #",
+                              sortable: false,
+                            },
                             {
                               key: "stake",
                               label: "Stake",

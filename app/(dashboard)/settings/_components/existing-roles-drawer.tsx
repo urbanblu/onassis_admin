@@ -20,7 +20,7 @@ const roleTypes = [
       "Bank Transfers",
       "Christmas Bonus Report",
       "Commission Payments",
-      "Coupon Query",
+      "Ticket Query",
       "Daily Sales",
       "Daily Sales & Winnings",
       "Finance - Payout",
@@ -28,7 +28,7 @@ const roleTypes = [
     ],
   },
   {
-    title: "Coupon Status",
+    title: "Ticket Status",
     values: ["Active Writers", "Terminal history"],
   },
   {

@@ -1,5 +1,7 @@
 import Axios from "@/api";
 import {
+  ICreateDrawResultPayload,
+  IDrawEvent,
   IDrawEventTicketsResponse,
   IDrawsWinningsTableRow,
   IGameType,
@@ -60,6 +62,39 @@ class GamesService {
         params,
       });
       return response.data as IDrawEventTicketsResponse;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static fetchDrawEvents = async (params?: {
+    page?: number;
+    page_size?: number;
+    status?: string;
+    draw_date?: string;
+  }): Promise<IPaginatedResults<IDrawEvent>> => {
+    try {
+      const response = await Axios({
+        url: `/api/v1/games/events/`,
+        method: "GET",
+        params,
+      });
+return response.data as IPaginatedResults<IDrawEvent>;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static createDrawResult = async (
+    eventId: string,
+    payload: ICreateDrawResultPayload,
+  ): Promise<void> => {
+    try {
+      await Axios({
+        url: `/api/v1/games/events/${eventId}/result/`,
+        method: "POST",
+        data: payload,
+      });
     } catch (error) {
       throw handleApiError(error);
     }

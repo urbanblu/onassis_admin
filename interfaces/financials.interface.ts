@@ -42,7 +42,7 @@ export interface IYtdSalesBlock {
   total_sales: string;
   total_sales_amount: number;
   unique_players: number;
-  total_coupons: number;
+  total_tickets: number;
   total_stakes: number;
 }
 
@@ -99,8 +99,8 @@ export interface IWinsCard {
 export interface ILiquidationCard {
   total_liquidation: string;
   total_liquidation_amount: number;
-  unclaimed_coupons: string;
-  unclaimed_coupons_amount: number;
+  unclaimed_tickets: string;
+  unclaimed_tickets_amount: number;
   currency: string;
 }
 
