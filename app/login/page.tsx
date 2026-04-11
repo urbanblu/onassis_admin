@@ -53,11 +53,11 @@ function LoginView() {
     <div className="w-screen h-screen">
       <div className="transition-all flex flex-col items-center justify-center w-full h-full px-5 sm:px-0">
         <Image
-          src="/images/lotus-icon.webp"
-          alt="lotus-icon"
+          src="/images/logo.png"
+          alt="onassis-logo"
           className="mb-5"
-          width={200}
-          height={200}
+          width={150}
+          height={150}
         />
         <div className="transition-all py-12 px-8 sm:px-16 w-full sm:max-w-sm flex flex-col items-stretch justify-center gap-3 border border-black rounded-md">
           <Button

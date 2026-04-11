@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import LotusIconImage from "../public/images/lotus-icon.webp";
+import LogoImage from "../public/images/logo.png";
 import { usePathname, useRouter } from "next/navigation";
 import ContactlessPayIcon from "../public/images/contactless-pay.webp";
 import NotificationIcon from "../public/images/notification-icon.webp";
@@ -62,9 +62,9 @@ function GlobalNavbar({ children }: { children: React.ReactNode }) {
       <div className="fixed top-0 right-0 left-0 z-50 bg-white">
         <div className="flex justify-between pr-7 pl-5 items-center py-5 sm:py-4">
           <Image
-            src={LotusIconImage}
+            src={LogoImage}
             alt="logo"
-            className="w-[100px] sm:w-[200px]"
+            className="w-[100px] sm:w-[110px]"
           />
           <div className="space-x-4 hidden md:flex">
             {navItems.map((i) => (
