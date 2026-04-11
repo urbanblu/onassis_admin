@@ -42,7 +42,7 @@ function OnassisCashLoginView() {
               </Form>
               <div className="w-full flex flex-col items-end space-y-2 text-black">
                 <Link href={"/login"} className="text-xs underline">
-                  Log into Lotus
+                  Log into Onassis Admin
                 </Link>
                 <Link
                   href={"/login/onassis-host"}

@@ -49,16 +49,14 @@ function CashoutTable({ writerId }: { writerId: string }) {
           { key: "source", label: "Source", sortable: false },
           { key: "network", label: "Network", sortable: true },
           { key: "bankBatchRef", label: "Bank Batch Ref", sortable: false },
-          { key: "lotusRef", label: "Lotus Ref", sortable: false },
+          { key: "lotusRef", label: "Onassis Admin Ref", sortable: false },
           { key: "amount", label: "Amount", sortable: false },
           { key: "balance", label: "Balance", sortable: false },
         ]}
         data={rows.map((r) => ({
           date: r.date,
           time: r.time,
-          source: (
-            <span className="font-gotham-bold text-xs">{r.source}</span>
-          ),
+          source: <span className="font-gotham-bold text-xs">{r.source}</span>,
           network: <span className="font-jura-bold text-xs">{r.network}</span>,
           bankBatchRef: (
             <span className="font-jura-bold text-xs">
