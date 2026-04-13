@@ -17,53 +17,66 @@
 8. [Winning Statistics Endpoint](#winning-statistics-endpoint)
 9. [Best & Worst Performance Endpoint](#best--worst-performance-endpoint)
 10. [YTD Retention Rate Endpoint](#ytd-retention-rate-endpoint)
-11. [Top 10 Writers Endpoint](#top-10-writers-endpoint)
+11. [Retention Rate Trend Endpoint](#retention-rate-trend-endpoint)
+12. [Top 10 Writers Endpoint](#top-10-writers-endpoint)
 
 ### LMCs
 
-12. [Available LMC Owners Endpoint](#available-lmc-owners-endpoint)
-13. [Register LMC Endpoint](#register-lmc-endpoint)
-14. [LMC Detail Cards Endpoint](#lmc-detail-cards-endpoint)
-15. [LMC Writers Overview Endpoint](#lmc-writers-overview-endpoint)
-16. [LMC Transactions Endpoint](#lmc-transactions-endpoint)
+13. [Available LMC Owners Endpoint](#available-lmc-owners-endpoint)
+14. [Register LMC Endpoint](#register-lmc-endpoint)
+15. [Get All LMC Owners Endpoint](#get-all-lmc-owners-endpoint)
+16. [Edit LMC Endpoint](#edit-lmc-endpoint)
+17. [LMC Detail Cards Endpoint](#lmc-detail-cards-endpoint)
+18. [LMC Summary Endpoint](#lmc-summary-endpoint)
+19. [LMC Writers Overview Endpoint](#lmc-writers-overview-endpoint)
+20. [LMC Transactions Endpoint](#lmc-transactions-endpoint)
+
+### Writers Registration
+
+21. [Register Writer Endpoint](#register-writer-endpoint)
 
 ### Draws & Winnings
 
-17. [Draws & Winnings Endpoint](#draws--winnings-endpoint)
-18. [Draws & Winnings Table Endpoint](#draws--winnings-table-endpoint)
-19. [Draw Event Tickets Endpoint](#draw-event-tickets-endpoint)
+22. [Draws & Winnings Endpoint](#draws--winnings-endpoint)
+23. [Draws & Winnings Table Endpoint](#draws--winnings-table-endpoint)
+24. [Draw Event Tickets Endpoint](#draw-event-tickets-endpoint)
 
 ### Admin Users
 
-20. [List Admin Users Endpoint](#list-admin-users-endpoint)
-21. [Create Admin User Endpoint](#create-admin-user-endpoint)
-22. [Edit Admin User Endpoint](#edit-admin-user-endpoint)
-23. [Activity Logs Endpoint](#activity-logs-endpoint)
+25. [List Admin Users Endpoint](#list-admin-users-endpoint)
+26. [Create Admin User Endpoint](#create-admin-user-endpoint)
+27. [Edit Admin User Endpoint](#edit-admin-user-endpoint)
+28. [Activity Logs Endpoint](#activity-logs-endpoint)
 
 ### Writer Dashboard
 
-24. [All Writers List Endpoint](#all-writers-list-endpoint)
-25. [Writer Profile Endpoint](#writer-profile-endpoint)
-26. [Writer Sales Endpoint](#writer-sales-endpoint)
-27. [Writer Winnings Endpoint](#writer-winnings-endpoint)
-28. [Writer Top-Ups Endpoint](#writer-top-ups-endpoint)
-29. [Writer Cashouts Endpoint](#writer-cashouts-endpoint)
+29. [All Writers List Endpoint](#all-writers-list-endpoint)
+30. [Writer Profile Endpoint](#writer-profile-endpoint)
+31. [Writer Sales Endpoint](#writer-sales-endpoint)
+32. [Writer Winnings Endpoint](#writer-winnings-endpoint)
+33. [Writer Top-Ups Endpoint](#writer-top-ups-endpoint)
+34. [Writer Cashouts Endpoint](#writer-cashouts-endpoint)
 
 ### Analytics continuation
 
-30. [Sales Card Endpoint](#sales-card-endpoint)
-31. [Net Top-Ups Card Endpoint](#net-top-ups-card-endpoint)
-32. [Writers@Work Card Endpoint](#writerswork-card-endpoint)
-33. [Wins Card Endpoint](#wins-card-endpoint)
-34. [Liquidation Card Endpoint](#liquidation-card-endpoint)
-35. [Settlements Card Endpoint](#settlements-card-endpoint)
+35. [Sales Card Endpoint](#sales-card-endpoint)
+36. [Net Top-Ups Card Endpoint](#net-top-ups-card-endpoint)
+37. [Writers@Work Card Endpoint](#writerswork-card-endpoint)
+38. [Wins Card Endpoint](#wins-card-endpoint)
+39. [Liquidation Card Endpoint](#liquidation-card-endpoint)
+40. [Settlements Card Endpoint](#settlements-card-endpoint)
 
 ### Sales Continuation
 
-36. [Today's Claims Endpoint](#todays-claims-endpoint)
-37. [Today's Wins Endpoint](#todays-wins-endpoint)
-38. [Winning Events Endpoint](#winning-events-endpoint)
-39. [Winners List Endpoint](#winners-list-endpoint)
+41. [Today's Claims Endpoint](#todays-claims-endpoint)
+42. [Today's Wins Endpoint](#todays-wins-endpoint)
+43. [Winning Events Endpoint](#winning-events-endpoint)
+44. [Winners List Endpoint](#winners-list-endpoint)
+
+### Reports
+
+45. [List Reports Endpoint](#list-reports-endpoint)
+46. [Execute Report Endpoint](#execute-report-endpoint)
 
 ---
 
@@ -651,6 +664,141 @@ Retention Rate   = (Retention Amount / Gross Sales) × 100, formatted as "X.XX%"
 
 ---
 
+## Retention Rate Trend Endpoint
+
+### Overview
+
+Returns the Retention Rate trend data for the bar chart. Supports a **30-day daily** breakdown and a **12-month monthly** breakdown, controlled by the `days` query param — matching the **30 days** / **1 year** toggle in the UI. Also returns the YTD RR headline figure shown above the chart.
+
+### Request
+
+**Method:** `GET`
+
+**Route:** `/api/v1/financials/dashboard/retention-rate-trend/`
+
+**Base URL:** `https://onassismystrocore-production.up.railway.app/api/v1/financials/dashboard/retention-rate-trend/`
+
+**Authentication:** Required (Bearer Token)
+
+**Permissions:** Operator or above
+
+### Query Parameters
+
+| Parameter | Type    | Default | Description                                                                                                              |
+| --------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `days`    | integer | `30`    | `30` = daily breakdown for last 30 days. `365` = monthly breakdown for last 12 months. Any other value defaults to `30`. |
+
+### UI Toggle Mapping
+
+| UI Button   | Query                  |
+| ----------- | ---------------------- |
+| **30 days** | `?days=30` or no param |
+| **1 year**  | `?days=365`            |
+
+### Sample Requests
+
+```bash
+# 30-day daily view (default)
+GET /api/v1/financials/dashboard/retention-rate-trend/
+
+# 30-day explicitly
+GET /api/v1/financials/dashboard/retention-rate-trend/?days=30
+
+# 1-year monthly view
+GET /api/v1/financials/dashboard/retention-rate-trend/?days=365
+```
+
+### Response — 30 days (`days=30`)
+
+```json
+{
+  "ytd_retention_rate": 7.59,
+  "period": {
+    "start_date": "2026-03-13",
+    "end_date": "2026-04-12",
+    "days": 30
+  },
+  "days": [
+    { "day": "2026-03-13", "retention_rate": -17 },
+    { "day": "2026-03-14", "retention_rate": -5 },
+    { "day": "2026-03-15", "retention_rate": -44 },
+    { "day": "2026-03-16", "retention_rate": 13 },
+    { "day": "2026-03-17", "retention_rate": 21 },
+    { "day": "2026-03-20", "retention_rate": 100 },
+    { "day": "2026-03-22", "retention_rate": -12 },
+    { "day": "2026-03-23", "retention_rate": -31 },
+    { "day": "2026-03-24", "retention_rate": -62 },
+    { "day": "2026-04-12", "retention_rate": 0 }
+  ]
+}
+```
+
+### Response — 1 year (`days=365`)
+
+```json
+{
+  "ytd_retention_rate": 7.59,
+  "period": {
+    "start_date": "2025-05-01",
+    "end_date": "2026-04-12",
+    "days": 365
+  },
+  "months": [
+    { "month": "May '25", "retention_rate": 13 },
+    { "month": "Jun '25", "retention_rate": -44 },
+    { "month": "Jul '25", "retention_rate": 21 },
+    { "month": "Aug '25", "retention_rate": 24 },
+    { "month": "Sep '25", "retention_rate": 100 },
+    { "month": "Oct '25", "retention_rate": 28 },
+    { "month": "Nov '25", "retention_rate": 41 },
+    { "month": "Dec '25", "retention_rate": 100 },
+    { "month": "Jan '26", "retention_rate": -31 },
+    { "month": "Feb '26", "retention_rate": 85 },
+    { "month": "Mar '26", "retention_rate": 28 },
+    { "month": "Apr '26", "retention_rate": 0 }
+  ]
+}
+```
+
+### Response Field Descriptions
+
+#### Top-level
+
+| Field                | Type    | Description                                                                        |
+| -------------------- | ------- | ---------------------------------------------------------------------------------- |
+| `ytd_retention_rate` | float   | YTD Retention Rate percentage — the headline "YTD RR: X.XX%" shown above the chart |
+| `period.start_date`  | string  | First date in the data range `YYYY-MM-DD`                                          |
+| `period.end_date`    | string  | Today's date `YYYY-MM-DD`                                                          |
+| `period.days`        | integer | The `days` param used (`30` or `365`)                                              |
+| `days`               | array   | Present when `days=30`. Daily entries.                                             |
+| `months`             | array   | Present when `days=365`. Monthly entries.                                          |
+
+#### Daily entry (`days` array)
+
+| Field            | Type    | Description                                                                                                                                                   |
+| ---------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `day`            | string  | Date `YYYY-MM-DD`                                                                                                                                             |
+| `retention_rate` | integer | Signed retention rate for that day. Positive = retained more than paid out (blue/green bar). Negative = paid out more (red bar). `0` if no data for that day. |
+
+#### Monthly entry (`months` array)
+
+| Field            | Type    | Description                                                            |
+| ---------------- | ------- | ---------------------------------------------------------------------- |
+| `month`          | string  | Month label e.g. `"Apr '26"`                                           |
+| `retention_rate` | integer | Signed retention rate for that month, aggregated from daily snapshots. |
+
+### Calculation
+
+```
+Daily RR   = (net_topups - total_wins_paid) / net_topups × 100   (per DailyRetentionRate row)
+Monthly RR = (SUM(net_topups) - SUM(total_wins_paid)) / SUM(net_topups) × 100
+YTD RR     = read directly from YTDSummary.ytd_retention_rate (pre-computed nightly)
+```
+
+> **Data source:** `DailyRetentionRate` table (updated nightly by Celery beat). Days with no snapshot entry return `retention_rate: 0`.
+
+---
+
 ## Top 10 Writers Endpoint
 
 ### Endpoint: Get Top 10 Writers Year-to-Date
@@ -767,35 +915,66 @@ Returns a list of users with the `lmc_owner` role who are not yet assigned to an
 
 ### Overview
 
-Creates a new LMC (Lotto Marketing Company) assigned to an existing `lmc_owner` user. Automatically generates a sequential LMC code (e.g. `LMC-0001`) and creates an airtime wallet for the new LMC.
+Registers a new LMC with its owner in a single operation. Creates both:
+
+- A new User with role `lmc_owner`
+- A new LMC linked to that user
+- An LMC airtime wallet (automatic)
+
+This endpoint allows onboarding new LMC companies without pre-creating the owner user separately.
 
 ### Request
 
 **Method:** `POST`
 
-**Route:** `/api/v1/lmc/`
+**Route:** `/api/v1/lmc/register/`
 
-**Authentication:** Required (Bearer Token)
+**Authentication:** Not required (public endpoint)
 
-**Permissions:** Operator or above
+**Permissions:** None (AllowAny)
 
 ### Request Body
 
 ```json
 {
-  "owner": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "email": "owner@example.com",
+  "first_name": "John",
+  "last_name": "Doe",
+  "phone": "+233501234567",
+  "password": "securepassword123",
   "address": "123 Main Street, Accra",
-  "is_active": true
+  "photo": null
 }
 ```
 
+**Note:** For photo uploads, use `multipart/form-data` instead of JSON. See [Photo Upload Example](#photo-upload-example) below.
+
 ### Request Field Descriptions
 
-| Field       | Type    | Required | Description                                    |
-| ----------- | ------- | -------- | ---------------------------------------------- |
-| `owner`     | UUID    | Yes      | UUID of an `lmc_owner` user                    |
-| `address`   | string  | No       | Physical address of the LMC                    |
-| `is_active` | boolean | No       | Whether the LMC is active (defaults to `true`) |
+| Field        | Type   | Required | Description                                              |
+| ------------ | ------ | -------- | -------------------------------------------------------- |
+| `email`      | string | Yes      | Unique email address for the LMC owner account           |
+| `first_name` | string | Yes      | Owner's first name (max 150 chars)                       |
+| `last_name`  | string | Yes      | Owner's last name (max 150 chars)                        |
+| `phone`      | string | Yes      | Unique phone number in E.164 format (e.g. +233501234567) |
+| `password`   | string | Yes      | Password for the owner account (minimum 8 characters)    |
+| `address`    | string | No       | Physical address of the LMC (max 500 chars)              |
+| `photo`      | file   | No       | Profile photo (image file, optional)                     |
+
+### Photo Upload Example
+
+When uploading a photo, use `multipart/form-data` instead of JSON:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/lmc/register/ \
+  -F "email=owner@example.com" \
+  -F "first_name=John" \
+  -F "last_name=Doe" \
+  -F "phone=+233501234567" \
+  -F "password=securepassword123" \
+  -F "address=123 Main Street, Accra" \
+  -F "photo=@/path/to/photo.jpg"
+```
 
 ### Response Format
 
@@ -803,36 +982,374 @@ Creates a new LMC (Lotto Marketing Company) assigned to an existing `lmc_owner` 
 
 ```json
 {
-  "id": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
-  "code": "LMC-0025",
-  "name": "Kwame Mensah",
-  "phone": "+233501234567",
-  "address": "123 Main Street, Accra",
-  "owner": {
+  "user": {
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "full_name": "Kwame Mensah",
-    "phone": "+233501234567",
-    "photo": null
+    "email": "owner@example.com",
+    "full_name": "John Doe",
+    "role": "lmc_owner",
+    "phone": "+233501234567"
   },
-  "is_active": true,
-  "created_at": "2026-04-05T12:00:00Z",
-  "updated_at": "2026-04-05T12:00:00Z"
+  "lmc": {
+    "id": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
+    "code": "LMC-0025",
+    "name": "John Doe",
+    "phone": "+233501234567",
+    "address": "123 Main Street, Accra",
+    "owner": {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "email": "owner@example.com",
+      "full_name": "John Doe",
+      "role": "lmc_owner",
+      "phone": "+233501234567"
+    },
+    "is_active": true,
+    "created_at": "2026-04-10T12:00:00Z",
+    "updated_at": "2026-04-10T12:00:00Z"
+  },
+  "message": "LMC registration successful"
 }
 ```
 
 ### Response Field Descriptions
 
-| Field        | Type     | Description                                      |
-| ------------ | -------- | ------------------------------------------------ |
-| `id`         | UUID     | LMC's unique identifier                          |
-| `code`       | string   | Auto-generated sequential code (e.g. `LMC-0025`) |
-| `name`       | string   | Owner's full name                                |
-| `phone`      | string   | Owner's phone number                             |
-| `address`    | string   | LMC physical address                             |
-| `owner`      | object   | Owner user summary                               |
-| `is_active`  | boolean  | Whether the LMC is active                        |
-| `created_at` | datetime | Creation timestamp                               |
-| `updated_at` | datetime | Last update timestamp                            |
+| Field            | Type     | Description                                      |
+| ---------------- | -------- | ------------------------------------------------ |
+| `user`           | object   | Created LMC owner user summary                   |
+| `user.id`        | UUID     | User's unique identifier                         |
+| `user.email`     | string   | Owner's email address                            |
+| `user.full_name` | string   | Owner's full name                                |
+| `user.role`      | string   | Always `"lmc_owner"`                             |
+| `user.phone`     | string   | Owner's phone number                             |
+| `lmc`            | object   | Created LMC details                              |
+| `lmc.id`         | UUID     | LMC's unique identifier                          |
+| `lmc.code`       | string   | Auto-generated sequential code (e.g. `LMC-0025`) |
+| `lmc.name`       | string   | Owner's full name                                |
+| `lmc.phone`      | string   | Owner's phone number                             |
+| `lmc.address`    | string   | LMC physical address                             |
+| `lmc.owner`      | object   | Owner user summary                               |
+| `lmc.is_active`  | boolean  | Always `true` for newly created LMCs             |
+| `lmc.created_at` | datetime | LMC creation timestamp                           |
+| `lmc.updated_at` | datetime | LMC last update timestamp                        |
+| `message`        | string   | Success confirmation message                     |
+
+### Error Responses
+
+**Status Code:** `400 Bad Request`
+
+```json
+{
+  "email": ["A user with this email address already exists."],
+  "phone": ["A user with this phone number already exists."]
+}
+```
+
+---
+
+## Get All LMC Owners Endpoint
+
+### Overview
+
+Returns a list of all LMC owners with their associated LMC information. Useful for displaying all LMC companies, creating dropdowns, or managing LMC data.
+
+### Request
+
+**Method:** `GET`
+
+**Route:** `/api/v1/lmc/owners/`
+
+**Authentication:** Not required (public endpoint)
+
+**Permissions:** None (AllowAny)
+
+### Response Format
+
+**Status Code:** `200 OK`
+
+```json
+[
+  {
+    "id": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
+    "code": "LMC-0025",
+    "address": "123 Main Street, Accra",
+    "is_active": true,
+    "owner_email": "owner@example.com",
+    "owner_phone": "+233501234567",
+    "owner_full_name": "John Doe",
+    "created_at": "2026-04-10T12:00:00Z"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "code": "LMC-0026",
+    "address": "456 Oak Avenue, Kumasi",
+    "is_active": true,
+    "owner_email": "owner2@example.com",
+    "owner_phone": "+233509876543",
+    "owner_full_name": "Jane Smith",
+    "created_at": "2026-04-09T10:30:00Z"
+  }
+]
+```
+
+### Response Field Descriptions
+
+| Field             | Type     | Description                                      |
+| ----------------- | -------- | ------------------------------------------------ |
+| `id`              | UUID     | LMC's unique identifier                          |
+| `code`            | string   | Auto-generated sequential code (e.g. `LMC-0025`) |
+| `address`         | string   | LMC physical address                             |
+| `is_active`       | boolean  | Whether the LMC is active                        |
+| `owner_email`     | string   | Owner's email address                            |
+| `owner_phone`     | string   | Owner's phone number                             |
+| `owner_full_name` | string   | Owner's full name                                |
+| `created_at`      | datetime | LMC creation timestamp                           |
+
+---
+
+## Register Writer Endpoint
+
+### Overview
+
+Registers a new writer with both user and writer information in a single operation. Creates:
+
+- A new User with role `writer`
+- A new Writer linked to the specified LMC
+- Writer wallets (airtime & claims) - automatic via service
+
+This endpoint allows complete writer onboarding without pre-creating the user separately.
+
+### Request
+
+**Method:** `POST`
+
+**Route:** `/api/v1/writers/register/`
+
+**Authentication:** Not required (public endpoint)
+
+**Permissions:** None (AllowAny)
+
+**Content-Type:** `multipart/form-data` (for photo upload) or `application/json`
+
+### Request Body
+
+**JSON (without photo):**
+
+```json
+{
+  "email": "writer@example.com",
+  "first_name": "Jane",
+  "last_name": "Smith",
+  "phone": "+233501234567",
+  "password": "securepassword123",
+  "lmc_id": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
+  "date_of_birth": "1990-05-15",
+  "location_address": "Accra, Ghana",
+  "photo=@/path/to/photo.jpg"
+
+}
+```
+
+**Multipart/Form-Data (with photo):**
+
+- `email`: writer@example.com
+- `first_name`: Jane
+- `last_name`: Smith
+- `phone`: +233501234567
+- `password`: securepassword123
+- `lmc_id`: f9e8d7c6-b5a4-3210-fedc-ba9876543210
+- `date_of_birth`: 1990-05-15
+- `location_address`: Accra, Ghana
+- `photo`: <binary image file>
+
+### Request Field Descriptions
+
+| Field              | Type   | Required | Description                                              |
+| ------------------ | ------ | -------- | -------------------------------------------------------- |
+| `email`            | string | Yes      | Unique email address for the writer account              |
+| `first_name`       | string | Yes      | Writer's first name (max 150 chars)                      |
+| `last_name`        | string | Yes      | Writer's last name (max 150 chars)                       |
+| `phone`            | string | Yes      | Unique phone number in E.164 format (e.g. +233501234567) |
+| `password`         | string | Yes      | Password for the writer account (minimum 8 characters)   |
+| `lmc_id`           | UUID   | Yes      | UUID of the LMC this writer belongs to                   |
+| `date_of_birth`    | date   | Yes      | Writer's date of birth (YYYY-MM-DD, for KYC)             |
+| `location_address` | string | No       | Writer's operating location address (max 255 chars)      |
+| `photo`            | file   | No       | Profile photo (multipart/form-data only)                 |
+
+### Response Format
+
+**Status Code:** `201 Created`
+
+```json
+{
+  "user": {
+    "id": "b5c4d3e2-f1a0-0987-6543-21cba0987654",
+    "email": "writer@example.com",
+    "full_name": "Jane Smith",
+    "role": "writer",
+    "phone": "+233501234567"
+  },
+  "writer": {
+    "id": "c6d5e4f3-a0b1-1234-7890-32dcb1a98765",
+    "user": {
+      "id": "b5c4d3e2-f1a0-0987-6543-21cba0987654",
+      "email": "writer@example.com",
+      "full_name": "Jane Smith",
+      "role": "writer",
+      "phone": "+233501234567"
+    },
+    "lmc": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
+    "photo": null,
+    "status": "active",
+    "writer_id": 42,
+    "date_of_birth": "1990-05-15",
+    "location_address": "Accra, Ghana",
+    "bound_device": null,
+    "has_bound_device": false,
+    "created_at": "2026-04-10T13:15:00Z",
+    "updated_at": "2026-04-10T13:15:00Z"
+  },
+  "message": "Writer registration successful"
+}
+```
+
+### Response Field Descriptions
+
+| Field                     | Type        | Description                                                          |
+| ------------------------- | ----------- | -------------------------------------------------------------------- |
+| `user`                    | object      | Created writer user summary                                          |
+| `user.id`                 | UUID        | User's unique identifier                                             |
+| `user.email`              | string      | Writer's email address                                               |
+| `user.full_name`          | string      | Writer's full name                                                   |
+| `user.role`               | string      | Always `"writer"`                                                    |
+| `user.phone`              | string      | Writer's phone number                                                |
+| `writer`                  | object      | Created writer details                                               |
+| `writer.id`               | UUID        | Writer's unique identifier                                           |
+| `writer.user`             | object      | User summary (full user object)                                      |
+| `writer.lmc`              | UUID        | LMC UUID this writer belongs to                                      |
+| `writer.photo`            | string/null | URL to profile photo or null                                         |
+| `writer.status`           | string      | Writer status (`active`, `passive`, `inactive`, `recover`, `no_use`) |
+| `writer.writer_id`        | integer     | Human-readable writer ID shown in UI                                 |
+| `writer.date_of_birth`    | date        | Writer's date of birth                                               |
+| `writer.location_address` | string      | Writer's operating location                                          |
+| `writer.bound_device`     | UUID/null   | Bound POS device or null                                             |
+| `writer.has_bound_device` | boolean     | Whether writer has a bound device                                    |
+| `writer.created_at`       | datetime    | Writer creation timestamp                                            |
+| `writer.updated_at`       | datetime    | Last update timestamp                                                |
+| `message`                 | string      | Success confirmation message                                         |
+
+### Error Responses
+
+**Status Code:** `400 Bad Request`
+
+```json
+{
+  "email": ["A user with this email address already exists."],
+  "phone": ["A user with this phone number already exists."],
+  "lmc_id": ["LMC not found."],
+  "date_of_birth": ["Invalid date format or age validation failed."]
+}
+```
+
+---
+
+## Edit LMC Endpoint
+
+### Overview
+
+Partially updates an existing LMC's editable fields. Use `PATCH` to update only the fields you want to change. Only `address`, `owner` (reassign to a different user), and `is_active` (enable/disable the LMC) can be updated. The `code` is auto-generated and cannot be changed.
+
+### Request
+
+**Method:** `PATCH`
+
+**Route:** `/api/v1/lmc/{id}/`
+
+**Base URL:** `https://onassismystrocore-production.up.railway.app/api/v1/lmc/{id}/`
+
+**Authentication:** Required (Bearer Token)
+
+**Permissions:** Operator or above
+
+### Request Body
+
+All fields are optional for `PATCH` — send only the fields you want to change.
+
+| Field       | Type    | Required | Description                                             |
+| ----------- | ------- | -------- | ------------------------------------------------------- |
+| `address`   | string  | No       | LMC physical address                                    |
+| `owner`     | UUID    | No       | UUID of the new owner user (must have role `lmc_owner`) |
+| `is_active` | boolean | No       | Enable (`true`) or disable (`false`) the LMC            |
+
+### Sample Requests
+
+**Update address only:**
+
+```bash
+PATCH /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "address": "45 Liberation Road, Accra"
+}
+```
+
+**Deactivate an LMC:**
+
+```bash
+PATCH /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "is_active": false
+}
+```
+
+**Update both address and reactivate:**
+
+```bash
+PATCH /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "address": "12 Ring Road Central, Accra",
+  "is_active": true
+}
+```
+
+### Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "id": "1a0dadec-9498-4a66-a51f-8345ae433c32",
+  "code": "LMC-0004",
+  "owner": "a3f12c90-1234-4abc-8def-000000000001",
+  "address": "45 Liberation Road, Accra",
+  "is_active": true,
+  "created_at": "2026-03-01T10:00:00Z"
+}
+```
+
+### Error Response
+
+**Status Code:** `400 Bad Request` — if `owner` UUID does not exist or does not have `lmc_owner` role:
+
+```json
+{
+  "owner": ["Invalid pk \"<uuid>\" - object does not exist."]
+}
+```
+
+**Status Code:** `403 Forbidden` — if caller is not Operator or above:
+
+```json
+{
+  "detail": "You do not have permission to perform this action."
+}
+```
 
 ---
 
@@ -916,11 +1433,95 @@ Returns all LMCs with an operational snapshot (live writer counts + POS data) an
 
 ---
 
+## LMC Summary Endpoint
+
+### Overview
+
+Returns the LMC info header and YTD summary cards (with contribution ratios) for a single LMC. Use this to populate the top section of the LMC detail page: the four stat cards and the wallet balance card.
+
+### Request
+
+**Method:** `GET`
+
+**Route:** `/api/v1/lmc/{id}/summary/`
+
+**Base URL:** `https://onassismystrocore-production.up.railway.app/api/v1/lmc/{id}/summary/`
+
+**Authentication:** Required (Bearer Token)
+
+**Permissions:** Operator or above; LMC owner for their own LMC
+
+### Sample Request
+
+```bash
+GET /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/summary/
+Authorization: Bearer <token>
+```
+
+### Response
+
+```json
+{
+  "lmc_info": {
+    "name": "Sallyrich Blessed Enterprise",
+    "address": "",
+    "phone": "+233205595253",
+    "pos_issued": 0,
+    "pos_trading": 0,
+    "wallet_balance": 634.02
+  },
+  "summary": {
+    "ytd_sales": 2623.5,
+    "ytd_topups": 8979.0,
+    "ytd_winnings": 63000.0,
+    "writers_count": 11,
+    "ytd_sales_ratio": 73,
+    "ytd_topups_ratio": 61,
+    "ytd_winnings_ratio": 94,
+    "writers_ratio": 32,
+    "wallet_balance": 634.02,
+    "today_deposits": 971.88
+  }
+}
+```
+
+### Response Field Descriptions
+
+#### `lmc_info`
+
+| Field            | Type    | Description                                          |
+| ---------------- | ------- | ---------------------------------------------------- |
+| `name`           | string  | LMC owner's full name                                |
+| `address`        | string  | LMC physical address                                 |
+| `phone`          | string  | Owner's phone number                                 |
+| `pos_issued`     | integer | POS devices issued (from latest snapshot)            |
+| `pos_trading`    | integer | POS devices currently trading (from latest snapshot) |
+| `wallet_balance` | decimal | Current airtime wallet balance                       |
+
+#### `summary`
+
+| Field                | Type    | Description                                         |
+| -------------------- | ------- | --------------------------------------------------- |
+| `ytd_sales`          | decimal | Year-to-date total ticket sales for this LMC        |
+| `ytd_topups`         | decimal | Year-to-date total top-ups paid out to writers      |
+| `ytd_winnings`       | decimal | Year-to-date total winnings for this LMC's writers  |
+| `writers_count`      | integer | Live count of writers in this LMC                   |
+| `ytd_sales_ratio`    | integer | This LMC's YTD sales as % of all LMCs (0–100)       |
+| `ytd_topups_ratio`   | integer | This LMC's YTD top-ups as % of all LMCs (0–100)     |
+| `ytd_winnings_ratio` | integer | This LMC's YTD winnings as % of all LMCs (0–100)    |
+| `writers_ratio`      | integer | This LMC's writer count as % of all writers (0–100) |
+| `wallet_balance`     | decimal | Current airtime wallet balance (mirrors `lmc_info`) |
+| `today_deposits`     | decimal | Total successful deposits into the wallet today     |
+
+> **UI Mapping:** `wallet_balance` → the large GHS figure on the wallet card. `today_deposits` → the "Today GHS X.XX" label beneath it.
+
+---
+
 ## LMC Writers Overview Endpoint
 
 ### Overview
 
-Returns detailed information for a single LMC: LMC info header, YTD summary cards with contribution ratios, and a paginated/filterable writers table.
+Returns a paginated, filterable writers table for a single LMC. Use this to populate the writers tab below the summary cards. Each tab click sends a single `status` filter — do **not** combine multiple status values.
 
 ### Request
 
@@ -928,58 +1529,92 @@ Returns detailed information for a single LMC: LMC info header, YTD summary card
 
 **Route:** `/api/v1/lmc/{id}/writers-overview/`
 
+**Base URL:** `https://onassismystrocore-production.up.railway.app/api/v1/lmc/{id}/writers-overview/`
+
 **Authentication:** Required (Bearer Token)
 
 **Permissions:** Operator or above; LMC owner for their own LMC
 
 ### Query Parameters
 
-| Parameter   | Type    | Description                                                                    |
-| ----------- | ------- | ------------------------------------------------------------------------------ |
-| `status`    | string  | Filter writers by status: `active`, `passive`, `inactive`, `recover`, `no_use` |
-| `search`    | string  | Search writers by name                                                         |
-| `page`      | integer | Page number (default: 1)                                                       |
-| `page_size` | integer | Results per page (default: 10, max: 1000)                                      |
+| Parameter   | Type    | Description                                             |
+| ----------- | ------- | ------------------------------------------------------- |
+| `status`    | string  | Filter by **one** status tab. See UI Tab Mapping below. |
+| `search`    | string  | Search writers by name                                  |
+| `page`      | integer | Page number (default: 1)                                |
+| `page_size` | integer | Results per page (default: 10)                          |
+
+### UI Tab Mapping
+
+| UI Tab       | Query                 |
+| ------------ | --------------------- |
+| **View All** | No `status` parameter |
+| **Active**   | `?status=active`      |
+| **Passive**  | `?status=passive`     |
+| **Inactive** | `?status=inactive`    |
+| **Recover**  | `?status=recover`     |
+| **No Use**   | `?status=no_use`      |
+
+### Sample Requests
+
+```bash
+# View All writers (no filter)
+GET /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/writers-overview/
+
+# Active tab
+GET /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/writers-overview/?status=active
+
+# Page 2
+GET /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/writers-overview/?status=active&page=2
+```
+
+### Response
+
+```json
+{
+  "count": 11,
+  "next": "https://onassismystrocore-production.up.railway.app/api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/writers-overview/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": "9cc70f47-b97e-4af5-8c99-de3bfecd9017",
+      "name": "Akwasi Ofori",
+      "contact": "+233552950898",
+      "sign_up_date": "2026-03-01T17:57:25.638000Z",
+      "dop": 41,
+      "dot": 17,
+      "ytd_sales": "178398.00",
+      "ytd_topups": "996669.00",
+      "status": "recover"
+    },
+    {
+      "id": "78f9e5c2-1f65-44a4-8843-6485d59f56e6",
+      "name": "Bemah Rose",
+      "contact": "+233598195262",
+      "sign_up_date": "2026-03-01T17:57:25.640000Z",
+      "dop": 41,
+      "dot": 0,
+      "ytd_sales": "0.00",
+      "ytd_topups": "0.00",
+      "status": "no_use"
+    }
+  ]
+}
+```
 
 ### Response Field Descriptions
 
-#### `lmc_info`
-
-| Field            | Type    | Description                         |
-| ---------------- | ------- | ----------------------------------- |
-| `name`           | string  | Owner's full name                   |
-| `address`        | string  | LMC physical address                |
-| `phone`          | string  | Owner's phone number                |
-| `pos_issued`     | integer | POS devices issued (from snapshot)  |
-| `pos_trading`    | integer | POS devices trading (from snapshot) |
-| `wallet_balance` | decimal | Current airtime wallet balance      |
-
-#### `summary`
-
-| Field                | Type    | Description                                           |
-| -------------------- | ------- | ----------------------------------------------------- |
-| `ytd_sales`          | decimal | Year-to-date total ticket sales for this LMC          |
-| `ytd_topups`         | decimal | Year-to-date total top-ups for this LMC               |
-| `ytd_winnings`       | decimal | Year-to-date total winnings for this LMC              |
-| `writers_count`      | integer | Live count of writers belonging to this LMC           |
-| `ytd_sales_ratio`    | integer | This LMC's sales as a % of all LMCs (0–100)           |
-| `ytd_topups_ratio`   | integer | This LMC's top-ups as a % of all LMCs (0–100)         |
-| `ytd_winnings_ratio` | integer | This LMC's winnings as a % of all LMCs (0–100)        |
-| `writers_ratio`      | integer | This LMC's writer count as a % of all writers (0–100) |
-
-#### Writer Row Fields
-
-| Field          | Type     | Description                                                                    |
-| -------------- | -------- | ------------------------------------------------------------------------------ |
-| `id`           | UUID     | Writer's unique identifier                                                     |
-| `name`         | string   | Writer's full name                                                             |
-| `contact`      | string   | Writer's phone number                                                          |
-| `sign_up_date` | datetime | When the writer was created                                                    |
-| `dop`          | integer  | Days on platform (days since sign-up)                                          |
-| `dot`          | integer  | Days of trading (distinct days with sales YTD)                                 |
-| `ytd_sales`    | decimal  | Writer's year-to-date ticket sales                                             |
-| `ytd_topups`   | decimal  | Writer's year-to-date top-ups received                                         |
-| `status`       | string   | Writer's current status (`active`, `passive`, `inactive`, `recover`, `no_use`) |
+| Field          | Type     | Description                                    |
+| -------------- | -------- | ---------------------------------------------- |
+| `id`           | UUID     | Writer's unique identifier                     |
+| `name`         | string   | Writer's full name                             |
+| `contact`      | string   | Writer's phone number                          |
+| `sign_up_date` | datetime | When the writer was registered                 |
+| `dop`          | integer  | Days on platform (days since sign-up)          |
+| `dot`          | integer  | Days of trading (distinct days with sales YTD) |
+| `ytd_sales`    | decimal  | Writer's year-to-date ticket sales             |
+| `ytd_topups`   | decimal  | Writer's year-to-date top-ups received         |
+| `status`       | string   | Writer's current status                        |
 
 ---
 
@@ -987,7 +1622,7 @@ Returns detailed information for a single LMC: LMC info header, YTD summary card
 
 ### Overview
 
-Returns a unified, paginated transaction ledger for a single LMC. Merges commissions, top-ups, and deposits into one chronological list with a running balance column.
+Returns a unified, paginated transaction ledger for a single LMC. Merges commissions, top-ups (to writers), and deposits (into LMC wallet) into one chronological list with a running balance column. Each tab click sends a single `type` filter — do **not** combine multiple type values.
 
 ### Request
 
@@ -995,20 +1630,22 @@ Returns a unified, paginated transaction ledger for a single LMC. Merges commiss
 
 **Route:** `/api/v1/lmc/{id}/transactions/`
 
+**Base URL:** `https://onassismystrocore-production.up.railway.app/api/v1/lmc/{id}/transactions/`
+
 **Authentication:** Required (Bearer Token)
 
 **Permissions:** Operator or above; LMC owner for their own LMC
 
 ### Query Parameters
 
-| Parameter   | Type    | Description                                                      |
-| ----------- | ------- | ---------------------------------------------------------------- |
-| `type`      | string  | Filter by type: `commission`, `topup`, `transfer`. Omit for all. |
-| `search`    | string  | Search by source name or phone number                            |
-| `date_from` | string  | Start date filter (YYYY-MM-DD)                                   |
-| `date_to`   | string  | End date filter (YYYY-MM-DD)                                     |
-| `page`      | integer | Page number (default: 1)                                         |
-| `page_size` | integer | Results per page (default: 30, max: 1000)                        |
+| Parameter   | Type    | Description                                                       |
+| ----------- | ------- | ----------------------------------------------------------------- |
+| `type`      | string  | Filter by **one** transaction type tab. See UI Tab Mapping below. |
+| `search`    | string  | Search by source name or phone number                             |
+| `date_from` | string  | Start date filter `YYYY-MM-DD`                                    |
+| `date_to`   | string  | End date filter `YYYY-MM-DD`                                      |
+| `page`      | integer | Page number (default: 1)                                          |
+| `page_size` | integer | Results per page (default: 30)                                    |
 
 ### UI Tab Mapping
 
@@ -1019,26 +1656,81 @@ Returns a unified, paginated transaction ledger for a single LMC. Merges commiss
 | **Top-ups**     | `?type=topup`       |
 | **Transfers**   | `?type=transfer`    |
 
+### Sample Requests
+
+```bash
+# View All transactions (no filter)
+GET /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/transactions/
+
+# Commissions tab
+GET /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/transactions/?type=commission
+
+# View All, page 2
+GET /api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/transactions/?page=2
+```
+
+### Response
+
+```json
+{
+  "count": 45,
+  "next": "https://onassismystrocore-production.up.railway.app/api/v1/lmc/1a0dadec-9498-4a66-a51f-8345ae433c32/transactions/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "date": "Sun, 05 April 2026",
+      "time": "03:56 PM",
+      "type": "commission",
+      "source_name": "Akwasi Ofori",
+      "source_phone": "+233552950898",
+      "reference": null,
+      "amount": "125.50",
+      "balance": "634.02"
+    },
+    {
+      "date": "Sat, 04 April 2026",
+      "time": "10:22 AM",
+      "type": "topup",
+      "source_name": "Bemah Rose",
+      "source_phone": "+233598195262",
+      "reference": "TRF-00123",
+      "amount": "500.00",
+      "balance": "508.52"
+    },
+    {
+      "date": "Fri, 03 April 2026",
+      "time": "08:15 AM",
+      "type": "transfer",
+      "source_name": null,
+      "source_phone": "+233205595253",
+      "reference": "DEP-98765",
+      "amount": "1000.00",
+      "balance": "1008.52"
+    }
+  ]
+}
+```
+
 ### Response Field Descriptions
 
-| Field          | Type        | Description                                            |
-| -------------- | ----------- | ------------------------------------------------------ |
-| `date`         | string      | Formatted date (e.g. "Sun, 05 April 2026")             |
-| `time`         | string      | Formatted time (e.g. "03:56 PM")                       |
-| `type`         | string      | Transaction type: `commission`, `topup`, or `transfer` |
-| `source_name`  | string/null | Writer's full name (null for deposits)                 |
-| `source_phone` | string/null | Writer's phone or mobile money number                  |
-| `reference`    | string/null | Payment reference (null for commissions)               |
-| `amount`       | decimal     | Transaction amount in GHS                              |
-| `balance`      | decimal     | Running wallet balance after this transaction          |
+| Field          | Type        | Description                                       |
+| -------------- | ----------- | ------------------------------------------------- |
+| `date`         | string      | Formatted date e.g. `"Sun, 05 April 2026"`        |
+| `time`         | string      | Formatted time e.g. `"03:56 PM"`                  |
+| `type`         | string      | `commission`, `topup`, or `transfer`              |
+| `source_name`  | string/null | Writer's full name; `null` for deposit transfers  |
+| `source_phone` | string/null | Writer's phone or mobile money number used        |
+| `reference`    | string/null | Payment reference; `null` for commissions         |
+| `amount`       | decimal     | Transaction amount in GHS                         |
+| `balance`      | decimal     | Running LMC wallet balance after this transaction |
 
 ### Transaction Types
 
-| Type         | Direction | Description                                                      |
-| ------------ | --------- | ---------------------------------------------------------------- |
-| `commission` | IN (+)    | Commission earned from a writer's top-up (3.5% of top-up amount) |
-| `topup`      | OUT (-)   | Airtime transferred from LMC wallet to a writer                  |
-| `transfer`   | IN (+)    | Deposit into LMC wallet (via mobile money)                       |
+| Type         | Direction | Description                                                   |
+| ------------ | --------- | ------------------------------------------------------------- |
+| `commission` | IN (+)    | Commission earned from a writer's top-up (% of top-up amount) |
+| `topup`      | OUT (−)   | Airtime transferred from LMC wallet to a writer               |
+| `transfer`   | IN (+)    | Deposit into LMC wallet via mobile money                      |
 
 ---
 
@@ -1172,7 +1864,7 @@ Returns a unified, paginated transaction ledger for a single LMC. Merges commiss
 
 **Route:** `GET /api/v1/games/events/{id}/tickets/`
 
-**Description:** Returns the paginated ticket list for a specific draw event (the "Pre Draw Tickets" modal). Each ticket includes its nested stakes with full detail.
+**Description:** Returns the paginated ticket list for a specific draw event (the "Pre Draw Tickets" modal). Each ticket includes its nested stakes with full detail, plus the event's draw date and time.
 
 **Authentication:** Required (Bearer Token)
 
@@ -1191,6 +1883,13 @@ Returns a unified, paginated transaction ledger for a single LMC. Merges commiss
 | `search`    | string | No       | Filter by ticket number, writer name, or player phone |
 | `page`      | int    | No       | Page number (default: 1)                              |
 | `page_size` | int    | No       | Results per page (default: 20)                        |
+
+### Event Info Fields (top-level response)
+
+| Field        | Type   | Description                                          |
+| ------------ | ------ | ---------------------------------------------------- |
+| `event_date` | string | Event draw date (formatted, e.g. "Sat, 05 Apr 2026") |
+| `event_time` | string | Event draw time (HH:MM:SS format)                    |
 
 ### Ticket Row Fields
 
@@ -1372,6 +2071,16 @@ Returns a unified, paginated transaction ledger for a single LMC. Merges commiss
 | `search`  | string | No       | Filter by first name, last name, or phone number |
 | `status`  | string | No       | Filter by writer status                          |
 | `page`    | int    | No       | Page number (default: 1)                         |
+
+### Query Examples
+
+```
+GET /api/v1/writers/all/?search=Kwesi
+GET /api/v1/writers/all/?search=Mensah
+GET /api/v1/writers/all/?search=0501234567
+GET /api/v1/writers/all/?search=Kwesi&status=active
+GET /api/v1/writers/all/?status=inactive&page=2
+```
 
 ### Response Fields
 
@@ -1942,6 +2651,556 @@ These endpoints power the summary cards shown in the admin/operator UI. Each ret
 
 ---
 
+## List Reports Endpoint
+
+### Overview
+
+Returns the full catalogue of available reports, each with its schema — the list of columns (including which are required) and the available filter parameters. Use this to dynamically render the report selection UI.
+
+### Request
+
+**Method:** `GET`
+
+**Route:** `/api/v1/financials/reports/`
+
+**Permissions:** Operator or above
+
+**No parameters required.**
+
+### Response
+
+```json
+{
+  "status": true,
+  "message": "Reports retrieved successfully",
+  "data": [
+    {
+      "reportId": 1,
+      "name": "30 Days Sales Tracker",
+      "schema": {
+        "category": "Operations",
+        "columns": [
+          { "key": "Writer ID", "label": "Writer ID", "required": true },
+          { "key": "Writer Name", "label": "Writer Name", "required": true },
+          {
+            "key": "30 Days Total",
+            "label": "30 Days Total",
+            "required": true
+          },
+          { "key": "Day-1", "label": "Day-1", "required": true },
+          "..."
+        ],
+        "filters": [
+          {
+            "key": "entity_name",
+            "label": "Writer Name",
+            "type": "text",
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "reportId": 7,
+      "name": "Daily Sales",
+      "schema": {
+        "category": "Finance",
+        "columns": [
+          {
+            "key": "Ticket Number",
+            "label": "Ticket Number",
+            "required": true
+          },
+          { "key": "Writer Name", "label": "Writer Name", "required": true },
+          { "key": "Ticket Amount", "label": "Ticket Amount", "required": true }
+        ],
+        "filters": [
+          { "key": "date", "label": "Date", "type": "date", "required": false }
+        ]
+      }
+    }
+  ]
+}
+```
+
+### Available Reports
+
+| reportId | Name                          | Category   | Required Filters         |
+| -------- | ----------------------------- | ---------- | ------------------------ |
+| 1        | 30 Days Sales Tracker         | Operations | —                        |
+| 2        | Bank Transfer - Batch Details | Finance    | —                        |
+| 3        | Bank Transfers                | Finance    | —                        |
+| 5        | Commission Payments           | Finance    | `reference_date`         |
+| 6        | Ticket Query                  | Finance    | `ticket`                 |
+| 7        | Daily Sales                   | Finance    | —                        |
+| 8        | Daily Sales & Winnings        | Finance    | `start_date`, `end_date` |
+| 9        | Finance - Payout              | Finance    | —                        |
+| 14       | Revenue Per Play              | Finance    | `start_date`, `end_date` |
+| 17       | Ticket Status                 | General    | `ticket`                 |
+| 18       | Active Writers                | General    | —                        |
+| 19       | Terminal History              | General    | —                        |
+| 20       | Winning Stakes Report         | General    | —                        |
+| 21       | All Stakes Report             | Operations | `start_date`, `end_date` |
+| 23       | Topup - Claims as Credit      | Finance    | —                        |
+| 24       | Topup - LMC Transfers         | Finance    | —                        |
+| 25       | Topup - Mobile Money          | Finance    | —                        |
+| 26       | Writers - Active Writers      | General    | `interval`, `year`       |
+
+---
+
+## Execute Report Endpoint
+
+### Overview
+
+Executes a report by ID and returns the data rows. Filters are passed as a JSON body (POST) or query parameters (GET). Both methods are supported; body values take precedence over query params on conflict.
+
+### Request
+
+**Method:** `POST` (preferred) or `GET`
+
+**Route:** `/api/v1/financials/reports/{reportId}/execute/`
+
+**Permissions:** Operator or above
+
+**Body (POST):** JSON object of filter key→value pairs (optional unless the report has required filters).
+
+### Response
+
+```json
+{
+  "status": true,
+  "message": "Report executed successfully",
+  "report_name": "30 Days Sales Tracker",
+  "data": [
+    {
+      "Writer ID": "10000009",
+      "Writer Name": "Test Writer",
+      "Writer Phone": "010000000",
+      "LMC": "Onassis LMC",
+      "Device": "PHONE",
+      "Serial": null,
+      "State": "active",
+      "Days on Platform": 205,
+      "Days-to-Start": 0,
+      "Operation Days": 0,
+      "Lifetime Sales": "0.00",
+      "Avg Lifetime Sales": "0.00",
+      "30 Days Total": "0.00",
+      "30 Day Average": "0.00",
+      "Date Onboarded": "2025-09-19 13:21:11",
+      "First Transaction Datetime": null,
+      "Last Transaction Datetime": null,
+      "Day-1": "0.00",
+      "Day-2": "0.00",
+      "Day-30": "0.00"
+    }
+  ]
+}
+```
+
+### Error Response (missing required filter)
+
+```json
+{
+  "status": false,
+  "message": "ticket is required."
+}
+```
+
+### Error Response (unknown report)
+
+```json
+{
+  "status": false,
+  "message": "Report 99 not found."
+}
+```
+
+---
+
+### Report-by-Report Reference
+
+#### Report 1 — 30 Days Sales Tracker
+
+**Endpoint:** `POST /api/v1/financials/reports/1/execute/`
+
+**Filters:**
+
+| Key           | Type | Required | Description                           |
+| ------------- | ---- | -------- | ------------------------------------- |
+| `entity_name` | text | No       | Filter by writer name (partial match) |
+
+**Sample:**
+
+```bash
+POST /api/v1/financials/reports/1/execute/
+{}
+```
+
+**Columns returned:** `Writer ID`, `Writer Name`, `Writer Phone`, `LMC`, `Device`, `Serial`, `State`, `Days on Platform`, `Days-to-Start`, `Operation Days`, `Lifetime Sales`, `Avg Lifetime Sales`, `30 Days Total`, `30 Day Average`, `Date Onboarded`, `First Transaction Datetime`, `Last Transaction Datetime`, `Day-1` … `Day-30`
+
+---
+
+#### Report 2 — Bank Transfer - Batch Details
+
+**Endpoint:** `POST /api/v1/financials/reports/2/execute/`
+
+**Filters:**
+
+| Key            | Type | Required | Description                   |
+| -------------- | ---- | -------- | ----------------------------- |
+| `batch_number` | text | No       | Filter by batch/transfer code |
+| `reference`    | text | No       | Filter by payment reference   |
+
+**Columns returned:** `Writer Name`, `Writer Phone`, `LMC Name`, `LMC Phone`, `Phone Number`, `Network`, `Client Reference`, `Amount`, `Description`, `Datetime`, `Updated At`, `Batch Number`, `UUID`
+
+---
+
+#### Report 3 — Bank Transfers
+
+**Endpoint:** `POST /api/v1/financials/reports/3/execute/`
+
+**Filters:**
+
+| Key       | Type | Required | Description                     |
+| --------- | ---- | -------- | ------------------------------- |
+| `from`    | date | No       | From date (YYYY-MM-DD)          |
+| `to`      | date | No       | To date (YYYY-MM-DD)            |
+| `account` | text | No       | Filter by account/mobile number |
+
+**Sample:**
+
+```json
+{ "from": "2026-04-01", "to": "2026-04-12" }
+```
+
+**Columns returned:** `Datetime`, `Account Number`, `Reference`, `Amount`, `Success`, `Reason`, `Batch Number`, `Batch Date`
+
+---
+
+#### Report 5 — Commission Payments
+
+**Endpoint:** `POST /api/v1/financials/reports/5/execute/`
+
+**Filters:**
+
+| Key              | Type | Required | Description                             |
+| ---------------- | ---- | -------- | --------------------------------------- |
+| `reference_date` | date | **Yes**  | Settlement period end date (YYYY-MM-DD) |
+
+**Sample:**
+
+```json
+{ "reference_date": "2026-03-31" }
+```
+
+**Columns returned:** `Writer`, `Phone Number`, `LMC`, `LMC Phone Number`, `Sales`, `Commission`
+
+---
+
+#### Report 6 — Ticket Query
+
+**Endpoint:** `POST /api/v1/financials/reports/6/execute/`
+
+**Filters:**
+
+| Key      | Type | Required | Description         |
+| -------- | ---- | -------- | ------------------- |
+| `ticket` | text | **Yes**  | Exact ticket number |
+
+**Sample:**
+
+```json
+{ "ticket": "108004462026022217052416797" }
+```
+
+**Columns returned:** `Datetime`, `Ticket No.`, `Play`, `Original Stake`, `Stake`, `Amount`
+
+---
+
+#### Report 7 — Daily Sales
+
+**Endpoint:** `POST /api/v1/financials/reports/7/execute/`
+
+**Filters:**
+
+| Key    | Type | Required | Description                                |
+| ------ | ---- | -------- | ------------------------------------------ |
+| `date` | date | No       | Sales date (YYYY-MM-DD). Defaults to today |
+
+**Sample:**
+
+```json
+{ "date": "2026-04-12" }
+```
+
+**Columns returned:** `Ticket Number`, `Game`, `Writer Name`, `Writer Number`, `LMC Name`, `Datetime of Ticket`, `Ticket Amount`
+
+---
+
+#### Report 8 — Daily Sales & Winnings
+
+**Endpoint:** `POST /api/v1/financials/reports/8/execute/`
+
+**Filters:**
+
+| Key          | Type | Required | Description             |
+| ------------ | ---- | -------- | ----------------------- |
+| `start_date` | date | **Yes**  | Start date (YYYY-MM-DD) |
+| `end_date`   | date | **Yes**  | End date (YYYY-MM-DD)   |
+
+**Sample:**
+
+```json
+{ "start_date": "2026-04-01", "end_date": "2026-04-12" }
+```
+
+**Columns returned:** `Date`, `Total Writers`, `Sales`, `Gross Income`, `Winning`, `Net Income`, `Retention Rate`
+
+---
+
+#### Report 9 — Finance - Payout
+
+**Endpoint:** `POST /api/v1/financials/reports/9/execute/`
+
+**Filters:**
+
+| Key          | Type | Required | Description            |
+| ------------ | ---- | -------- | ---------------------- |
+| `start_date` | date | No       | From date (YYYY-MM-DD) |
+| `end_date`   | date | No       | To date (YYYY-MM-DD)   |
+
+**Columns returned:** `Writer ID`, `Writer Name`, `Writer Phone #`, `Transaction Date`, `Withdrawal`, `Bank Reference`
+
+---
+
+#### Report 14 — Revenue Per Play
+
+**Endpoint:** `POST /api/v1/financials/reports/14/execute/`
+
+**Filters:**
+
+| Key          | Type | Required | Description             |
+| ------------ | ---- | -------- | ----------------------- |
+| `start_date` | date | **Yes**  | Start date (YYYY-MM-DD) |
+| `end_date`   | date | **Yes**  | End date (YYYY-MM-DD)   |
+
+**Sample:**
+
+```json
+{ "start_date": "2026-04-01", "end_date": "2026-04-12" }
+```
+
+**Columns returned:** `Date`, `Game`, `Play Variety`, `Total Tickets`, `Total Amount`
+
+---
+
+#### Report 17 — Ticket Status
+
+**Endpoint:** `POST /api/v1/financials/reports/17/execute/`
+
+**Filters:**
+
+| Key      | Type | Required | Description         |
+| -------- | ---- | -------- | ------------------- |
+| `ticket` | text | **Yes**  | Exact ticket number |
+
+**Sample:**
+
+```json
+{ "ticket": "108004462026022217052416797" }
+```
+
+**Columns returned:** `Ticket`, `Event ID`, `Event Name`, `Event Display`, `Occurrence Date`, `Writer Phone`, `Player Phone`, `Stake No.`, `Stake Amount`, `Payout`, `Status`, `Reason`, `Created At`, `Payout Time`
+
+---
+
+#### Report 18 — Active Writers
+
+**Endpoint:** `POST /api/v1/financials/reports/18/execute/`
+
+**Filters:** None
+
+**Columns returned:** `id`, `name`, `phone_number`, `terminal_number`, `location`, `created_at`
+
+---
+
+#### Report 19 — Terminal History
+
+**Endpoint:** `POST /api/v1/financials/reports/19/execute/`
+
+**Filters:**
+
+| Key               | Type | Required | Description                                 |
+| ----------------- | ---- | -------- | ------------------------------------------- |
+| `terminal_number` | text | No       | Filter by serial number (partial match)     |
+| `mac_address`     | text | No       | Filter by device identifier (partial match) |
+
+> **Note:** `Terminal` and `MAC Address` both map to the device's `serial_number` field — this is the single unique identifier stored per POS/App/Web device.
+
+**Columns returned:** `Terminal`, `MAC Address`, `Writer Name`, `Phone Number`, `First Use`
+
+---
+
+#### Report 20 — Winning Stakes Report
+
+**Endpoint:** `POST /api/v1/financials/reports/20/execute/`
+
+**Filters:**
+
+| Key          | Type | Required | Description                             |
+| ------------ | ---- | -------- | --------------------------------------- |
+| `start_date` | date | No       | From stake date (YYYY-MM-DD)            |
+| `end_date`   | date | No       | To stake date (YYYY-MM-DD)              |
+| `ticket`     | text | No       | Filter by ticket number (partial match) |
+
+**Sample:**
+
+```json
+{ "start_date": "2026-04-01", "end_date": "2026-04-12" }
+```
+
+**Columns returned:** `Writer`, `LMC`, `Ticket`, `Purchase Amount`, `Stake`, `Draw`, `Event`, `Play`, `Variety`, `Payout`, `Date of Stake`, `Date of Winning`
+
+---
+
+#### Report 21 — All Stakes Report
+
+**Endpoint:** `POST /api/v1/financials/reports/21/execute/`
+
+**Filters:**
+
+| Key          | Type | Required | Description             |
+| ------------ | ---- | -------- | ----------------------- |
+| `start_date` | date | **Yes**  | Start date (YYYY-MM-DD) |
+| `end_date`   | date | **Yes**  | End date (YYYY-MM-DD)   |
+
+**Sample:**
+
+```json
+{ "start_date": "2026-04-12", "end_date": "2026-04-12" }
+```
+
+**Sample Response:**
+
+```json
+{
+  "status": true,
+  "message": "Report executed successfully",
+  "report_name": "All Stakes Report",
+  "data": [
+    {
+      "ticket": "108004462026041200001",
+      "ticket_number": "108004462026041200001",
+      "writer_name": "Kwame Asante",
+      "writer_phone_number": "0241234567",
+      "lmc_name": "Onassis LMC",
+      "lmc_phone_number": "0201234567",
+      "game_name": "5/90 Original",
+      "event_name": "Sunday Aseda",
+      "event_round": 412,
+      "play_variety_name": "Direct 2 (2 Sure)",
+      "stake_status_name": "active",
+      "stake_number": [14, 29],
+      "stake_amount": "0.50",
+      "payout": null,
+      "date": "2026-04-12"
+    }
+  ]
+}
+```
+
+**Columns returned:** `ticket`, `ticket_number`, `writer_name`, `writer_phone_number`, `lmc_name`, `lmc_phone_number`, `game_name`, `event_name`, `event_round`, `play_variety_name`, `stake_status_name`, `stake_number`, `stake_amount`, `payout`, `date`
+
+---
+
+#### Report 23 — Topup - Claims as Credit
+
+**Endpoint:** `POST /api/v1/financials/reports/23/execute/`
+
+**Filters:**
+
+| Key    | Type | Required | Description            |
+| ------ | ---- | -------- | ---------------------- |
+| `from` | date | No       | From date (YYYY-MM-DD) |
+| `to`   | date | No       | To date (YYYY-MM-DD)   |
+
+**Columns returned:** `Writer Name`, `Writer Phone`, `LMC Name`, `LMC Phone`, `Phone Number`, `Network`, `Client Reference`, `Amount`, `Description`, `Datetime`, `Updated At`, `Batch Number`, `UUID`
+
+---
+
+#### Report 24 — Topup - LMC Transfers
+
+**Endpoint:** `POST /api/v1/financials/reports/24/execute/`
+
+**Filters:**
+
+| Key    | Type | Required | Description            |
+| ------ | ---- | -------- | ---------------------- |
+| `from` | date | No       | From date (YYYY-MM-DD) |
+| `to`   | date | No       | To date (YYYY-MM-DD)   |
+
+**Columns returned:** `Writer Name`, `Writer Phone`, `LMC Name`, `LMC Phone`, `Phone Number`, `Network`, `Client Reference`, `Amount`, `Description`, `Datetime`, `Updated At`, `Batch Number`, `UUID`
+
+---
+
+#### Report 25 — Topup - Mobile Money
+
+**Endpoint:** `POST /api/v1/financials/reports/25/execute/`
+
+**Filters:**
+
+| Key    | Type | Required | Description            |
+| ------ | ---- | -------- | ---------------------- |
+| `from` | date | No       | From date (YYYY-MM-DD) |
+| `to`   | date | No       | To date (YYYY-MM-DD)   |
+
+**Columns returned:** `Writer Name`, `Writer Phone`, `LMC Name`, `LMC Phone`, `Phone Number`, `Network`, `Client Reference`, `Amount`, `Net Value`, `Description`, `Batch Number`, `UUID`, `Datetime`, `Updated At`
+
+---
+
+#### Report 26 — Writers - Active Writers
+
+**Endpoint:** `POST /api/v1/financials/reports/26/execute/`
+
+**Filters:**
+
+| Key        | Type | Required | Description              |
+| ---------- | ---- | -------- | ------------------------ |
+| `interval` | text | **Yes**  | `daily` or `monthly`     |
+| `year`     | text | **Yes**  | 4-digit year e.g. `2026` |
+
+**Sample (monthly):**
+
+```json
+{ "interval": "monthly", "year": "2026" }
+```
+
+**Sample Response:**
+
+```json
+{
+  "status": true,
+  "message": "Report executed successfully",
+  "report_name": "Writers - Active Writers",
+  "data": [
+    { "period": "Jan 2026", "active_writers": 1240 },
+    { "period": "Feb 2026", "active_writers": 1318 },
+    { "period": "Mar 2026", "active_writers": 1402 }
+  ]
+}
+```
+
+**Sample (daily):**
+
+```json
+{ "interval": "daily", "year": "2026" }
+```
+
+**Columns returned:** `period`, `active_writers`
+
+---
+
 ## Authentication
 
 All endpoints require JWT token authentication.
@@ -1974,6 +3233,7 @@ Response: {"access": "new_token..."}
 
 | Date       | Change                                                                                                 |
 | ---------- | ------------------------------------------------------------------------------------------------------ |
+| 2026-04-12 | Added Reports endpoints documentation (List Reports, Execute Report — 19 reports)                      |
 | 2026-04-07 | Added Dashboard Card Endpoints documentation                                                           |
 | 2026-04-07 | Added Sales & Wins Dashboard Endpoints: `today_claims`, `today_wins`, `winning_events`, `winners_list` |
 | 2026-04-02 | Initial API documentation published                                                                    |

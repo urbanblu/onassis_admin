@@ -2,6 +2,8 @@ import Axios from "@/api";
 import {
   IActiveWriterDailyStats,
   IPaginatedResults,
+  IRegisterWriterPayload,
+  IRegisterWriterResponse,
   ITodayTopUp,
   ITop10Writer,
   IWriterCashoutRow,
@@ -63,7 +65,7 @@ class WritersService {
         url: `/api/v1/writers/top-10-writers/`,
         method: "GET",
       });
-      return response.data as ITop10Writer[];
+      return (response.data?.writers ?? []) as ITop10Writer[];
     } catch (error) {
       throw handleApiError(error);
     }
@@ -218,6 +220,36 @@ class WritersService {
         params,
       });
       return response.data as IPaginatedResults<IWriterCashoutRow>;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static registerWriter = async (
+    payload: IRegisterWriterPayload,
+  ): Promise<IRegisterWriterResponse> => {
+    try {
+      const formData = new FormData();
+      formData.append("email", payload.email);
+      formData.append("first_name", payload.first_name);
+      formData.append("last_name", payload.last_name);
+      formData.append("phone", payload.phone);
+      formData.append("password", payload.password);
+      formData.append("lmc_id", payload.lmc_id);
+      formData.append("date_of_birth", payload.date_of_birth);
+      if (payload.location_address) {
+        formData.append("location_address", payload.location_address);
+      }
+      if (payload.photo instanceof File) {
+        formData.append("photo", payload.photo);
+      }
+
+      const response = await Axios({
+        url: `/api/v1/writers/register/`,
+        method: "POST",
+        data: formData,
+      });
+      return response.data as IRegisterWriterResponse;
     } catch (error) {
       throw handleApiError(error);
     }

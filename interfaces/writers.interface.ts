@@ -169,3 +169,38 @@ export interface IActiveWriterDailyStats {
     active_writers: number;
   }>;
 }
+
+export interface IRegisterWriterPayload {
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  password: string;
+  lmc_id: string;
+  date_of_birth: string;
+  location_address?: string;
+  photo?: File;
+}
+
+export interface IRegisterWriterResponse {
+  user: {
+    id: string;
+    email: string;
+    full_name: string;
+    role: string;
+    phone: string;
+  };
+  writer: {
+    id: string;
+    lmc: string;
+    photo: string | null;
+    status: string;
+    writer_id: number;
+    date_of_birth: string;
+    location_address: string;
+    has_bound_device: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  message: string;
+}

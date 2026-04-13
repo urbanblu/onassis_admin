@@ -111,3 +111,41 @@ export interface ISettlementsCard {
   claim_wallet_balance_amount: number;
   currency: string;
 }
+
+export interface IReportColumnSchema {
+  key: string;
+  label: string;
+  required: boolean;
+}
+
+export interface IReportFilterSchema {
+  key: string;
+  label: string;
+  type: "text" | "date" | "number";
+  required: boolean;
+}
+
+export interface IReportSchema {
+  category: string;
+  columns: IReportColumnSchema[];
+  filters: IReportFilterSchema[];
+}
+
+export interface IReportDefinition {
+  reportId: number;
+  name: string;
+  schema: IReportSchema;
+}
+
+export interface IListReportsResponse {
+  status: boolean;
+  message: string;
+  data: IReportDefinition[];
+}
+
+export interface IExecuteReportResponse {
+  status: boolean;
+  message: string;
+  report_name: string;
+  data: Array<Record<string, string | number | null>>;
+}

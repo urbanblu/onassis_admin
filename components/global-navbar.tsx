@@ -58,7 +58,7 @@ function GlobalNavbar({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-white">
+    <div className="flex flex-col w-full h-screen bg-white">
       <div className="fixed top-0 right-0 left-0 z-50 bg-white">
         <div className="flex justify-between pr-7 pl-5 items-center py-5 sm:py-4">
           <Image
@@ -260,7 +260,7 @@ function GlobalNavbar({ children }: { children: React.ReactNode }) {
         </div>
         <Separator className="h-[1.5px]" />
       </div>
-      <section className="pt-24 flex-1 min-h-0 flex flex-col overflow-y-auto">
+      <section className="pt-24 flex-1 min-h-0 flex flex-col overflow-auto">
         {children}
       </section>
     </div>

@@ -10,6 +10,7 @@ type Props = {
   onDatePicked?: (date: DateValue) => void;
   className?: string;
   labelClassName?: string;
+  maxValue?: DateValue;
 };
 
 function CustomDatePicker({
@@ -17,9 +18,11 @@ function CustomDatePicker({
   onDatePicked,
   className,
   labelClassName,
+  maxValue,
 }: Props) {
+  const todayDate = today(getLocalTimeZone());
   const [value, setValue] = useState<DateValue | null>(
-    today(getLocalTimeZone()),
+    maxValue && todayDate.compare(maxValue) > 0 ? null : todayDate,
   );
 
   useEffect(() => {
@@ -28,7 +31,13 @@ function CustomDatePicker({
   }, [value, onDatePicked]);
 
   return (
-    <DatePicker name="date" value={value} onChange={setValue} className="mt-2">
+    <DatePicker
+      name="date"
+      value={value}
+      onChange={setValue}
+      maxValue={maxValue}
+      className="mt-2 w-full"
+    >
       {label && (
         <Label
           className={cn(

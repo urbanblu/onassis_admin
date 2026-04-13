@@ -1,39 +1,78 @@
 import CustomInputComponent from "@/components/custom-input-component";
-import CustomSelectComponent from "@/components/custom-select-component";
-import { Button, CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
-import React from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useFileUpload } from "@/hooks/use-file-upload";
 import LmcService from "@/api/lmc";
 import ToastService from "@/utils/toast-service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button, CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
+import Image from "next/image";
+import React from "react";
+import { IoCameraOutline } from "react-icons/io5";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
-function NewLmcDrawer() {
+type Props = {
+  onFilterTap?: (payload: { name: string; phoneNumber: string }) => void;
+};
+
+function NewLmcDrawer(payload: Props) {
   const [drawerIsOpen, setDrawerOpen] = React.useState(false);
-  const [selectedOwnerId, setSelectedOwnerId] = React.useState<string>("");
+  const [passwordValue, setPasswordValue] = React.useState("");
   const queryClient = useQueryClient();
 
-  const { data: owners = [], isPending: ownersPending } = useQuery({
-    queryKey: ["lmc", "available-owners"],
-    queryFn: LmcService.fetchAvailableLmcOwners,
-    enabled: drawerIsOpen,
+  const {
+    files,
+    onClick: onPhotoUploadClick,
+    InputComponent,
+    removeFile,
+  } = useFileUpload({
+    accept: "image/*",
+    multiple: false,
+    maxSize: 10 * 1024 * 1024, // 10MB
+    onMaxFileSizeDetected: () => {
+      ToastService.info({
+        text: "Maximum file size exceeded",
+      });
+    },
   });
 
-  const ownerOptions = React.useMemo(
-    () =>
-      owners.map((owner) => ({
-        key: owner.id,
-        label: `${owner.full_name} (${owner.phone})`,
-      })),
-    [owners],
-  );
+  // const {
+  //   files: ghanaCardFront,
+  //   onClick: onFrontGhanaCardUploadClick,
+  //   InputComponent: FrontGhanaCardInput,
+  //   removeFile: removeFrontGhanaCard,
+  // } = useFileUpload({
+  //   accept: "image/*",
+  //   multiple: false,
+  //   maxSize: 10 * 1024 * 1024, // 10MB
+  //   onMaxFileSizeDetected: () => {
+  //     ToastService.info({
+  //       text: "Maximum file size exceeded",
+  //     });
+  //   },
+  // });
 
-  const { mutateAsync: registerLmc, isPending: isRegistering } = useMutation({
-    mutationKey: ["lmc", "register"],
-    mutationFn: LmcService.registerLmc,
+  // const {
+  //   files: ghanaCardBack,
+  //   onClick: onBackGhanaCardUploadClick,
+  //   InputComponent: BackGhanaCardInput,
+  //   removeFile: removeBackGhanaCard,
+  // } = useFileUpload({
+  //   accept: "image/*",
+  //   multiple: false,
+  //   maxSize: 10 * 1024 * 1024, // 10MB
+  //   onMaxFileSizeDetected: () => {
+  //     ToastService.info({
+  //       text: "Maximum file size exceeded",
+  //     });
+  //   },
+  // });
+
+  const { mutateAsync: registerLmc, isPending } = useMutation({
+    mutationKey: ["lmc", "register-onboarding"],
+    mutationFn: LmcService.registerLmcOnboarding,
     onSuccess: async () => {
       ToastService.success({ text: "LMC registered successfully" });
       await queryClient.invalidateQueries({ queryKey: ["lmc", "detail-cards"] });
       setDrawerOpen(false);
-      setSelectedOwnerId("");
     },
   });
 
@@ -66,25 +105,40 @@ function NewLmcDrawer() {
               <Form
                 onSubmit={async (e) => {
                   e.preventDefault();
-                  if (!selectedOwnerId) {
-                    ToastService.error({ text: "Please select an owner" });
-                    return;
-                  }
-
                   const data = Object.fromEntries(
                     new FormData(e.currentTarget),
                   );
 
+                  const password = String(data.password ?? "");
+                  const confirmPassword = String(data.confirmPassword ?? "");
+                  if (password.length < 8) {
+                    ToastService.error({
+                      text: "password: Ensure this field has at least 8 characters.",
+                    });
+                    return;
+                  }
+                  if (password !== confirmPassword) {
+                    ToastService.error({ text: "Passwords do not match" });
+                    return;
+                  }
+
                   try {
                     await registerLmc({
-                      owner: selectedOwnerId,
-                      address: String(data.address ?? ""),
-                      is_active: true,
+                      email: String(data.email ?? ""),
+                      first_name: String(data.firstName ?? ""),
+                      last_name: String(data.lastName ?? ""),
+                      phone: String(data.phoneNumber ?? ""),
+                      password,
+                      address: String(data.location ?? ""),
+                      photo: files[0],
+                    });
+                    payload.onFilterTap?.({
+                      name: String(data.firstName ?? ""),
+                      phoneNumber: String(data.phoneNumber ?? ""),
                     });
                   } catch (error) {
                     ToastService.error({
-                      text:
-                        error instanceof Error ? error.message : "Failed to register LMC",
+                      text: error instanceof Error ? error.message : "Failed to register LMC",
                     });
                   }
                 }}
@@ -92,27 +146,172 @@ function NewLmcDrawer() {
                 <div className="flex flex-col space-y-3">
                   <span className="text-lg font-gotham-black">NEW LMC</span>
                   <div className="space-y-4">
-                    <CustomSelectComponent
-                      label="Select User"
-                      placeholder=""
-                      showDropDownIcon
-                      list={ownerOptions}
-                      isDisabled={ownersPending || ownerOptions.length === 0}
-                      onSelectionChange={(item) => setSelectedOwnerId(item.key)}
+                    <InputComponent />
+                    <div className="w-full flex justify-center">
+                      <div
+                        className={`relative rounded-full w-35 h-35 ${files.length === 0 ? "border" : ""} justify-center flex flex-col`}
+                        onClick={onPhotoUploadClick}
+                      >
+                        <div
+                          className={`flex flex-col items-center ${files.length === 0 ? "p-3" : ""} space-y-2`}
+                        >
+                          {files.length === 0 ? (
+                            <>
+                              <IoCameraOutline size={25} />
+                              <span className="text-center">
+                                Click to add photo
+                              </span>
+                            </>
+                          ) : (
+                            <Image
+                              src={URL.createObjectURL(files[0])}
+                              alt="Profile"
+                              className="w-35 h-35 object-cover rounded-full"
+                              width={0}
+                              height={0}
+                            />
+                          )}
+                        </div>
+                        {files.length > 0 && (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeFile(0);
+                            }}
+                            className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
+                          >
+                            <RiDeleteBin6Line className="text-red-500" />
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <CustomInputComponent
+                      label="First Name"
+                      className="p-0 border rounded-sm border-gray-300"
+                      name="firstName"
                     />
                     <CustomInputComponent
-                      label="Address"
+                      label="Last Name"
                       className="p-0 border rounded-sm border-gray-300"
-                      name="address"
-                      isRequired={true}
+                      name="lastName"
                     />
+                    <CustomInputComponent
+                      label="Email"
+                      className="p-0 border rounded-sm border-gray-300"
+                      name="email"
+                      type="email"
+                      showPreficIcon={false}
+                      showPlaceholder={false}
+                      isRequired
+                    />
+                    <CustomInputComponent
+                      label="Phone Number"
+                      className="p-0 border rounded-sm border-gray-300"
+                      name="phoneNumber"
+                      type="tel"
+                    />
+                    <CustomInputComponent
+                      label="Location"
+                      className="p-0 border rounded-sm border-gray-300"
+                      name="location"
+                    />
+                    <CustomInputComponent
+                      type="password"
+                      name="password"
+                      label="Password"
+                      minLength={8}
+                      onChange={(e) => setPasswordValue(e.target.value)}
+                      className="p-0 border rounded-sm border-gray-300"
+                    />
+                    <CustomInputComponent
+                      type="password"
+                      name="confirmPassword"
+                      label="Confirm Password"
+                      validate={(val) => {
+                        if (!val) return "This field is required";
+                        if (val !== passwordValue) return "Passwords do not match";
+                        return null;
+                      }}
+                      className="p-0 border rounded-sm border-gray-300"
+                    />
+                    {/* <span className="text-xs">Ghana Card - Front</span>
+                    <FrontGhanaCardInput />
+                    <div className="relative w-full">
+                      <Button
+                        className="w-full border rounded-sm h-30 bg-transparent p-0 mt-0.5"
+                        onPress={onFrontGhanaCardUploadClick}
+                      >
+                        {ghanaCardFront.length > 0 ? (
+                          <div className="relative w-full h-full">
+                            <Image
+                              src={URL.createObjectURL(ghanaCardFront[0])}
+                              alt="ghana-card-front"
+                              className="w-full h-full"
+                              width={0}
+                              height={0}
+                            />
+                            <div className="absolute top-1 right-1 p-1">
+                              <CloseButton
+                                className="bg-white"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeFrontGhanaCard(0);
+                                }}
+                              >
+                                <RiDeleteBin6Line className="text-red-500 w-4 h-4" />
+                              </CloseButton>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center">
+                            <IoAddCircleSharp className="text-black h-7 w-7" />
+                          </div>
+                        )}
+                      </Button>
+                    </div>
+                    <span className="text-xs">Ghana Card - Back</span>
+                    <div className="relative w-full">
+                      <Button
+                        className="w-full border rounded-sm h-30 bg-transparent mt-0.5"
+                        onPress={onBackGhanaCardUploadClick}
+                      >
+                        {ghanaCardBack.length > 0 ? (
+                          <div className="relative w-full h-full">
+                            <Image
+                              src={URL.createObjectURL(ghanaCardBack[0])}
+                              alt="ghana-card-back"
+                              className="w-full h-full"
+                              width={0}
+                              height={0}
+                            />
+                            <div className="absolute top-1 right-1 p-1">
+                              <CloseButton
+                                className="bg-white"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeBackGhanaCard(0);
+                                }}
+                              >
+                                <RiDeleteBin6Line className="text-red-500 w-4 h-4" />
+                              </CloseButton>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center">
+                            <IoAddCircleSharp className="text-black h-7 w-7" />
+                          </div>
+                        )}
+                      </Button>
+                    </div>
+
+                    <BackGhanaCardInput /> */}
                   </div>
                   <Button
                     className="rounded-sm bg-black w-full text-xs font-gotham-black mt-2"
                     type="submit"
-                    isDisabled={isRegistering}
+                    isDisabled={isPending}
                   >
-                    {isRegistering ? "Saving..." : "Save"}
+                    {isPending ? "Saving..." : "Save"}
                   </Button>
                 </div>
               </Form>

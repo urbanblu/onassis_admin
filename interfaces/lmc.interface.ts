@@ -65,6 +65,27 @@ export interface ILmcRegisterResponse {
   updated_at: string;
 }
 
+export interface ILmcOwnerOption {
+  id: string;
+  code: string;
+  address: string;
+  is_active: boolean;
+  owner_email: string;
+  owner_phone: string;
+  owner_full_name: string;
+  created_at: string;
+}
+
+export interface IRegisterLmcOnboardingPayload {
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  password: string;
+  address?: string;
+  photo?: File;
+}
+
 export interface ILmcWriterOverviewRow {
   id: string;
   name: string;

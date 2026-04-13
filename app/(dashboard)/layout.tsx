@@ -10,14 +10,15 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { auth } = useAuth();
+  const { auth, _hasHydrated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
+    if (!_hasHydrated) return;
     if (!auth) {
       router.replace("/login");
     }
-  }, [auth, router]);
+  }, [auth, _hasHydrated, router]);
 
   return <GlobalNavbar>{children}</GlobalNavbar>;
 }

@@ -4,17 +4,20 @@ const CustomCheckboxItem = ({
   selected,
   label,
   labelClassName,
+  isDisabled = false,
   setIsSelected,
 }: {
   selected: boolean;
   label?: string;
   labelClassName?: string;
+  isDisabled?: boolean;
   setIsSelected?: (isSelected: boolean) => void;
 }) => {
   return (
     <Checkbox
       id={label}
       isSelected={selected}
+      isDisabled={isDisabled}
       onChange={setIsSelected}
       className="group"
     >

@@ -2,7 +2,9 @@ import Axios from "@/api";
 import {
   IBestWorstPerformance,
   IDrawsWinningsDashboard,
+  IExecuteReportResponse,
   ILiquidationCard,
+  IListReportsResponse,
   INetTopupsCard,
   IRetentionRate,
   ISalesCard,
@@ -146,6 +148,36 @@ class FinancialsService {
         method: "GET",
       });
       return response.data as ISettlementsCard;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static fetchReports = async () => {
+    try {
+      const response = await Axios({
+        url: `/api/v1/financials/reports/`,
+        method: "GET",
+      });
+      const payload = response.data as IListReportsResponse;
+      return payload.data ?? [];
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static executeReport = async (
+    reportId: number,
+    filters: Record<string, string | number>,
+  ) => {
+    try {
+      const response = await Axios({
+        url: `/api/v1/financials/reports/${reportId}/execute/`,
+        method: "POST",
+        data: filters,
+      });
+      const payload = response.data as IExecuteReportResponse;
+      return payload;
     } catch (error) {
       throw handleApiError(error);
     }
