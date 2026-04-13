@@ -51,15 +51,17 @@ function NewRetailerDrawer(payload: Props) {
     label: `${lmc.owner_full_name} (${lmc.code})`,
   }));
 
-  const { mutateAsync: registerWriter, isPending: writerPending } = useMutation({
-    mutationKey: ["writers", "register"],
-    mutationFn: WritersService.registerWriter,
-    onSuccess: async () => {
-      ToastService.success({ text: "Retailer created successfully" });
-      await queryClient.invalidateQueries({ queryKey: ["writers", "all"] });
-      setDrawerOpen(false);
+  const { mutateAsync: registerWriter, isPending: writerPending } = useMutation(
+    {
+      mutationKey: ["writers", "register"],
+      mutationFn: WritersService.registerWriter,
+      onSuccess: async () => {
+        ToastService.success({ text: "Retailer created successfully" });
+        await queryClient.invalidateQueries({ queryKey: ["writers", "all"] });
+        setDrawerOpen(false);
+      },
     },
-  });
+  );
 
   return (
     <Drawer>
@@ -224,7 +226,8 @@ function NewRetailerDrawer(payload: Props) {
                       label="Confirm Password"
                       validate={(val) => {
                         if (!val) return "This field is required";
-                        if (val !== passwordValue) return "Passwords do not match";
+                        if (val !== passwordValue)
+                          return "Passwords do not match";
                         return null;
                       }}
                       className="p-0 border rounded-sm border-gray-300"
