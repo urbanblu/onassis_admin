@@ -442,6 +442,7 @@ Returns a list of all available game types with their configuration details.
     "total_writers": 1549,
     "active_writers": 1357
   },
+  "download_url": "http://localhost:8000/api/v1/writers/download-active-writer-daily-stats/?days=30",
   "period": {
     "start_date": "2026-03-05",
     "end_date": "2026-04-03",

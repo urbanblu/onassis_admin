@@ -1,8 +1,9 @@
 "use client";
 
-import { Avatar, Tabs } from "@heroui/react";
+import { Avatar, Button, Tabs } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import Axios from "@/api";
 import FinancialsService from "@/api/financials";
 import WritersService from "@/api/writers";
 import {
@@ -14,6 +15,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { AiOutlineExport } from "react-icons/ai";
 
 function WritersPerformace() {
   const [rangeDays, setRangeDays] = useState<30 | 365>(30);
@@ -56,6 +58,7 @@ function WritersPerformace() {
   const activeWriterDaily =
     rangeDays === 30 ? activeWriterDaily30 : activeWriterDaily365;
   const rawChartDays = activeWriterDaily?.days ?? [];
+  const downloadUrl = activeWriterDaily?.download_url;
 
   // For long ranges (1 year) downsample to keep chart readable.
   const chartDays = (() => {
@@ -89,33 +92,58 @@ function WritersPerformace() {
                   </div>
                 </div>
               </div>
-              <Tabs
-                className="min-w-48 flex-wrap"
-                selectedKey={String(rangeDays)}
-                onSelectionChange={(key) => {
-                  const next = String(key) === "30" ? 30 : 365;
-                  setRangeDays(next);
-                }}
-              >
-                <Tabs.ListContainer>
-                  <Tabs.List aria-label="Options" className="rounded-sm">
-                    <Tabs.Tab
-                      className="px-4 py-1 text-xs font-gotham-bold"
-                      id="30"
-                    >
-                      {"30 days"}
-                      <Tabs.Indicator className="rounded-sm" />
-                    </Tabs.Tab>
-                    <Tabs.Tab
-                      className="px-4 py-1 text-xs font-gotham-bold"
-                      id="365"
-                    >
-                      {"1 year"}
-                      <Tabs.Indicator className="rounded-sm" />
-                    </Tabs.Tab>
-                  </Tabs.List>
-                </Tabs.ListContainer>
-              </Tabs>
+              <div className="flex items-center space-x-3">
+                <Tabs
+                  className="min-w-48 flex-wrap"
+                  selectedKey={String(rangeDays)}
+                  onSelectionChange={(key) => {
+                    const next = String(key) === "30" ? 30 : 365;
+                    setRangeDays(next);
+                  }}
+                >
+                  <Tabs.ListContainer>
+                    <Tabs.List aria-label="Options" className="rounded-sm">
+                      <Tabs.Tab
+                        className="px-4 py-1 text-xs font-gotham-bold"
+                        id="30"
+                      >
+                        {"30 days"}
+                        <Tabs.Indicator className="rounded-sm" />
+                      </Tabs.Tab>
+                      <Tabs.Tab
+                        className="px-4 py-1 text-xs font-gotham-bold"
+                        id="365"
+                      >
+                        {"1 year"}
+                        <Tabs.Indicator className="rounded-sm" />
+                      </Tabs.Tab>
+                    </Tabs.List>
+                  </Tabs.ListContainer>
+                </Tabs>
+                <Button
+                  className="rounded-sm bg-black text-xs font-gotham-bold"
+                  size="md"
+                  isDisabled={!downloadUrl}
+                  onClick={async () => {
+                    if (!downloadUrl) return;
+                    const response = await Axios({
+                      url: downloadUrl,
+                      method: "GET",
+                      responseType: "blob",
+                    });
+                    const blob = new Blob([response.data as BlobPart]);
+                    const href = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = href;
+                    a.download = `writer-activity-${rangeDays}d.csv`;
+                    a.click();
+                    URL.revokeObjectURL(href);
+                  }}
+                >
+                  <AiOutlineExport className="w-3.5 h-3.5" />
+                  <span className="text-xs font-gotham-bold">Export Data</span>
+                </Button>
+              </div>
             </div>
             <div className="flex-1 min-h-0 w-full mt-5">
               <ActiveWritersStackedBarChart days={chartDays} />

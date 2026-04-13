@@ -153,6 +153,7 @@ export interface IActiveWriterDailyStats {
     total_writers: number;
     active_writers: number;
   };
+  download_url?: string;
   period: {
     start_date: string;
     end_date: string;

@@ -117,6 +117,7 @@ class WritersService {
           total_writers: 0,
           active_writers: 0,
         },
+        download_url: base.download_url,
         period: base.period ?? {
           start_date: "",
           end_date: "",
