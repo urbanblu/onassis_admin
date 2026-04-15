@@ -69,7 +69,7 @@ function ThirdSalesSegment() {
   }, [winnersList?.winners, selectedGameKey, selectedGameName]);
 
   return (
-    <div className="flex flex-col space-y-3 md:min-h-0 md:overflow-hidden">
+    <div className="flex flex-col space-y-3 h-full min-h-0 overflow-hidden">
       <MiniCard
         title="Wins"
         amount={formatGhs(todayWins?.total_win_amount ?? 0)}
@@ -82,13 +82,13 @@ function ThirdSalesSegment() {
           </div>
         }
       />
-      <div className="h-[400px] md:h-auto md:flex-1 md:min-h-0 md:overflow-hidden">
+      <div className="flex-1 min-h-0">
         <div className="border rounded-sm flex flex-col h-full">
           <div className="px-5 pt-4 shrink-0">
             <span className="font-gotham-black text-xs text-gray-500 uppercase">
               Winnings
             </span>
-            <div className="grid grid-cols-2 space-x-4 items-center">
+            <div className="grid grid-cols-2 gap-x-4 items-center">
               <CustomDatePicker
                 label="Draw Date"
                 className="border rounded-sm border-gray-300"
@@ -181,7 +181,7 @@ const MiniCard = ({
   subtitle: React.ReactNode;
 }) => {
   return (
-    <div className="border rounded-sm p-5">
+    <div className="border rounded-sm p-5 shrink-0">
       <div className="flex flex-col items-start">
         <span className="font-gotham-black text-[0.65rem] text-gray-500">
           {title}

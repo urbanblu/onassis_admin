@@ -25,7 +25,7 @@ const CustomCheckboxItem = ({
         <>
           <Checkbox.Control
             className={cn(
-              "size-4! rounded-xs! border-[1.3px]! shadow-none! transition-none!",
+              "size-4! rounded-full! border-[1.3px]! shadow-none! transition-none!",
               "before:content-none! after:content-none!",
               isSelected ? "border-[#f6a21f]!" : "border-gray-400!",
             )}

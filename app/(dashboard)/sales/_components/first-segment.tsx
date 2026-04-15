@@ -195,8 +195,8 @@ function FirstSalesSegment() {
   });
 
   return (
-    <div className="flex flex-col space-y-3 md:min-h-0 md:overflow-hidden">
-      <div className="flex flex-col">
+    <div className="flex flex-col space-y-3 h-full min-h-0 overflow-hidden">
+      <div className="shrink-0">
         <div className="border rounded-sm">
           <div className="flex flex-col py-4">
             <div className="flex space-x-5 items-center px-5">
@@ -228,27 +228,25 @@ function FirstSalesSegment() {
           </div>
         </div>
       </div>
-      <div className="h-[400px] md:h-auto md:flex-1 md:min-h-0 md:overflow-hidden">
-        <div className="h-full">
-          <CustomTable
-            columns={[
-              { key: "ticket", label: "Ticket #", sortable: true },
-              { key: "play", label: "Play", sortable: true },
-              { key: "stakes", label: "Stakes", sortable: false },
-              { key: "amount", label: "Amount", sortable: true },
-              { key: "time", label: "Time", sortable: false },
-            ]}
-            data={tableData}
-            pagination={pagination}
-            pageSize={currentPageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
-            onRowClick={handleRowClick}
-            onSort={handleSort}
-            loading={loading}
-            isRefetching={false}
-          />
-        </div>
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <CustomTable
+          columns={[
+            { key: "ticket", label: "Ticket #", sortable: true },
+            { key: "play", label: "Play", sortable: true },
+            { key: "stakes", label: "Stakes", sortable: false },
+            { key: "amount", label: "Amount", sortable: true },
+            { key: "time", label: "Time", sortable: false },
+          ]}
+          data={tableData}
+          pagination={pagination}
+          pageSize={currentPageSize}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          onRowClick={handleRowClick}
+          onSort={handleSort}
+          loading={loading}
+          isRefetching={false}
+        />
       </div>
     </div>
   );

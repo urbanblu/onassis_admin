@@ -110,7 +110,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-gotham-black: GothamBlack;
+  /* --font-gotham-black: GothamBlack;
   --font-gotham-bold: GothamBold;
   --font-gotham-regular: GothamRegular;
   --font-gotham-light: GothamLight;
@@ -118,14 +118,13 @@
   --font-gotham-thin: GothamThin;
   --font-gotham-ultra: GothamUltra;
   --font-gotham-xlight: GothamXLight;
-  /* */
   --font-jura-bold: JuraBold;
   --font-jura-light: JuraLight;
   --font-jura-medium: JuraMedium;
   --font-jura-regular: JuraRegular;
-  --font-jura-semibold: JuraSemibold;
+  --font-jura-semibold: JuraSemibold; */
 
-  /* --font-gotham-black: GothamBlack;
+  --font-gotham-black: GothamBlack;
   --font-gotham-bold: InterBold;
   --font-gotham-regular: InterRegular;
   --font-gotham-light: InterLight;
@@ -138,7 +137,7 @@
   --font-jura-light: JuraLight;
   --font-jura-medium: JuraMedium;
   --font-jura-regular: JuraRegular;
-  --font-jura-semibold: JuraSemibold; */
+  --font-jura-semibold: JuraSemibold;
 }
 
 /* Configure Dark Mode later */
@@ -157,13 +156,13 @@
  * @see https://heroui.com/docs/react/getting-started/theming
  */
 
-:root,
+/* :root,
 .light,
 .default,
 [data-theme="light"],
-[data-theme="default"] {
-  /* Theme Colors (Light Mode) */
-  /* --accent: oklch(62.04% 0.195 248.13);
+[data-theme="default"] { */
+/* Theme Colors (Light Mode) */
+/* --accent: oklch(62.04% 0.195 248.13);
   --accent-foreground: oklch(99.11% 0 0);
   --background: oklch(97.02% 0 248.13);
   --border: oklch(90% 0 248.13);
@@ -171,8 +170,8 @@
   --danger-foreground: oklch(99.11% 0 0);
   --default: oklch(94% 0 248.13);
   --default-foreground: oklch(21.03% 0.0059 248.13); */
-  /* --field-background: oklch(100% 0 248.13); */
-  /* --field-foreground: oklch(21.03% 0 248.13);
+/* --field-background: oklch(100% 0 248.13); */
+/* --field-foreground: oklch(21.03% 0 248.13);
   --field-placeholder: oklch(55.17% 0 248.13);
   --focus: oklch(62.04% 0.195 248.13);
   --foreground: oklch(21.03% 0 248.13);
@@ -183,7 +182,7 @@
   --segment: oklch(100% 0 248.13);
   --segment-foreground: oklch(21.03% 0 248.13);
   --separator: oklch(92% 0 248.13); */
-  /* --success: oklch(73.29% 0.1935 150.13);
+/* --success: oklch(73.29% 0.1935 150.13);
   --success-foreground: oklch(21.03% 0.0059 150.13);
   --surface: oklch(100% 0 248.13);
   --surface-foreground: oklch(21.03% 0 248.13);
@@ -194,20 +193,20 @@
   --warning: oklch(78.19% 0.1585 71.65);
   --warning-foreground: oklch(21.03% 0.0059 71.65); */
 
-  /* Border Radius */
-  /* --radius: 0.125rem;
+/* Border Radius */
+/* --radius: 0.125rem;
   --field-radius: 0.75rem; */
 
-  /* Font Family */
-  /* Make sure to load Inter font in your app */
-  /* --font-sans: var(--font-inter); */
-}
+/* Font Family */
+/* Make sure to load Inter font in your app */
+/* --font-sans: var(--font-inter); */
+/* } */
 
-.dark,
-[data-theme="dark"] {
-  /* color-scheme: dark; */
-  /* Theme Colors (Dark Mode) */
-  /* --accent: oklch(62.04% 0.195 248.13);
+/* .dark,
+[data-theme="dark"] { */
+/* color-scheme: dark; */
+/* Theme Colors (Dark Mode) */
+/* --accent: oklch(62.04% 0.195 248.13);
   --accent-foreground: oklch(99.11% 0 0);
   --background: oklch(12% 0 248.13);
   --border: oklch(28% 0 248.13);
@@ -215,8 +214,8 @@
   --danger-foreground: oklch(99.11% 0 0);
   --default: oklch(27.4% 0 248.13);
   --default-foreground: oklch(99.11% 0 0); */
-  /* --field-background: oklch(21.03% 0 248.13); */
-  /* --field-foreground: oklch(99.11% 0 248.13);
+/* --field-background: oklch(21.03% 0 248.13); */
+/* --field-foreground: oklch(99.11% 0 248.13);
   --field-placeholder: oklch(70.5% 0 248.13);
   --focus: oklch(62.04% 0.195 248.13);
   --foreground: oklch(99.11% 0 248.13);
@@ -237,13 +236,13 @@
   --surface-tertiary-foreground: oklch(99.11% 0 248.13);
   --warning: oklch(82.03% 0.1388 75.66);
   --warning-foreground: oklch(21.03% 0.0059 75.66); */
-}
+/* } */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: GothamRegular;
-  /* font-family: InterRegular; */
+  /* font-family: GothamRegular; */
+  font-family: InterRegular;
 }
 
 @layer components {

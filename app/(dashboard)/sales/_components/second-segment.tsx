@@ -109,7 +109,7 @@ function SecondSalesSegment() {
   });
 
   return (
-    <div className="flex flex-col space-y-3 md:min-h-0 md:overflow-hidden">
+    <div className="flex flex-col space-y-3 h-full min-h-0 overflow-hidden">
       <div className="border rounded-sm">
         <div className="p-3 flex flex-col">
           <div>
@@ -150,25 +150,23 @@ function SecondSalesSegment() {
         </div>
       </div>
 
-      <div className="h-[400px] md:h-auto md:flex-1 md:min-h-0 md:overflow-hidden">
-        <div className="h-full">
-          <CustomTable
-            columns={[
-              { key: "retailer", label: "Retailer", sortable: true },
-              { key: "topUp", label: "Top-Up", sortable: true },
-              { key: "sales", label: "Sales", sortable: false },
-            ]}
-            data={tableData}
-            pagination={pagination}
-            pageSize={currentPageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
-            onRowClick={handleRowClick}
-            onSort={handleSort}
-            loading={loading}
-            isRefetching={false}
-          />
-        </div>
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <CustomTable
+          columns={[
+            { key: "retailer", label: "Retailer", sortable: true },
+            { key: "topUp", label: "Top-Up", sortable: true },
+            { key: "sales", label: "Sales", sortable: false },
+          ]}
+          data={tableData}
+          pagination={pagination}
+          pageSize={currentPageSize}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          onRowClick={handleRowClick}
+          onSort={handleSort}
+          loading={loading}
+          isRefetching={false}
+        />
       </div>
     </div>
   );
