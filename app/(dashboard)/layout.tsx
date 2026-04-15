@@ -20,5 +20,12 @@ export default function DashboardLayout({
     }
   }, [auth, _hasHydrated, router]);
 
-  return <GlobalNavbar>{children}</GlobalNavbar>;
+  return (
+    <div className="flex h-screen bg-white">
+      <GlobalNavbar />
+      <main className="flex-1 ml-16 md:ml-[220px] overflow-auto">
+        {children}
+      </main>
+    </div>
+  );
 }

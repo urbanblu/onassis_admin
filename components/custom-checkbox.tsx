@@ -27,7 +27,7 @@ const CustomCheckboxItem = ({
             className={cn(
               "size-4! rounded-xs! border-[1.3px]! shadow-none! transition-none!",
               "before:content-none! after:content-none!",
-              "border-gray-400!",
+              isSelected ? "border-[#f6a21f]!" : "border-gray-400!",
             )}
           >
             <Checkbox.Indicator>
@@ -35,7 +35,7 @@ const CustomCheckboxItem = ({
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="black"
+                  stroke="#f6a21f"
                   strokeWidth="4"
                   className="size-3"
                 >

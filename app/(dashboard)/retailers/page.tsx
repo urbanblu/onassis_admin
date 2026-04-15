@@ -9,7 +9,6 @@ import CustomTable, { TableRow } from "@/components/custom-table";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import NewRetailerDrawer from "./_components/new-retailer-drawer";
-import SetCreditPromiseDrawer from "./_components/set-credit-promise-drawer";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
 import { formatGhs } from "@/utils/currency";
@@ -125,7 +124,7 @@ function RetailersView() {
   });
 
   return (
-    <div className="flex flex-col p-5 px-7 pb-10 space-y-5 h-auto sm:h-[calc(100vh-6rem)] sm:overflow-hidden">
+    <div className="flex flex-col p-5 px-7 pb-7 space-y-5 h-auto sm:h-full sm:overflow-hidden">
       <div className="flex justify-between space-y-2 sm:space-y-0 flex-col sm:flex-row items-start">
         <div className="flex flex-col space-y-2">
           <span className="text-sm sm:text-lg font-gotham-black uppercase">
@@ -159,40 +158,37 @@ function RetailersView() {
             <span className="text-xs font-gotham-bold">Export Data</span>
           </Button>
           <NewRetailerDrawer />
-          <SetCreditPromiseDrawer />
         </div>
       </div>
 
-      <div className="h-[500px] sm:h-full sm:flex-1 sm:min-h-0 mt-2">
-        <div className="h-full overflow-hidden">
-          <CustomTable
-            columns={[
-              { key: "id", label: "ID #", sortable: true },
-              { key: "name", label: "Name", sortable: true },
-              { key: "contact", label: "Contact", sortable: false },
-              { key: "signUpDate", label: "Sign-up Date", sortable: true },
-              { key: "dop", label: "DoP", sortable: false },
-              { key: "dot", label: "DoT", sortable: false },
-              { key: "ytdSales", label: "YTD Sales", sortable: false },
-              { key: "ytdTopUps", label: "YTD Top-ups", sortable: false },
-              {
-                key: "lastTransDate",
-                label: "Last Trans Date",
-                sortable: false,
-              },
-              { key: "status", label: "Status", sortable: false },
-            ]}
-            data={tableData}
-            pagination={pagination}
-            pageSize={currentPageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
-            onRowClick={handleRowClick}
-            onSort={handleSort}
-            loading={isPending}
-            isRefetching={isFetching}
-          />
-        </div>
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <CustomTable
+          columns={[
+            { key: "id", label: "ID #", sortable: true },
+            { key: "name", label: "Name", sortable: true },
+            { key: "contact", label: "Contact", sortable: false },
+            { key: "signUpDate", label: "Sign-up Date", sortable: true },
+            { key: "dop", label: "DoP", sortable: false },
+            { key: "dot", label: "DoT", sortable: false },
+            { key: "ytdSales", label: "YTD Sales", sortable: false },
+            { key: "ytdTopUps", label: "YTD Top-ups", sortable: false },
+            {
+              key: "lastTransDate",
+              label: "Last Trans Date",
+              sortable: false,
+            },
+            { key: "status", label: "Status", sortable: false },
+          ]}
+          data={tableData}
+          pagination={pagination}
+          pageSize={currentPageSize}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          onRowClick={handleRowClick}
+          onSort={handleSort}
+          loading={isPending}
+          isRefetching={isFetching}
+        />
       </div>
     </div>
   );

@@ -41,10 +41,10 @@ function RightSegment() {
         <div className="grid grid-cols-2 text-xs font-gotham-bold">
           <span className="text-black">1 of 3</span>
           <div className="flex items-center space-x-1">
-            <div className="bg-black p-1">
+            <div className="bg-[#f6a21f] p-1">
               <IoIosArrowBack className="text-white" />
             </div>
-            <div className="bg-black p-1">
+            <div className="bg-[#f6a21f] p-1">
               <IoIosArrowForward className="text-white" />
             </div>
           </div>

@@ -68,6 +68,38 @@
   src: url("../public/fonts/Jura-SemiBold.ttf");
 }
 
+/** Inter Font Faces */
+@font-face {
+  font-family: InterBold;
+  src: url("../public/fonts/Inter-Bold.ttf");
+}
+
+@font-face {
+  font-family: InterLight;
+  src: url("../public/fonts/Inter-Light.ttf");
+}
+
+@font-face {
+  font-family: InterMedium;
+  src: url("../public/fonts/Inter-Medium.ttf");
+}
+
+@font-face {
+  font-family: InterRegular;
+  src: url("../public/fonts/Inter-Regular.ttf");
+}
+
+@font-face {
+  font-family: InterThin;
+  src: url("../public/fonts/Inter-Thin.ttf");
+}
+
+/** InterDisplay Font Face */
+@font-face {
+  font-family: InterDisplayMedium;
+  src: url("../public/fonts/InterDisplay-Medium.ttf");
+}
+
 :root {
   --background: white;
   --foreground: black;
@@ -86,12 +118,27 @@
   --font-gotham-thin: GothamThin;
   --font-gotham-ultra: GothamUltra;
   --font-gotham-xlight: GothamXLight;
-  /*  */
+  /* */
   --font-jura-bold: JuraBold;
   --font-jura-light: JuraLight;
   --font-jura-medium: JuraMedium;
   --font-jura-regular: JuraRegular;
   --font-jura-semibold: JuraSemibold;
+
+  /* --font-gotham-black: GothamBlack;
+  --font-gotham-bold: InterBold;
+  --font-gotham-regular: InterRegular;
+  --font-gotham-light: InterLight;
+  --font-gotham-medium: InterMedium;
+  --font-gotham-thin: InterThin;
+  --font-gotham-ultra: GothamUltra;
+  --font-gotham-xlight: GothamXLight;
+
+  --font-jura-bold: InterDisplayMedium;
+  --font-jura-light: JuraLight;
+  --font-jura-medium: JuraMedium;
+  --font-jura-regular: JuraRegular;
+  --font-jura-semibold: JuraSemibold; */
 }
 
 /* Configure Dark Mode later */
@@ -196,6 +243,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: GothamRegular;
+  /* font-family: InterRegular; */
 }
 
 @layer components {

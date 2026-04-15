@@ -127,14 +127,14 @@ function CustomTable({
               aria-label="Custom data table"
               className="w-full min-w-[720px] rounded-sm bg-transparent [&_td]:text-xs"
             >
-              <Table.Header className="sticky top-0 z-10 bg-[#F9FAFB] border-b">
+              <Table.Header className="sticky top-0 z-10 bg-[#fff8ee] border-b">
                 {columns.map((column) => (
                   <Table.Column
                     key={column.key}
                     id={column.key}
                     isRowHeader={columns[0].key === column.key}
                     allowsSorting={column.sortable}
-                    className="bg-[#F9FAFB]"
+                    className="bg-[#fff8ee]"
                   >
                     <div className="flex items-center gap-1">
                       <span className="text-xs font-gotham-bold">
@@ -142,7 +142,7 @@ function CustomTable({
                       </span>
                       {column.sortable && (
                         <RiExpandUpDownFill
-                          className="py-1 px-0 cursor-pointer"
+                          className="py-1 px-0 cursor-pointer text-[#f6a21f]"
                           onClick={() => handleSort(column.key)}
                         />
                       )}
@@ -171,7 +171,7 @@ function CustomTable({
                       <Table.Row
                         key={index}
                         id={index}
-                        className="hover:bg-gray-50 cursor-pointer transition-all rounded-sm border"
+                        className="hover:bg-[#fff8ee] cursor-pointer transition-all rounded-sm border"
                         onAction={() => {
                           onRowClick?.(row, index);
                         }}

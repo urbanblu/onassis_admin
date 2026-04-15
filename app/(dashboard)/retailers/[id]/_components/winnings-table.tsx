@@ -46,10 +46,9 @@ function WinningsTable({ writerId }: { writerId: string }) {
     : { pageNumber: 1, pageSize: currentPageSize, totalCount: 0 };
 
   return (
-    <div className="flex flex-col min-w-0 lg:h-full lg:min-h-0">
+    <div className="flex flex-col min-w-0">
       <CustomTable
         columns={[
-          { key: "ticket", label: "Ticket #", sortable: true },
           { key: "ticket", label: "Ticket #", sortable: true },
           { key: "event", label: "Event #", sortable: false },
           { key: "game", label: "Game", sortable: true },

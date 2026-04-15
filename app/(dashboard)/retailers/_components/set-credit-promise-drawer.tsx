@@ -12,7 +12,7 @@ function SetCreditPromiseDrawer(payload: Props) {
   return (
     <Drawer>
       <Button
-        className="rounded-sm bg-black text-xs font-gotham-bold"
+        className="rounded-sm bg-[#f6a21f] text-xs font-gotham-bold"
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
@@ -74,7 +74,7 @@ function SetCreditPromiseDrawer(payload: Props) {
                       }}
                     />
                     <Button
-                      className="rounded-sm bg-black w-full text-xs font-gotham-black mt-2"
+                      className="rounded-sm bg-[#f6a21f] w-full text-xs font-gotham-black mt-2"
                       type="submit"
                     >
                       Save

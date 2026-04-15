@@ -73,10 +73,10 @@ function Lmcs() {
           <NewLmcDrawer />
         </div>
       </div>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-3 gap-y-3">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
         {isPending && (
-          <div className="flex flex-row justify-center mt-10">
-            <Spinner />
+          <div className="flex flex-row justify-center mt-10 col-span-full">
+            <Spinner size="sm" />
           </div>
         )}
         {!isPending &&
@@ -85,50 +85,61 @@ function Lmcs() {
             return (
               <div
                 key={card.id}
-                className="border rounded-sm flex flex-col items-center py-3"
+                className="border rounded-sm flex flex-col overflow-hidden"
               >
-                <Avatar size="lg" className="w-20 h-20">
-                  <Avatar.Image alt="" src={card.photo_url ?? ""} />
-                  <Avatar.Fallback className="bg-[#F8A824] text-2xl font-gotham-bold">
-                    {initial}
-                  </Avatar.Fallback>
-                </Avatar>
-                <span className="font-gotham-bold text-center px-2">
-                  {card.name}
-                </span>
-                <span className="font-jura-medium text-xs mb-2">
-                  {card.phone}
-                </span>
-                <span className="text-[10px] text-gray-500 mb-1">
-                  {card.code}
-                </span>
-                <Tabs className="min-w-48 flex-wrap">
-                  <Tabs.ListContainer>
-                    <Tabs.List aria-label="Options" className="rounded-sm">
-                      <Tabs.Tab
-                        className="text-xs font-gotham-bold"
-                        id="operational"
-                      >
-                        {"Operational"}
-                        <Tabs.Indicator className="rounded-sm" />
-                      </Tabs.Tab>
-                      <Tabs.Tab
-                        className="text-xs font-gotham-bold"
-                        id="financial"
-                      >
-                        {"Financial"}
-                        <Tabs.Indicator className="rounded-sm" />
-                      </Tabs.Tab>
-                    </Tabs.List>
-                  </Tabs.ListContainer>
+                {/* Card header */}
+                <div className="flex items-center gap-3 px-4 py-3 border-b bg-[#fff8ee]">
+                  <Avatar size="md" className="w-10 h-10 shrink-0">
+                    <Avatar.Image alt="" src={card.photo_url ?? ""} />
+                    <Avatar.Fallback className="bg-[#f6a21f] text-white font-gotham-bold text-sm">
+                      {initial}
+                    </Avatar.Fallback>
+                  </Avatar>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-gotham-bold text-sm truncate text-gray-800">
+                      {card.name}
+                    </span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[0.65rem] font-gotham-regular text-gray-500">
+                        {card.phone}
+                      </span>
+                      <span className="text-[0.65rem] font-jura-regular text-[#f6a21f] font-semibold">
+                        {card.code}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-                  <Tabs.Panel className="" id="operational">
-                    <OperationalTab operational={card.operational} />
-                  </Tabs.Panel>
-                  <Tabs.Panel className="" id="financial">
-                    <FinancialTab financial={card.financial} />
-                  </Tabs.Panel>
-                </Tabs>
+                {/* Tabs */}
+                <div className="flex-1 px-4 py-3">
+                  <Tabs className="w-full">
+                    <Tabs.ListContainer>
+                      <Tabs.List aria-label="Options" className="rounded-sm">
+                        <Tabs.Tab
+                          className="text-xs font-gotham-bold px-3"
+                          id="operational"
+                        >
+                          {"Operational"}
+                          <Tabs.Indicator className="rounded-sm bg-[#f6a21f]" />
+                        </Tabs.Tab>
+                        <Tabs.Tab
+                          className="text-xs font-gotham-bold px-3"
+                          id="financial"
+                        >
+                          {"Financial"}
+                          <Tabs.Indicator className="rounded-sm bg-[#f6a21f]" />
+                        </Tabs.Tab>
+                      </Tabs.List>
+                    </Tabs.ListContainer>
+
+                    <Tabs.Panel className="pt-2" id="operational">
+                      <OperationalTab operational={card.operational} />
+                    </Tabs.Panel>
+                    <Tabs.Panel className="pt-2" id="financial">
+                      <FinancialTab financial={card.financial} />
+                    </Tabs.Panel>
+                  </Tabs>
+                </div>
               </div>
             );
           })}

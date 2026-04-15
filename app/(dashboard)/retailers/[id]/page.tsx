@@ -206,36 +206,36 @@ function RetailerDetailView() {
                 <Tabs.List aria-label="Options">
                   <Tabs.Tab id="topups" className="text-sm font-gotham-black">
                     Top-ups
-                    <Tabs.Indicator className="bg-black" />
+                    <Tabs.Indicator className="bg-[#f6a21f]" />
                   </Tabs.Tab>
                   <Tabs.Tab id="sales" className="text-sm font-gotham-black">
                     Sales
-                    <Tabs.Indicator className="bg-black" />
+                    <Tabs.Indicator className="bg-[#f6a21f]" />
                   </Tabs.Tab>
                   <Tabs.Tab id="winnings" className="text-sm font-gotham-black">
                     Winnings
-                    <Tabs.Indicator className="bg-black" />
+                    <Tabs.Indicator className="bg-[#f6a21f]" />
                   </Tabs.Tab>
                   <Tabs.Tab id="cashout" className="text-sm font-gotham-black">
                     Cashout
-                    <Tabs.Indicator className="bg-black" />
+                    <Tabs.Indicator className="bg-[#f6a21f]" />
                   </Tabs.Tab>
                 </Tabs.List>
               </Tabs.ListContainer>
 
-              <Tabs.Panel id="topups" className="lg:flex-1 lg:min-h-0 min-w-0">
+              <Tabs.Panel id="topups" className="min-w-0">
                 <TopUpTable writerId={writerId} />
               </Tabs.Panel>
-              <Tabs.Panel id="sales" className="lg:flex-1 lg:min-h-0 min-w-0">
+              <Tabs.Panel id="sales" className="min-w-0">
                 <SalesTable writerId={writerId} />
               </Tabs.Panel>
               <Tabs.Panel
                 id="winnings"
-                className="lg:flex-1 lg:min-h-0 min-w-0"
+                className="min-w-0"
               >
                 <WinningsTable writerId={writerId} />
               </Tabs.Panel>
-              <Tabs.Panel id="cashout" className="lg:flex-1 lg:min-h-0 min-w-0">
+              <Tabs.Panel id="cashout" className="min-w-0">
                 <CashoutTable writerId={writerId} />
               </Tabs.Panel>
             </Tabs>

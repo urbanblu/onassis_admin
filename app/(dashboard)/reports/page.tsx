@@ -18,6 +18,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { IoMailOutline } from "react-icons/io5";
 import { RiDownloadLine } from "react-icons/ri";
+import { AiOutlineExport } from "react-icons/ai";
 
 const PAGE_SIZE = 10;
 
@@ -144,215 +145,209 @@ function ReportsView() {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-7 pb-5 w-full flex-1 min-h-0 overflow-hidden">
-      <div className="flex flex-col space-y-4 w-full h-full min-h-0">
-        <span className="text-sm sm:text-lg font-gotham-black uppercase shrink-0">
-          REPORTS
-        </span>
-        <div className="shrink-0">
-          <ReportsSelection
-            reports={groupedReports}
-            onSelected={(val) => {
-              setSelectedReportId(val.reportId);
-              setOptionalSelectedColumns({});
-              setFilters({});
-              setPreviewPage(1);
-            }}
-            selectedValue={selectedReport}
-          />
-        </div>
-        <div className="rounded-sm border-[1.5px] p-5 flex-1 flex flex-col min-h-0 bg-white">
-          <span className="text-xs font-gotham-bold shrink-0 mb-4">
-            {selectedReport?.schema.category ?? "General"}
+    <div className="flex flex-col px-7 pb-3 pt-5 space-y-3 h-full overflow-hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full flex-1 min-h-0 overflow-hidden">
+        <div className="flex flex-col space-y-4 w-full h-full min-h-0">
+          <span className="text-sm sm:text-lg font-gotham-black uppercase shrink-0">
+            REPORTS
           </span>
-          <div className="flex-1 max-h-52 sm:max-h-full min-h-0 overflow-y-auto pr-2 custom-scrollbar sm:overscroll-contain">
-            <div className="mb-5 shrink-0 space-y-3">
-              {(selectedReport?.schema.filters ?? []).map((filter) => {
-                if (filter.type === "date") {
-                  return (
-                    <div key={filter.key} className="max-w-[220px]">
-                      <Label className="text-xs">{filter.label}</Label>
-                      <input
-                        type="date"
-                        value={filters[filter.key] ?? ""}
-                        onChange={(e) =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            [filter.key]: e.target.value,
-                          }))
-                        }
-                        className="mt-2 w-full border rounded-sm border-gray-300 px-3 py-2 text-xs"
-                      />
-                    </div>
-                  );
-                }
+          <div className="shrink-0">
+            <ReportsSelection
+              reports={groupedReports}
+              onSelected={(val) => {
+                setSelectedReportId(val.reportId);
+                setOptionalSelectedColumns({});
+                setFilters({});
+                setPreviewPage(1);
+              }}
+              selectedValue={selectedReport}
+            />
+          </div>
+          <div className="rounded-sm border-[1.5px] p-5 flex-1 flex flex-col min-h-0 bg-white">
+            <span className="text-xs font-gotham-bold shrink-0 mb-4">
+              {selectedReport?.schema.category ?? "General"}
+            </span>
+            <div className="flex-1 min-h-0 overflow-y-auto pr-2 custom-scrollbar overscroll-contain">
+              <div className="mb-5 shrink-0 space-y-3">
+                {(selectedReport?.schema.filters ?? []).map((filter) => {
+                  if (filter.type === "date") {
+                    return (
+                      <div key={filter.key} className="max-w-[220px]">
+                        <Label className="text-xs">{filter.label}</Label>
+                        <input
+                          type="date"
+                          value={filters[filter.key] ?? ""}
+                          onChange={(e) =>
+                            setFilters((prev) => ({
+                              ...prev,
+                              [filter.key]: e.target.value,
+                            }))
+                          }
+                          className="mt-2 w-full border rounded-sm border-gray-300 px-3 py-2 text-xs"
+                        />
+                      </div>
+                    );
+                  }
 
-                return (
-                  <CustomInputComponent
-                    key={filter.key}
-                    className="max-w-[220px] p-0 border border-gray-400 rounded-sm"
-                    label={filter.label}
-                    placeholder={`Input ${filter.label}`}
-                    onChange={(e) =>
-                      setFilters((prev) => ({
+                  return (
+                    <CustomInputComponent
+                      key={filter.key}
+                      className="max-w-[220px] p-0 border border-gray-400 rounded-sm"
+                      label={filter.label}
+                      placeholder={`Input ${filter.label}`}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          [filter.key]: e.target.value,
+                        }))
+                      }
+                    />
+                  );
+                })}
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-2">
+                {(selectedReport?.schema.columns ?? []).map((column) => (
+                  <CustomCheckboxItem
+                    key={column.key}
+                    selected={
+                      column.required || optionalSelectedColumns[column.key]
+                    }
+                    label={column.label}
+                    labelClassName="font-gotham-regular"
+                    isDisabled={column.required}
+                    setIsSelected={(checked) =>
+                      setOptionalSelectedColumns((prev) => ({
                         ...prev,
-                        [filter.key]: e.target.value,
+                        [column.key]: Boolean(checked),
                       }))
                     }
                   />
-                );
-              })}
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-2">
-              {(selectedReport?.schema.columns ?? []).map((column) => (
-                <CustomCheckboxItem
-                  key={column.key}
-                  selected={
-                    column.required || optionalSelectedColumns[column.key]
-                  }
-                  label={column.label}
-                  labelClassName="font-gotham-regular"
-                  isDisabled={column.required}
-                  setIsSelected={(checked) =>
-                    setOptionalSelectedColumns((prev) => ({
-                      ...prev,
-                      [column.key]: Boolean(checked),
-                    }))
-                  }
-                />
-              ))}
+
+            <Button
+              className="mt-5 w-full rounded-sm bg-[#f6a21f] text-white font-gotham-black text-xs py-6 shrink-0"
+              isDisabled={!selectedReport || executeMutation.isPending}
+              onClick={onGenerate}
+              isPending={executeMutation.isPending}
+            >
+              {({ isPending }) => (
+                <>
+                  {isPending ? (
+                    <>
+                      <Spinner color="current" size="sm" />
+                      {"GENERATE REPORT"}
+                    </>
+                  ) : (
+                    "GENERATE REPORT"
+                  )}
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+
+        <div className="w-full h-full min-h-0 rounded-sm bg-gray-100 overflow-hidden flex flex-col">
+          <div className="p-4 border-gray-200 shrink-0 flex justify-between items-center">
+            <span className="text-xs font-gotham-bold text-black">Preview</span>
+            <div className="space-x-2">
+              <Button
+                className="rounded-sm bg-[#f6a21f] text-white"
+                size="md"
+                isDisabled={!previewRows.length}
+                onClick={onDownloadCsv}
+              >
+                <AiOutlineExport className="w-3.5 h-3.5" />
+                <span className="text-xs font-gotham-bold">Export Data</span>
+              </Button>
             </div>
           </div>
-
-          <Button
-            className="mt-5 w-full rounded-sm bg-black text-white font-gotham-black text-xs py-6 shrink-0"
-            isDisabled={!selectedReport || executeMutation.isPending}
-            onClick={onGenerate}
-            isPending={executeMutation.isPending}
-          >
-            {({ isPending }) => (
+          <Separator className="text-black bg-[#f6a21f]/30" />
+          <div className="bg-white m-5 p-5 h-full min-h-0 flex flex-col">
+            {!executeMutation.data ? (
+              <div className="text-sm font-gotham-black">
+                Generate a report to preview data
+              </div>
+            ) : (
               <>
-                {isPending ? (
-                  <>
-                    <Spinner color="current" size="sm" />
-                    {"GENERATE REPORT"}
-                  </>
-                ) : (
-                  "GENERATE REPORT"
-                )}
+                <div className="text-sm font-gotham-bold mb-3">
+                  {executeMutation.data.report_name}
+                  <span className="font-gotham-regular text-xs">{` /${previewRows.length.toLocaleString("en-GH")} records`}</span>
+                </div>
+                <div className="flex-1 min-h-0 overflow-auto border rounded-sm">
+                  <table className="min-w-max w-full text-xs">
+                    <thead className="sticky top-0 bg-white z-10">
+                      <tr className="border-b border-black">
+                        {visibleColumns.map((col) => (
+                          <th
+                            key={col.key}
+                            className="text-left px-3 py-2 whitespace-nowrap"
+                          >
+                            {col.label}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pagedRows.length === 0 ? (
+                        <tr>
+                          <td
+                            className="px-3 py-4 text-center"
+                            colSpan={visibleColumns.length || 1}
+                          >
+                            No rows returned
+                          </td>
+                        </tr>
+                      ) : (
+                        pagedRows.map((row, idx) => (
+                          <tr key={idx} className="border-b">
+                            {visibleColumns.map((col) => (
+                              <td
+                                key={col.key}
+                                className="px-3 py-2 whitespace-nowrap"
+                              >
+                                {String(row[col.key] ?? "")}
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="pt-3 flex items-center justify-between text-xs">
+                  <span>
+                    Page {previewPage} of {totalPreviewPages}
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="border rounded-sm"
+                      isDisabled={previewPage <= 1}
+                      onClick={() => setPreviewPage((p) => Math.max(1, p - 1))}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="border rounded-sm"
+                      isDisabled={previewPage >= totalPreviewPages}
+                      onClick={() =>
+                        setPreviewPage((p) =>
+                          Math.min(totalPreviewPages, p + 1),
+                        )
+                      }
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
               </>
             )}
-          </Button>
-        </div>
-      </div>
-
-      <div className="w-full h-full min-h-0 rounded-sm bg-gray-100 overflow-hidden flex flex-col">
-        <div className="p-4 border-gray-200 shrink-0 flex justify-between">
-          <span className="text-xs font-gotham-bold text-black">Preview</span>
-          <div className="space-x-2">
-            <Button
-              size="sm"
-              className="text-[0.6rem] bg-transparent border text-black"
-              isDisabled={!previewRows.length}
-              onClick={onDownloadCsv}
-            >
-              <RiDownloadLine className="w-3 h-3" />
-              Download
-            </Button>
-            <Button
-              size="sm"
-              className="text-[0.6rem] bg-transparent border text-black"
-              onClick={() =>
-                ToastService.info({ text: "Feature not yet available" })
-              }
-            >
-              <IoMailOutline className="w-3 h-3" />
-              Email
-            </Button>
           </div>
-        </div>
-        <Separator className="text-black bg-black/30" />
-        <div className="bg-white m-5 p-5 h-full min-h-0 flex flex-col">
-          {!executeMutation.data ? (
-            <div className="text-sm font-gotham-black">
-              Generate a report to preview data
-            </div>
-          ) : (
-            <>
-              <div className="text-sm font-gotham-bold mb-3">
-                {executeMutation.data.report_name}
-                <span className="font-gotham-regular text-xs">{` /${previewRows.length.toLocaleString("en-GH")} records`}</span>
-              </div>
-              <div className="flex-1 min-h-0 overflow-auto border rounded-sm">
-                <table className="min-w-max w-full text-xs">
-                  <thead className="sticky top-0 bg-white z-10">
-                    <tr className="border-b border-black">
-                      {visibleColumns.map((col) => (
-                        <th
-                          key={col.key}
-                          className="text-left px-3 py-2 whitespace-nowrap"
-                        >
-                          {col.label}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pagedRows.length === 0 ? (
-                      <tr>
-                        <td
-                          className="px-3 py-4 text-center"
-                          colSpan={visibleColumns.length || 1}
-                        >
-                          No rows returned
-                        </td>
-                      </tr>
-                    ) : (
-                      pagedRows.map((row, idx) => (
-                        <tr key={idx} className="border-b">
-                          {visibleColumns.map((col) => (
-                            <td
-                              key={col.key}
-                              className="px-3 py-2 whitespace-nowrap"
-                            >
-                              {String(row[col.key] ?? "")}
-                            </td>
-                          ))}
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              <div className="pt-3 flex items-center justify-between text-xs">
-                <span>
-                  Page {previewPage} of {totalPreviewPages}
-                </span>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="border rounded-sm"
-                    isDisabled={previewPage <= 1}
-                    onClick={() => setPreviewPage((p) => Math.max(1, p - 1))}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="border rounded-sm"
-                    isDisabled={previewPage >= totalPreviewPages}
-                    onClick={() =>
-                      setPreviewPage((p) => Math.min(totalPreviewPages, p + 1))
-                    }
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
         </div>
       </div>
     </div>

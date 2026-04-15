@@ -135,7 +135,7 @@ function ExistingRolesDrawer() {
                       </span>
                       <div className="w-[100px]">
                         <Button
-                          className="rounded-sm bg-[#0A6FFD] text-xs font-gotham-bold"
+                          className="rounded-sm bg-[#237c9c] text-xs font-gotham-bold"
                           size="md"
                           onClick={() => setIsAdding(true)}
                         >
@@ -247,7 +247,7 @@ function ExistingRolesDrawer() {
                 </div>
 
                 <Button
-                  className="rounded-sm bg-black w-full text-xs font-gotham-black mt-6"
+                  className="rounded-sm bg-[#f6a21f] w-full text-xs font-gotham-black mt-6"
                   type="submit"
                 >
                   Save

@@ -128,7 +128,7 @@ function EditUserDrawer(payload: Props) {
                     />
                   </div>
                   <Button
-                    className="rounded-sm bg-black w-full text-xs font-gotham-black mt-2"
+                    className="rounded-sm bg-[#f6a21f] w-full text-xs font-gotham-black mt-2"
                     type="submit"
                     isDisabled={isPending}
                     isPending={isPending}

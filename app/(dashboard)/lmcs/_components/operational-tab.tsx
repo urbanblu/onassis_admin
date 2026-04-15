@@ -10,11 +10,11 @@ function OperationalTab({ operational }: { operational: ILmcOperational }) {
       <InfoItem label="Inactive:" value={String(operational.inactive)} />
       <InfoItem label="Recover:" value={String(operational.recover)} />
       <InfoItem label="No Use:" value={String(operational.no_use)} />
-      <Separator className="bg-black" />
+      <Separator className="bg-[#f6a21f]" />
       <span className="text-sm font-gotham-bold">
         Writers ({operational.writers_total})
       </span>
-      <Separator className="bg-black" />
+      <Separator className="bg-[#f6a21f]" />
       <InfoItem label="POS Issued:" value={String(operational.pos_issued)} labelClassName="text-black" />
       <InfoItem label="POS Trading:" value={String(operational.pos_trading)} />
       <InfoItem

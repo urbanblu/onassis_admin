@@ -121,7 +121,7 @@ function WritersPerformace() {
                   </Tabs.ListContainer>
                 </Tabs>
                 <Button
-                  className="rounded-sm bg-black text-xs font-gotham-bold"
+                  className="rounded-sm bg-[#f6a21f] text-xs font-gotham-bold"
                   size="md"
                   isDisabled={!downloadUrl}
                   onClick={async () => {

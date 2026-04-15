@@ -38,7 +38,7 @@ function NewUserDrawer(payload: Props) {
   return (
     <Drawer>
       <Button
-        className="rounded-sm w-full bg-[#0A6FFD] text-xs font-gotham-bold"
+        className="rounded-sm w-full bg-[#237c9c] text-xs font-gotham-bold"
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
@@ -159,7 +159,7 @@ function NewUserDrawer(payload: Props) {
                     />
                   </div>
                   <Button
-                    className="rounded-sm bg-black w-full text-xs font-gotham-black mt-2"
+                    className="rounded-sm bg-[#f6a21f] w-full text-xs font-gotham-black mt-2"
                     type="submit"
                     isDisabled={isPending}
                     isPending={isPending}

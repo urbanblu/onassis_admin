@@ -34,28 +34,28 @@ function SettingsView() {
                   className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
                 >
                   General Settings
-                  <Tabs.Indicator className="bg-black" />
+                  <Tabs.Indicator className="bg-[#f6a21f]" />
                 </Tabs.Tab>
                 <Tabs.Tab
                   id="orgConfig"
                   className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
                 >
                   Org Config
-                  <Tabs.Indicator className="bg-black" />
+                  <Tabs.Indicator className="bg-[#f6a21f]" />
                 </Tabs.Tab>
                 <Tabs.Tab
                   id="teamMembers"
                   className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
                 >
                   Team Members
-                  <Tabs.Indicator className="bg-black" />
+                  <Tabs.Indicator className="bg-[#f6a21f]" />
                 </Tabs.Tab>
                 <Tabs.Tab
                   id="products"
                   className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
                 >
                   Products
-                  <Tabs.Indicator className="bg-black" />
+                  <Tabs.Indicator className="bg-[#f6a21f]" />
                 </Tabs.Tab>
 
                 <Tabs.Tab
@@ -63,7 +63,7 @@ function SettingsView() {
                   className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
                 >
                   Integration
-                  <Tabs.Indicator className="bg-black" />
+                  <Tabs.Indicator className="bg-[#f6a21f]" />
                 </Tabs.Tab>
 
                 <Tabs.Tab
@@ -71,7 +71,7 @@ function SettingsView() {
                   className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
                 >
                   Security
-                  <Tabs.Indicator className="bg-black" />
+                  <Tabs.Indicator className="bg-[#f6a21f]" />
                 </Tabs.Tab>
 
                 <Tabs.Tab
@@ -79,7 +79,7 @@ function SettingsView() {
                   className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
                 >
                   Compliance
-                  <Tabs.Indicator className="bg-black" />
+                  <Tabs.Indicator className="bg-[#f6a21f]" />
                 </Tabs.Tab>
 
                 <Tabs.Tab
@@ -87,7 +87,7 @@ function SettingsView() {
                   className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
                 >
                   Support
-                  <Tabs.Indicator className="bg-black" />
+                  <Tabs.Indicator className="bg-[#f6a21f]" />
                 </Tabs.Tab>
               </Tabs.List>
             </Tabs.ListContainer>

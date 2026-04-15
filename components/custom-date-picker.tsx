@@ -96,7 +96,7 @@ function CustomDatePicker({
                     "rounded-full",
                     "p-0",
                     "text-xs",
-                    "data-[selected=true]:bg-black data-[selected=true]:text-white",
+                    "data-[selected=true]:bg-[#f6a21f] data-[selected=true]:text-white",
                     "data-[hovered=true]:bg-gray-100",
                     "data-[today=true]:text-black data-[today=true]:font-black",
                   )}
@@ -109,7 +109,7 @@ function CustomDatePicker({
               {({ year }) => (
                 <Calendar.YearPickerCell
                   year={year}
-                  className="text-xs data-[selected=true]:rounded-full data-[selected=true]:bg-black"
+                  className="text-xs data-[selected=true]:rounded-full data-[selected=true]:bg-[#f6a21f]"
                 />
               )}
             </Calendar.YearPickerGridBody>

@@ -104,7 +104,7 @@ function DrawView() {
   const ytdStakes = ytdSales?.total_stakes;
 
   return (
-    <div className="flex flex-col px-7 pb-5 space-y-3 h-auto sm:h-[calc(100vh-6rem)] sm:overflow-hidden">
+    <div className="flex flex-col px-7 pb-3 pt-5 space-y-3 h-auto sm:h-full sm:overflow-hidden">
       <div className="flex items-center justify-between shrink-0">
         <span className="text-sm sm:text-lg transition-all font-gotham-black uppercase">
           DRAWS & WINNINGS
