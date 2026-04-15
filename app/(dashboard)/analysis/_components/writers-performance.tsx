@@ -73,10 +73,10 @@ function WritersPerformace() {
 
   return (
     <div className="flex flex-col space-y-5">
-      <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-4 gap-4 h-auto">
+      <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-4 gap-4 h-auto">
         <div className="col-span-3 border rounded-sm px-5 py-4 min-h-[400px] flex flex-col">
           <div className="flex flex-col h-full">
-            <div className="sm:flex sm:justify-between space-y-5 sm:space-y-0">
+            <div className="md:flex md:justify-between space-y-5 md:space-y-0">
               <div className="flex-col space-y-2">
                 <div className="text-sm font-gotham-bold">
                   Total Writers vs Active Writers
@@ -145,7 +145,7 @@ function WritersPerformace() {
                 </Button>
               </div>
             </div>
-            <div className="flex-1 min-h-0 w-full mt-5">
+            <div className="w-full mt-5 h-[320px] md:h-auto md:flex-1 md:min-h-0">
               <ActiveWritersStackedBarChart days={chartDays} />
             </div>
           </div>
@@ -199,8 +199,8 @@ function WritersPerformace() {
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-4 gap-4">
-        <div className="flex flex-col sm:col-span-3 space-y-3">
+      <div className="grid md:grid-cols-4 gap-4">
+        <div className="flex flex-col md:col-span-3 space-y-3">
           <span className="font-gotham-black text-sm text-gray-800">
             {"Top 10 Retailers - Year to Date"}
           </span>
@@ -228,7 +228,7 @@ function WritersPerformace() {
             ))}
           </div>
         </div>
-        <div className="sm:col-span-1 border rounded-sm p-5">
+        <div className="md:col-span-1 border rounded-sm p-5">
           <div className="flex flex-col space-y-1">
             <span className="font-gotham-black text-sm text-gray-800">
               {"YTD Retention Rate"}
@@ -237,8 +237,8 @@ function WritersPerformace() {
               {"% of net earnings retained after payout"}
             </span>
           </div>
-          <div className="h-full flex flex-col text-4xl sm:text-5xl font-jura-bold">
-            <span className="self-center mt-4 sm:mt-5">
+          <div className="h-full flex flex-col text-4xl md:text-5xl font-jura-bold">
+            <span className="self-center mt-4 md:mt-5">
               {retention?.retention_rate ?? "—"}
             </span>
           </div>
@@ -305,8 +305,6 @@ function formatDayLabel(isoDay: string) {
 }
 
 function ActiveWritersStackedBarChart({ days }: { days: ActiveWriterDay[] }) {
-  console.log(days);
-
   const deployedColor = "#2ECC71";
   const activeColor = "#18A2B8";
   const gridColor = "#E5E7EB";

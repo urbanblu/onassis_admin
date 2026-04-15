@@ -10,6 +10,7 @@ import {
   Separator,
 } from "@heroui/react";
 import React, { useState } from "react";
+import { RiSettingsLine } from "react-icons/ri";
 
 const roleTypes = [
   {
@@ -94,7 +95,8 @@ function ExistingRolesDrawer() {
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
-        <span className="text-xs font-gotham-bold">Roles and Permissions</span>
+        <RiSettingsLine />
+        <span className="text-xs font-gotham-bold">Manage Roles</span>
       </Button>
       <Drawer.Backdrop
         variant="blur"

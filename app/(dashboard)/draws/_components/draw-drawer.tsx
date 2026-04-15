@@ -4,7 +4,6 @@ import CustomTable, { TableRow } from "@/components/custom-table";
 import { CloseButton, cn, Drawer, Table } from "@heroui/react";
 import React from "react";
 import { useState } from "react";
-import { FaRegFilePdf } from "react-icons/fa";
 import { IoChevronDown } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
 import GamesService from "@/api/games";
@@ -134,13 +133,6 @@ function DrawDrawer({
                   </div>
                 ) : (
                   <div className="flex flex-col space-y-5 sm:h-[calc(100vh-6rem)] sm:overflow-hidden">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs font-gotham-regular">
-                        Export to:
-                      </span>
-                      <FaRegFilePdf />
-                    </div>
-
                     <div className="border rounded-sm p-4 max-lg:overflow-x-auto max-lg:overflow-y-hidden">
                       <div className="flex flex-nowrap items-start gap-4 md:gap-6 w-max lg:w-full lg:min-w-0 lg:justify-between">
                         <div className="flex flex-col max-lg:shrink-0">
@@ -161,7 +153,7 @@ function DrawDrawer({
                             {(event?.draw_numbers ?? []).map((n, i) => (
                               <span
                                 key={i}
-                                className="rounded bg-transparent border-[1.5px] p-1 text-xs font-gotham-medium shrink-0"
+                                className="bg-[#237c9c] rounded-full text-white w-[25px] h-[25px] text-xs text-center p-1"
                               >
                                 {n}
                               </span>

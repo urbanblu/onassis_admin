@@ -12,8 +12,8 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AdminUsersService from "@/api/admin-users";
 import ToastService from "@/utils/toast-service";
-import { FaRegEdit } from "react-icons/fa";
 import type { IAdminUser } from "@/interfaces/admin-users.interface";
+import { RiEdit2Line } from "react-icons/ri";
 
 type Props = {
   user: IAdminUser;
@@ -44,7 +44,7 @@ function EditUserDrawer(payload: Props) {
 
   return (
     <Drawer>
-      <FaRegEdit
+      <RiEdit2Line
         className="w-3 h-3 text-blue-500 cursor-pointer"
         onClick={() => setDrawerOpen(true)}
       />

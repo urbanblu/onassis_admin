@@ -12,6 +12,7 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AdminUsersService from "@/api/admin-users";
 import ToastService from "@/utils/toast-service";
+import { RiAddLine } from "react-icons/ri";
 
 type Props = {
   onCreated?: () => void;
@@ -42,7 +43,8 @@ function NewUserDrawer(payload: Props) {
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
-        Add New Member
+        <RiAddLine />
+        Invite Someone
       </Button>
       <Drawer.Backdrop
         variant="blur"
@@ -143,7 +145,8 @@ function NewUserDrawer(payload: Props) {
                       showPlaceholder={false}
                       validate={(val) => {
                         if (!val) return "This field is required";
-                        if (val !== passwordValue) return "Passwords do not match";
+                        if (val !== passwordValue)
+                          return "Passwords do not match";
                         return null;
                       }}
                       showSuffixIcon={false}

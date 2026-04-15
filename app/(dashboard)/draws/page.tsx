@@ -10,6 +10,7 @@ import CreateDrawDrawer from "./_components/create-draw-drawer";
 import { useQuery } from "@tanstack/react-query";
 import FinancialsService from "@/api/financials";
 import GamesService from "@/api/games";
+import { RiArrowRightLine } from "react-icons/ri";
 
 function DrawView() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -104,9 +105,9 @@ function DrawView() {
   const ytdStakes = ytdSales?.total_stakes;
 
   return (
-    <div className="flex flex-col px-7 pb-3 pt-5 space-y-3 h-auto sm:h-full sm:overflow-hidden">
+    <div className="flex flex-col px-7 pb-3 pt-5 space-y-3 h-auto md:h-full md:overflow-hidden">
       <div className="flex items-center justify-between shrink-0">
-        <span className="text-sm sm:text-lg transition-all font-gotham-black uppercase">
+        <span className="text-sm md:text-lg transition-all font-gotham-black uppercase">
           DRAWS & WINNINGS
         </span>
         <CreateDrawDrawer />
@@ -179,7 +180,7 @@ function DrawView() {
         />
       </div>
 
-      <div className="h-[500px] sm:h-full sm:flex-1 sm:min-h-0 mt-2">
+      <div className="h-[500px] md:h-full md:flex-1 md:min-h-0 mt-2">
         <div className="h-full overflow-hidden">
           <CustomTable
             columns={[
@@ -206,54 +207,52 @@ function DrawView() {
                   <span className="text-sm font-jura-bold">{r.draw_time}</span>
                 ),
                 preDraw: (
-                  <span
-                    className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed cursor-pointer"
+                  <div
+                    className="rounded-sm bg-black text-white text-center p-1 font-jura-bold flex flex-row space-x-1 items-center justify-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onPreDrawClick(r.event_id);
                     }}
                   >
-                    {r.pre_draw}
-                  </span>
+                    <span>{r.pre_draw}</span>
+                    <RiArrowRightLine />
+                  </div>
                 ),
                 drawNumbers: (
-                  <div className="flex space-x-2 items-center flex-wrap">
+                  <div className="flex gap-2 items-center flex-wrap">
                     {r.draw_numbers.map((n, i) => (
                       <span
                         key={i}
-                        className="rounded bg-transparent border-[1.5px] p-1"
+                        className="bg-[#237c9c] rounded-full text-white w-[25px] h-[25px] text-center p-1"
                       >
                         {n}
                       </span>
                     ))}
-                    <Image
-                      src={DrawNumbersIcon}
-                      alt="DrawNumbersIcon"
-                      className="h-5 w-5"
-                    />
                   </div>
                 ),
                 postDraw1: (
-                  <span
-                    className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed cursor-pointer"
+                  <div
+                    className="rounded-sm bg-black text-white text-center p-1 font-jura-bold flex flex-row space-x-1 items-center justify-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onPostDraw1Click(r.event_id);
                     }}
                   >
-                    {r.post_draw_1}
-                  </span>
+                    <span>{r.post_draw_1}</span>
+                    <RiArrowRightLine />
+                  </div>
                 ),
                 postDraw2: (
-                  <span
-                    className="text-sm font-jura-bold text-[#505FFF] underline decoration-dashed cursor-pointer"
+                  <div
+                    className="rounded-sm bg-black text-white text-center p-1 font-jura-bold flex flex-row space-x-1 items-center justify-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onPostDraw2Click(r.event_id);
                     }}
                   >
-                    {r.post_draw_2}
-                  </span>
+                    <span>{r.post_draw_2}</span>
+                    <RiArrowRightLine />
+                  </div>
                 ),
                 payoutRatio: (
                   <span className="text-sm font-jura-bold">

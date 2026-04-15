@@ -2,6 +2,7 @@
 
 import CustomInputComponent from "@/components/custom-input-component";
 import CustomCheckboxItem from "@/components/custom-checkbox";
+import CustomTable, { TableColumn, TableRow } from "@/components/custom-table";
 import FinancialsService from "@/api/financials";
 import type { IReportDefinition } from "@/interfaces/financials.interface";
 import ToastService from "@/utils/toast-service";
@@ -16,8 +17,6 @@ import {
 } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { IoMailOutline } from "react-icons/io5";
-import { RiDownloadLine } from "react-icons/ri";
 import { AiOutlineExport } from "react-icons/ai";
 
 const PAGE_SIZE = 10;
@@ -52,20 +51,39 @@ function ReportsView() {
     () => executeMutation.data?.data ?? [],
     [executeMutation.data?.data],
   );
+
   const visibleColumns = useMemo(() => {
     if (!selectedReport) return [];
     return selectedReport.schema.columns.filter(
       (col) => col.required || optionalSelectedColumns[col.key],
     );
   }, [optionalSelectedColumns, selectedReport]);
-  const totalPreviewPages = Math.max(
-    1,
-    Math.ceil(previewRows.length / PAGE_SIZE),
-  );
+
   const pagedRows = useMemo(() => {
     const start = (previewPage - 1) * PAGE_SIZE;
     return previewRows.slice(start, start + PAGE_SIZE);
   }, [previewRows, previewPage]);
+
+  const tableColumns: TableColumn[] = useMemo(
+    () => visibleColumns.map((col) => ({ key: col.key, label: col.label })),
+    [visibleColumns],
+  );
+
+  const tableData: TableRow[] = useMemo(
+    () =>
+      pagedRows.map((row) =>
+        Object.fromEntries(
+          visibleColumns.map((col) => [col.key, String(row[col.key] ?? "")]),
+        ),
+      ),
+    [pagedRows, visibleColumns],
+  );
+
+  const previewPagination = {
+    pageNumber: previewPage,
+    pageSize: PAGE_SIZE,
+    totalCount: previewRows.length,
+  };
 
   const groupedReports = useMemo(() => {
     const groups = new Map<string, IReportDefinition[]>();
@@ -145,10 +163,11 @@ function ReportsView() {
   };
 
   return (
-    <div className="flex flex-col px-7 pb-3 pt-5 space-y-3 h-full overflow-hidden">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full flex-1 min-h-0 overflow-hidden">
-        <div className="flex flex-col space-y-4 w-full h-full min-h-0">
-          <span className="text-sm sm:text-lg font-gotham-black uppercase shrink-0">
+    <div className="flex flex-col px-7 pb-3 pt-5 space-y-3 md:h-full md:overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full md:flex-1 md:min-h-0 md:overflow-hidden">
+        {/* Left panel — filters + checkboxes */}
+        <div className="flex flex-col space-y-4 w-full md:h-full md:min-h-0">
+          <span className="text-sm md:text-lg font-gotham-black uppercase shrink-0">
             REPORTS
           </span>
           <div className="shrink-0">
@@ -163,7 +182,7 @@ function ReportsView() {
               selectedValue={selectedReport}
             />
           </div>
-          <div className="rounded-sm border-[1.5px] p-5 flex-1 flex flex-col min-h-0 bg-white">
+          <div className="rounded-sm border-[1.5px] p-5 h-[500px] md:flex-1 flex flex-col min-h-0 bg-white">
             <span className="text-xs font-gotham-bold shrink-0 mb-4">
               {selectedReport?.schema.category ?? "General"}
             </span>
@@ -248,103 +267,49 @@ function ReportsView() {
           </div>
         </div>
 
-        <div className="w-full h-full min-h-0 rounded-sm bg-gray-100 overflow-hidden flex flex-col">
+        {/* Right panel — preview */}
+        <div className="min-h-[480px] md:h-full md:min-h-0 rounded-sm bg-gray-100 overflow-hidden flex flex-col">
           <div className="p-4 border-gray-200 shrink-0 flex justify-between items-center">
             <span className="text-xs font-gotham-bold text-black">Preview</span>
-            <div className="space-x-2">
-              <Button
-                className="rounded-sm bg-[#f6a21f] text-white"
-                size="md"
-                isDisabled={!previewRows.length}
-                onClick={onDownloadCsv}
-              >
-                <AiOutlineExport className="w-3.5 h-3.5" />
-                <span className="text-xs font-gotham-bold">Export Data</span>
-              </Button>
-            </div>
+            <Button
+              className="rounded-sm bg-[#f6a21f] text-white"
+              size="md"
+              isDisabled={!previewRows.length}
+              onClick={onDownloadCsv}
+            >
+              <AiOutlineExport className="w-3.5 h-3.5" />
+              <span className="text-xs font-gotham-bold">Export Data</span>
+            </Button>
           </div>
           <Separator className="text-black bg-[#f6a21f]/30" />
-          <div className="bg-white m-5 p-5 h-full min-h-0 flex flex-col">
+          <div className="bg-white m-5 flex-1 min-h-0 flex flex-col overflow-hidden">
             {!executeMutation.data ? (
-              <div className="text-sm font-gotham-black">
+              <div className="text-sm font-gotham-black p-5">
                 Generate a report to preview data
               </div>
             ) : (
               <>
-                <div className="text-sm font-gotham-bold mb-3">
+                <div className="text-sm font-gotham-bold px-1 pt-1 pb-3 shrink-0">
                   {executeMutation.data.report_name}
-                  <span className="font-gotham-regular text-xs">{` /${previewRows.length.toLocaleString("en-GH")} records`}</span>
+                  <span className="font-gotham-regular text-xs">{` / ${previewRows.length.toLocaleString("en-GH")} records`}</span>
                 </div>
-                <div className="flex-1 min-h-0 overflow-auto border rounded-sm">
-                  <table className="min-w-max w-full text-xs">
-                    <thead className="sticky top-0 bg-white z-10">
-                      <tr className="border-b border-black">
-                        {visibleColumns.map((col) => (
-                          <th
-                            key={col.key}
-                            className="text-left px-3 py-2 whitespace-nowrap"
-                          >
-                            {col.label}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pagedRows.length === 0 ? (
-                        <tr>
-                          <td
-                            className="px-3 py-4 text-center"
-                            colSpan={visibleColumns.length || 1}
-                          >
-                            No rows returned
-                          </td>
-                        </tr>
-                      ) : (
-                        pagedRows.map((row, idx) => (
-                          <tr key={idx} className="border-b">
-                            {visibleColumns.map((col) => (
-                              <td
-                                key={col.key}
-                                className="px-3 py-2 whitespace-nowrap"
-                              >
-                                {String(row[col.key] ?? "")}
-                              </td>
-                            ))}
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="pt-3 flex items-center justify-between text-xs">
-                  <span>
-                    Page {previewPage} of {totalPreviewPages}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="border rounded-sm"
-                      isDisabled={previewPage <= 1}
-                      onClick={() => setPreviewPage((p) => Math.max(1, p - 1))}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="border rounded-sm"
-                      isDisabled={previewPage >= totalPreviewPages}
-                      onClick={() =>
-                        setPreviewPage((p) =>
-                          Math.min(totalPreviewPages, p + 1),
-                        )
-                      }
-                    >
-                      Next
-                    </Button>
+                {tableColumns.length > 0 ? (
+                  <div className="flex-1 min-h-0 overflow-hidden">
+                    <CustomTable
+                      columns={tableColumns}
+                      data={tableData}
+                      pagination={previewPagination}
+                      pageSize={PAGE_SIZE}
+                      onPageChange={setPreviewPage}
+                      loading={false}
+                      isRefetching={false}
+                    />
                   </div>
-                </div>
+                ) : (
+                  <div className="text-xs text-gray-400 p-1">
+                    Select at least one column to preview.
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -367,7 +332,6 @@ const ReportsSelection = ({ reports, onSelected, selectedValue }: Props) => {
 
   const selectedLabel = selectedValue?.name ?? "";
 
-  // When you select an item, close the select and then call onSelected
   function handleAction(payload: IReportDefinition) {
     setIsOpen(false);
     onSelected(payload);
@@ -375,7 +339,6 @@ const ReportsSelection = ({ reports, onSelected, selectedValue }: Props) => {
 
   return (
     <Select
-      className=""
       placeholder="Select a Report"
       isOpen={isOpen}
       onOpenChange={setIsOpen}
