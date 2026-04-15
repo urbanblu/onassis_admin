@@ -116,14 +116,14 @@ function Lmcs() {
                     <Tabs.ListContainer>
                       <Tabs.List aria-label="Options" className="rounded-sm">
                         <Tabs.Tab
-                          className="text-xs font-gotham-bold px-3"
+                          className="text-xs font-gotham-bold px-3 text-black data-[selected=true]:text-white"
                           id="operational"
                         >
                           {"Operational"}
                           <Tabs.Indicator className="rounded-sm bg-[#f6a21f]" />
                         </Tabs.Tab>
                         <Tabs.Tab
-                          className="text-xs font-gotham-bold px-3"
+                          className="text-xs font-gotham-bold px-3 text-black data-[selected=true]:text-white"
                           id="financial"
                         >
                           {"Financial"}

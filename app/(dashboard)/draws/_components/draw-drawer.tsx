@@ -324,13 +324,13 @@ function DrawDrawer({
                                                 {st.play}
                                               </span>
                                               <div>
-                                                <div className="flex space-x-2 items-center flex-wrap">
-                                                  {nums.map((num, ni) => (
+                                                <div className="flex flex-nowrap gap-2 items-center">
+                                                  {nums.map((n, i) => (
                                                     <span
-                                                      key={ni}
-                                                      className="rounded bg-transparent border-[1.5px] p-1 text-xs font-gotham-medium"
+                                                      key={i}
+                                                      className="bg-[#237c9c] rounded-full text-white w-[25px] h-[25px] text-xs text-center p-1"
                                                     >
-                                                      {num}
+                                                      {n}
                                                     </span>
                                                   ))}
                                                 </div>
