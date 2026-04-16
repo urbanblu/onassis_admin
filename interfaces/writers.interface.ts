@@ -29,6 +29,12 @@ export interface IWriterStatisticsResponse {
   data: IWriterStatisticsData;
 }
 
+export interface IAvailableFloat {
+  available_float: string;
+  available_float_amount: number;
+  currency: string;
+}
+
 export interface ITodayTopUp {
   date: string;
   total_topup: string;

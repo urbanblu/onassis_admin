@@ -7,6 +7,7 @@ import {
   IListReportsResponse,
   INetTopupsCard,
   IRetentionRate,
+  IRetentionRateTrend,
   ISalesCard,
   ISettlementsCard,
   ITopUpStatistics,
@@ -64,6 +65,21 @@ class FinancialsService {
         data?: IBestWorstPerformance;
       };
       return raw.data ?? raw;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static fetchRetentionRateTrend = async (
+    days?: number,
+  ): Promise<IRetentionRateTrend> => {
+    try {
+      const response = await Axios({
+        url: `/api/v1/financials/dashboard/retention-rate-trend/`,
+        method: "GET",
+        params: days != null ? { days } : undefined,
+      });
+      return response.data as IRetentionRateTrend;
     } catch (error) {
       throw handleApiError(error);
     }

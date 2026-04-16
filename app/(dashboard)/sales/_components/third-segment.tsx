@@ -88,7 +88,7 @@ function ThirdSalesSegment() {
             <span className="font-gotham-black text-xs text-gray-500 uppercase">
               Winnings
             </span>
-            <div className="grid grid-cols-2 space-x-4 items-center">
+            <div className="grid grid-cols-2 gap-x-4 items-center">
               <CustomDatePicker
                 label="Draw Date"
                 className="border rounded-sm border-gray-300"

@@ -117,3 +117,30 @@ export interface ILmcTransactionRow {
   amount: string;
   balance: string;
 }
+
+export interface ILmcSummaryInfo {
+  name: string;
+  address: string;
+  phone: string;
+  pos_issued: number;
+  pos_trading: number;
+  wallet_balance: number;
+}
+
+export interface ILmcSummaryData {
+  ytd_sales: number;
+  ytd_topups: number;
+  ytd_winnings: number;
+  writers_count: number;
+  ytd_sales_ratio: number;
+  ytd_topups_ratio: number;
+  ytd_winnings_ratio: number;
+  writers_ratio: number;
+  wallet_balance: number;
+  today_deposits: number;
+}
+
+export interface ILmcSummary {
+  lmc_info: ILmcSummaryInfo;
+  summary: ILmcSummaryData;
+}

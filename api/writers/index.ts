@@ -1,6 +1,7 @@
 import Axios from "@/api";
 import {
   IActiveWriterDailyStats,
+  IAvailableFloat,
   IPaginatedResults,
   IRegisterWriterPayload,
   IRegisterWriterResponse,
@@ -42,6 +43,18 @@ class WritersService {
           writers: [],
         }
       );
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static fetchAvailableFloat = async (): Promise<IAvailableFloat> => {
+    try {
+      const response = await Axios({
+        url: `/api/v1/writers/available-float/`,
+        method: "GET",
+      });
+      return response.data as IAvailableFloat;
     } catch (error) {
       throw handleApiError(error);
     }

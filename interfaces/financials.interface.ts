@@ -112,6 +112,27 @@ export interface ISettlementsCard {
   currency: string;
 }
 
+export interface IRetentionRateTrendDay {
+  day: string;
+  retention_rate: number;
+}
+
+export interface IRetentionRateTrendMonth {
+  month: string;
+  retention_rate: number;
+}
+
+export interface IRetentionRateTrend {
+  ytd_retention_rate: number;
+  period: {
+    start_date: string;
+    end_date: string;
+    days: number;
+  };
+  days?: IRetentionRateTrendDay[];
+  months?: IRetentionRateTrendMonth[];
+}
+
 export interface IReportColumnSchema {
   key: string;
   label: string;

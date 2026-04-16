@@ -23,6 +23,11 @@ function SecondSalesSegment() {
     queryFn: WritersService.fetchTodayTopUp,
   });
 
+  const { data: availableFloat, isPending: floatPending } = useQuery({
+    queryKey: ["writers", "available-float"],
+    queryFn: WritersService.fetchAvailableFloat,
+  });
+
   const writers = useMemo(() => stats?.writers ?? [], [stats?.writers]);
   const filteredWriters = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
@@ -68,7 +73,7 @@ function SecondSalesSegment() {
     void direction;
   };
 
-  const loading = statsPending || topUpPending;
+  const loading = statsPending || topUpPending || floatPending;
 
   const tradingCount =
     stats != null ? `${filteredWriters.length} of ${stats.totalwriters}` : "—";
@@ -145,7 +150,9 @@ function SecondSalesSegment() {
             <span className="font-gotham-black text-[0.65rem]">
               Available Float
             </span>
-            <span className="font-jura-bold text-xl text-gray-400">—</span>
+            <span className="font-jura-bold text-xl">
+              {availableFloat?.available_float ?? "—"}
+            </span>
           </div>
         </div>
       </div>

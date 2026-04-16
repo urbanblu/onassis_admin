@@ -85,8 +85,6 @@ function CreateDrawDrawer() {
     });
   };
 
-  console.log("eventOptions", eventOptions);
-
   return (
     <Drawer>
       <Button

@@ -6,11 +6,83 @@ import Image from "next/image";
 import CollectionIcon from "@/public/images/collection-icon.webp";
 import PayoutIcon from "@/public/images/payout-icon.webp";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import FinancialsService from "@/api/financials";
 import { formatGhs } from "@/utils/currency";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  LabelList,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+type ChartEntry = {
+  label: string;
+  fullLabel: string;
+  value: number;
+};
+
+const getBarColor = (value: number) => {
+  if (value < 0) return "#ef4444";
+  if (value >= 50) return "#22c55e";
+  return "#3b82f6";
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderCustomLabel = (props: any) => {
+  const { x = 0, y = 0, width = 0, height = 0, value = 0 } = props as {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    value: number;
+  };
+  if (value === 0) return <g />;
+  const isPositive = value > 0;
+  const labelY = isPositive ? y - 5 : y + height + 12;
+  return (
+    <text
+      x={x + width / 2}
+      y={labelY}
+      textAnchor="middle"
+      fontSize={9}
+      fill="#374151"
+      fontWeight="bold"
+    >
+      {value}%
+    </text>
+  );
+};
+
+const CustomTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: ChartEntry }>;
+}) => {
+  if (!active || !payload?.length) return null;
+  const { fullLabel, value } = payload[0].payload;
+  return (
+    <div className="bg-white border rounded shadow-md px-3 py-2 text-xs">
+      <p className="font-gotham-black text-gray-700">Date: {fullLabel}</p>
+      <p className="text-green-500 font-gotham-medium mt-1">
+        retention_rate : {value}%
+      </p>
+    </div>
+  );
+};
 
 function RetentionRatePerformance() {
+  const [period, setPeriod] = useState<"30days" | "1year">("30days");
+
   const { data: salesCard } = useQuery({
     queryKey: ["financials", "sales-card"],
     queryFn: FinancialsService.fetchSalesCard,
@@ -35,6 +107,39 @@ function RetentionRatePerformance() {
     queryKey: ["financials", "settlements-card"],
     queryFn: FinancialsService.fetchSettlementsCard,
   });
+
+  const days = period === "1year" ? 365 : 30;
+  const { data: trendData } = useQuery({
+    queryKey: ["financials", "retention-rate-trend", days],
+    queryFn: () => FinancialsService.fetchRetentionRateTrend(days),
+  });
+
+  const chartData: ChartEntry[] = useMemo(() => {
+    if (!trendData) return [];
+    if (period === "30days") {
+      return (trendData.days ?? []).map((d) => {
+        const date = new Date(d.day);
+        const shortLabel = date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+        const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
+        return {
+          label: shortLabel,
+          fullLabel: `${d.day} (${dayName})`,
+          value: d.retention_rate,
+        };
+      });
+    }
+    return (trendData.months ?? []).map((m) => ({
+      label: m.month,
+      fullLabel: m.month,
+      value: m.retention_rate,
+    }));
+  }, [trendData, period]);
+
+  const ytdRR =
+    trendData != null ? `${trendData.ytd_retention_rate.toFixed(2)}%` : "—";
 
   return (
     <div className="flex flex-col space-y-4">
@@ -113,26 +218,32 @@ function RetentionRatePerformance() {
                 <span className="text-xs font-gotham-black text-gray-500">
                   YTD RR:{" "}
                 </span>
-                <span className="text-xs font-jura-bold">{"—"}</span>
+                <span className="text-xs font-jura-bold">{ytdRR}</span>
               </div>
             </div>
 
             <div className="shrink-0">
-              <Tabs className="min-w-48 flex-wrap">
+              <Tabs
+                className="min-w-48 flex-wrap"
+                selectedKey={period}
+                onSelectionChange={(key) =>
+                  setPeriod(key as "30days" | "1year")
+                }
+              >
                 <Tabs.ListContainer>
                   <Tabs.List
                     aria-label="Options"
                     className="rounded-sm bg-gray-100"
                   >
                     <Tabs.Tab
-                      id="overview"
+                      id="30days"
                       className="px-4 py-1 text-xs font-gotham-bold"
                     >
                       {"30 days"}
                       <Tabs.Indicator className="rounded-sm" />
                     </Tabs.Tab>
                     <Tabs.Tab
-                      id="analytics"
+                      id="1year"
                       className="px-4 py-1 text-xs font-gotham-bold"
                     >
                       {"1 year"}
@@ -144,12 +255,50 @@ function RetentionRatePerformance() {
             </div>
           </div>
 
-          <div className="flex-1 flex items-center justify-center rounded-sm">
-            <div className="flex flex-col items-center space-y-2">
-              <span className="text-xs text-gray-500">
-                Trend chart not wired (graph integration deferred)
-              </span>
-            </div>
+          <div className="h-[300px]">
+            {chartData.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <span className="text-xs text-gray-400">No data available</span>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 20, right: 10, left: 0, bottom: 5 }}
+                  barCategoryGap="30%"
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#e5e7eb"
+                  />
+                  <XAxis dataKey="label" hide />
+                  <YAxis
+                    domain={[-100, 100]}
+                    ticks={[-100, -50, 0, 50, 100]}
+                    orientation="right"
+                    tick={{ fontSize: 9, fill: "#6b7280" }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={30}
+                  />
+                  <ReferenceLine y={0} stroke="#d1d5db" strokeWidth={1} />
+                  <Tooltip
+                    content={<CustomTooltip />}
+                    cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                  />
+                  <Bar dataKey="value" radius={[2, 2, 0, 0]}>
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={getBarColor(entry.value)}
+                      />
+                    ))}
+                    <LabelList dataKey="value" content={renderCustomLabel} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
       </div>

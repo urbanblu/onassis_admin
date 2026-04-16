@@ -4,8 +4,10 @@ import {
   ILmcDetailCard,
   ILmcOwnerOption,
   ILmcRegisterResponse,
+  ILmcSummary,
   ILmcTransactionRow,
   ILmcTransactionsParams,
+  ILmcWriterOverviewRow,
   IRegisterLmcOnboardingPayload,
   IRegisterLmcPayload,
 } from "@/interfaces/lmc.interface";
@@ -120,17 +122,29 @@ class LmcService {
     }
   };
 
+  static fetchSummary = async (lmcId: string): Promise<ILmcSummary> => {
+    try {
+      const response = await Axios({
+        url: `/api/v1/lmc/${lmcId}/summary/`,
+        method: "GET",
+      });
+      return response.data as ILmcSummary;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
   static fetchWritersOverview = async (
     lmcId: string,
     params?: WritersOverviewParams,
-  ): Promise<unknown> => {
+  ): Promise<IPaginatedResults<ILmcWriterOverviewRow>> => {
     try {
       const response = await Axios({
         url: `/api/v1/lmc/${lmcId}/writers-overview/`,
         method: "GET",
         params,
       });
-      return response.data;
+      return response.data as IPaginatedResults<ILmcWriterOverviewRow>;
     } catch (error) {
       throw handleApiError(error);
     }

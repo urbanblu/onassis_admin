@@ -1,7 +1,7 @@
 "use client";
 import { Avatar, Button, CloseButton, Separator, Tabs } from "@heroui/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import MoneyIcon from "@/public/images/double-money.webp";
 import Image from "next/image";
@@ -11,10 +11,37 @@ import { IoSend } from "react-icons/io5";
 import ToastService from "@/utils/toast-service";
 import { LuMapPin } from "react-icons/lu";
 import { ImBin } from "react-icons/im";
+import EditLmcUserDrawer from "../_components/edit-lmc-user-drawer";
+import { useQuery } from "@tanstack/react-query";
+import LmcService from "@/api/lmc";
+import { ILmcSummary } from "@/interfaces/lmc.interface";
+
+const formatGHS = (n: number) =>
+  `GHS ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 function LmcDetailView() {
   const router = useRouter();
+  const params = useParams();
+  const lmcId = String(params.id ?? "");
   const [activeTab, setActiveTab] = useState("transactions");
+
+  const { data: summary } = useQuery<ILmcSummary>({
+    queryKey: ["lmc", lmcId, "summary"],
+    queryFn: () => LmcService.fetchSummary(lmcId),
+    enabled: !!lmcId,
+  });
+
+  const s = summary?.summary;
+  const info = summary?.lmc_info;
+
+  const initials = info?.name
+    ? info.name
+        .split(" ")
+        .slice(0, 2)
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase()
+    : "—";
 
   return (
     <div className="px-5">
@@ -25,33 +52,49 @@ function LmcDetailView() {
         <Avatar size="sm" className="w-12 h-12">
           <Avatar.Image alt="" src={""} />
           <Avatar.Fallback className="bg-blue-500 text-xl font-gotham-bold text-white">
-            {"BA"}
+            {initials}
           </Avatar.Fallback>
         </Avatar>
         <div className="text-xs">
-          <span className="font-gotham-black text-2xl">Bismark Asiedu</span>
-          <span className="text-gray-500">/</span>
-          <span className="text-blue-500 font-gotham-regular cursor-pointer">
-            EDIT
+          <span className="font-gotham-black text-2xl">
+            {info?.name ?? "—"}
           </span>
+          <span className="text-gray-500">/</span>
+          <EditLmcUserDrawer />
         </div>
       </div>
 
       <div className="grid md:grid-cols-5 items-start h-full gap-5">
         <div className="space-y-5 col-span-4">
           <div className="grid md:grid-cols-4 sm:grid-cols-2 space-x-3 gap-4">
-            {[1, 2, 3, 4].map((i, index) => {
-              return (
-                <TopCard
-                  key={index}
-                  icon={<Image src={MoneyIcon} alt="money image" />}
-                  value={"GHS 2,897,302.66"}
-                  label="YTD Sales"
-                  subtitle={"Contribution Ratio"}
-                  chartValue={7}
-                />
-              );
-            })}
+            <TopCard
+              icon={<Image src={MoneyIcon} alt="money image" />}
+              value={s ? formatGHS(s.ytd_sales) : "—"}
+              label="YTD Sales"
+              subtitle={"Contribution Ratio"}
+              chartValue={s?.ytd_sales_ratio ?? 0}
+            />
+            <TopCard
+              icon={<Image src={MoneyIcon} alt="money image" />}
+              value={s ? formatGHS(s.ytd_topups) : "—"}
+              label="YTD Top-Ups"
+              subtitle={"Contribution Ratio"}
+              chartValue={s?.ytd_topups_ratio ?? 0}
+            />
+            <TopCard
+              icon={<Image src={MoneyIcon} alt="money image" />}
+              value={s ? formatGHS(s.ytd_winnings) : "—"}
+              label="YTD Winnings"
+              subtitle={"Contribution Ratio"}
+              chartValue={s?.ytd_winnings_ratio ?? 0}
+            />
+            <TopCard
+              icon={<Image src={MoneyIcon} alt="money image" />}
+              value={s ? String(s.writers_count) : "—"}
+              label="Writers"
+              subtitle={"Contribution Ratio"}
+              chartValue={s?.writers_ratio ?? 0}
+            />
           </div>
           <div>
             <Tabs
@@ -94,28 +137,48 @@ function LmcDetailView() {
               <LmcDetailTable
                 type="Transactions"
                 tabs={["View All", "Commissions", "Top-ups", "Transfers"]}
+                lmcId={lmcId}
               />
             )}
             {activeTab === "writers" && (
               <LmcDetailTable
                 type="Writers"
-                tabs={["View All", "Active", "Passive", "Inactive", "Recover", "No Use"]}
+                tabs={[
+                  "View All",
+                  "Active",
+                  "Passive",
+                  "Inactive",
+                  "Recover",
+                  "No Use",
+                ]}
+                lmcId={lmcId}
               />
             )}
             {activeTab === "agents" && (
               <LmcDetailTable
                 type="Agents"
                 tabs={["View All", "Active", "Inactive"]}
+                lmcId={lmcId}
               />
             )}
           </div>
         </div>
 
         <div className="col-span-1 space-y-5">
-          <TodayCard />
-          <PrimaryAddressCard />
+          <TodayCard
+            walletBalance={s ? formatGHS(s.wallet_balance) : "—"}
+            todayDeposits={s ? formatGHS(s.today_deposits) : "GHS 0.00"}
+          />
+          <PrimaryAddressCard
+            name={info?.name}
+            address={info?.address}
+            phone={info?.phone}
+          />
           <NationalFootprintCard />
-          <PosCard />
+          <PosCard
+            posIssued={info?.pos_issued ?? 0}
+            posTrading={info?.pos_trading ?? 0}
+          />
         </div>
       </div>
     </div>
@@ -124,17 +187,23 @@ function LmcDetailView() {
 
 export default LmcDetailView;
 
-const PosCard = () => {
+const PosCard = ({
+  posIssued,
+  posTrading,
+}: {
+  posIssued: number;
+  posTrading: number;
+}) => {
   return (
     <div className="flex flex-col border rounded-sm p-4 space-y-2">
       <div className="flex flex-row justify-between">
         <span className="text-xs font-gotham-black">POS Issued</span>
-        <span className="text-xs font-jura-bold">0</span>
+        <span className="text-xs font-jura-bold">{posIssued}</span>
       </div>
       <Separator />
       <div className="flex flex-row justify-between">
-        <span className="text-xs font-gotham-black">POS Issued</span>
-        <span className="text-xs font-jura-bold">0</span>
+        <span className="text-xs font-gotham-black">POS Trading</span>
+        <span className="text-xs font-jura-bold">{posTrading}</span>
       </div>
     </div>
   );
@@ -151,14 +220,22 @@ const NationalFootprintCard = () => {
   );
 };
 
-const PrimaryAddressCard = () => {
+const PrimaryAddressCard = ({
+  name,
+  address,
+  phone,
+}: {
+  name?: string;
+  address?: string;
+  phone?: string;
+}) => {
   return (
     <div className="flex flex-col items-start border rounded-sm p-6 h-full space-y-2">
       <span className="text-xs font-gotham-black text-gray-500">
         Primary Address
       </span>
-      <span className="font-jura-bold text-sm">Greater Accra</span>
-      <span className="font-jura-bold text-sm">N/A</span>
+      <span className="font-jura-bold text-sm">{name ?? "—"}</span>
+      <span className="font-jura-bold text-sm">{address || "N/A"}</span>
       <div className="flex flex-row items-center space-x-2">
         <LuMapPin />
         <span className="font-jura-bold text-sm text-[#0a6ffd]">N/A</span>
@@ -166,19 +243,23 @@ const PrimaryAddressCard = () => {
       <span className="text-xs font-gotham-black text-gray-500">
         Phone Numbers
       </span>
-      <div className="flex items-center w-full space-x-2">
-        <div className="border rounded-sm border-gray-300 p-2 text-xs font-gotham-black w-full">
-          +233 (0)20 340 2595
+      {phone ? (
+        <div className="flex items-center w-full space-x-2">
+          <div className="border rounded-sm border-gray-300 p-2 text-xs font-gotham-black w-full">
+            {phone}
+          </div>
+          <CloseButton
+            className="bg-transparent border rounded-sm p-4"
+            onClick={() =>
+              ToastService.info({ text: "Feature not yet available" })
+            }
+          >
+            <ImBin />
+          </CloseButton>
         </div>
-        <CloseButton
-          className="bg-transparent border rounded-sm p-4"
-          onClick={() =>
-            ToastService.info({ text: "Feature not yet available" })
-          }
-        >
-          <ImBin />
-        </CloseButton>
-      </div>
+      ) : (
+        <span className="text-xs text-gray-400">—</span>
+      )}
       <span
         className="text-[#0a6ffd] text-xs cursor-pointer"
         onClick={() => ToastService.info({ text: "Feature not yet available" })}
@@ -189,15 +270,23 @@ const PrimaryAddressCard = () => {
   );
 };
 
-const TodayCard = () => {
+const TodayCard = ({
+  walletBalance,
+  todayDeposits,
+}: {
+  walletBalance: string;
+  todayDeposits: string;
+}) => {
   return (
     <div className="border rounded-sm flex flex-col items-center p-6 h-full space-y-4">
-      <span className="text-xl font-jura-bold">GHS 77,636.62</span>
+      <span className="text-xl font-jura-bold">{walletBalance}</span>
       <div className="flex flex-row items-center space-x-2">
         <div className="rounded-full bg-[#0A6FFD] p-1.5 font-gotham-black text-[10px] text-white">
           Today
         </div>
-        <span className="text-sm font-jura-bold text-gray-500">GHS 0.00</span>
+        <span className="text-sm font-jura-bold text-gray-500">
+          {todayDeposits}
+        </span>
       </div>
       <div className="flex flex-row items-center space-x-2">
         <Button
