@@ -3,7 +3,15 @@
 import CustomSelectComponent from "@/components/custom-select-component";
 import GamesService from "@/api/games";
 import ToastService from "@/utils/toast-service";
-import { Button, CloseButton, CloseIcon, Drawer, Form, Label } from "@heroui/react";
+import {
+  Button,
+  CloseButton,
+  CloseIcon,
+  Drawer,
+  Form,
+  Label,
+  Spinner,
+} from "@heroui/react";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -20,7 +28,8 @@ function CreateDrawDrawer() {
 
   const { data: eventsData, isPending: eventsPending } = useQuery({
     queryKey: ["games", "events-list", today],
-    queryFn: () => GamesService.fetchDrawEvents({ page_size: 100, draw_date: today }),
+    queryFn: () =>
+      GamesService.fetchDrawEvents({ page_size: 100, draw_date: today }),
     enabled: drawerIsOpen,
   });
 
@@ -28,7 +37,11 @@ function CreateDrawDrawer() {
     () =>
       (eventsData?.results ?? []).map((e) => {
         const name =
-          e.event_name ?? e.name ?? e.game_type_name ?? e.game_type?.name ?? "—";
+          e.event_name ??
+          e.name ??
+          e.game_type_name ??
+          e.game_type?.name ??
+          "—";
         const date = e.draw_date
           ? new Date(e.draw_date).toLocaleDateString("en-GB", {
               day: "numeric",
@@ -72,10 +85,12 @@ function CreateDrawDrawer() {
     });
   };
 
+  console.log("eventOptions", eventOptions);
+
   return (
     <Drawer>
       <Button
-        className="rounded-sm bg-black text-xs font-gotham-bold"
+        className="rounded-sm bg-transparent border text-black text-xs font-gotham-bold"
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
@@ -118,7 +133,10 @@ function CreateDrawDrawer() {
                   }
 
                   try {
-                    await createResult({ eventId: selectedEventId, nums: parsed });
+                    await createResult({
+                      eventId: selectedEventId,
+                      nums: parsed,
+                    });
                   } catch (error) {
                     ToastService.error({
                       text:
@@ -148,7 +166,9 @@ function CreateDrawDrawer() {
                         <input
                           key={i}
                           value={val}
-                          onChange={(e) => handleNumberChange(i, e.target.value)}
+                          onChange={(e) =>
+                            handleNumberChange(i, e.target.value)
+                          }
                           placeholder="—"
                           className="w-12 h-12 text-center text-sm font-jura-bold border border-gray-300 rounded-sm focus:outline-none focus:border-black"
                         />
@@ -159,9 +179,18 @@ function CreateDrawDrawer() {
                   <Button
                     className="rounded-sm bg-black w-full text-xs font-gotham-black mt-2"
                     type="submit"
+                    isPending={isSubmitting}
                     isDisabled={isSubmitting}
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Result"}
+                    {({ isPending }) => (
+                      <>
+                        {isPending ? (
+                          <Spinner color="current" size="sm" />
+                        ) : (
+                          "Submit Result"
+                        )}
+                      </>
+                    )}
                   </Button>
                 </div>
               </Form>

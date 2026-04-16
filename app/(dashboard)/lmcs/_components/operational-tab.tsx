@@ -11,16 +11,24 @@ function OperationalTab({ operational }: { operational: ILmcOperational }) {
       <InfoItem label="Recover:" value={String(operational.recover)} />
       <InfoItem label="No Use:" value={String(operational.no_use)} />
       <Separator className="bg-black" />
-      <span className="text-sm font-gotham-bold">
-        Writers ({operational.writers_total})
-      </span>
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-gotham-bold">Writers</span>
+        <span className="text-xs font-jura-bold">
+          {operational.writers_total}
+        </span>
+      </div>
+
       <Separator className="bg-black" />
-      <InfoItem label="POS Issued:" value={String(operational.pos_issued)} labelClassName="text-black" />
+      <InfoItem
+        label="POS Issued:"
+        value={String(operational.pos_issued)}
+        labelClassName="text-black"
+      />
       <InfoItem label="POS Trading:" value={String(operational.pos_trading)} />
       <InfoItem
         label="POS Recovery:"
         value={String(operational.pos_recovery)}
-        labelClassName="text-red"
+        labelClassName="text-[#FF0000]"
       />
     </div>
   );

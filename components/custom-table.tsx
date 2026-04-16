@@ -26,6 +26,7 @@ export interface CustomTableProps {
   onPageSizeChange?: (size: number) => void;
   onRowClick?: (row: TableRow, index: number) => void;
   onSort?: (column: string, direction: "asc" | "desc") => void;
+  enablePagination?: boolean;
   onRender?: (
     row: TableRow,
     index: number,
@@ -35,6 +36,7 @@ export interface CustomTableProps {
   isRefetching: boolean;
   emptyMessage?: string;
   className?: string;
+  addTableBorder?: boolean;
 }
 
 function CustomTable({
@@ -51,7 +53,9 @@ function CustomTable({
   onPageSizeChange,
   onRowClick,
   onSort,
+  addTableBorder = true,
   onRender,
+  enablePagination = true,
   loading = false,
   isRefetching = false,
   emptyMessage = "No data available",
@@ -121,7 +125,9 @@ function CustomTable({
   return (
     <div className={`flex flex-col sm:h-full min-w-0 ${className}`}>
       <div className="sm:flex-1 sm:min-h-0 min-w-0 flex flex-col">
-        <Table className="w-full min-w-0 rounded-sm bg-transparent border sm:h-full flex flex-col">
+        <Table
+          className={`w-full min-w-0 rounded-sm bg-transparent ${addTableBorder ? "border" : ""} sm:h-full flex flex-col`}
+        >
           <Table.ScrollContainer className="w-full min-w-0 flex-1 min-h-0 overflow-x-auto overflow-y-auto max-h-[min(58dvh,26rem)] md:max-h-[min(62dvh,30rem)] lg:max-h-[min(62dvh,30rem)] lg:overflow-y-auto">
             <Table.Content
               aria-label="Custom data table"
@@ -192,7 +198,7 @@ function CustomTable({
             </Table.Content>
           </Table.ScrollContainer>
 
-          {!loading && (
+          {!loading && enablePagination && (
             <Table.Footer className="border-t">
               <Pagination size="sm">
                 <Pagination.Summary>

@@ -5,6 +5,7 @@ import {
   IDrawEventTicketsResponse,
   IDrawsWinningsTableRow,
   IGameType,
+  IPendingApprovalsResponse,
 } from "@/interfaces/games.interface";
 import { IPaginatedResults } from "@/interfaces/writers.interface";
 import { handleApiError } from "@/utils/api_error";
@@ -79,7 +80,8 @@ class GamesService {
         method: "GET",
         params,
       });
-return response.data as IPaginatedResults<IDrawEvent>;
+
+      return response.data as IPaginatedResults<IDrawEvent>;
     } catch (error) {
       throw handleApiError(error);
     }
@@ -94,6 +96,42 @@ return response.data as IPaginatedResults<IDrawEvent>;
         url: `/api/v1/games/events/${eventId}/result/`,
         method: "POST",
         data: payload,
+      });
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static fetchPendingApprovals =
+    async (): Promise<IPendingApprovalsResponse> => {
+      try {
+        const response = await Axios({
+          url: `/api/v1/games/events/pending-approvals/`,
+          method: "GET",
+        });
+        return response.data as IPendingApprovalsResponse;
+      } catch (error) {
+        throw handleApiError(error);
+      }
+    };
+
+  static confirmDrawResult = async (confirmUrl: string): Promise<void> => {
+    try {
+      await Axios({ url: `/api/v1/${confirmUrl}`, method: "POST" });
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static rejectDrawResult = async (
+    rejectUrl: string,
+    reason?: string,
+  ): Promise<void> => {
+    try {
+      await Axios({
+        url: `/api/v1/${rejectUrl}`,
+        method: "POST",
+        data: reason ? { reason } : undefined,
       });
     } catch (error) {
       throw handleApiError(error);

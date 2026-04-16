@@ -10,11 +10,15 @@ import CreateDrawDrawer from "./_components/create-draw-drawer";
 import { useQuery } from "@tanstack/react-query";
 import FinancialsService from "@/api/financials";
 import GamesService from "@/api/games";
+import ManageDrawNumbersDrawer from "./_components/manage-draw-numbers";
+import ManageDrawDrawer from "./_components/manage-draw-numbers";
+import { Button } from "@heroui/react";
 
 function DrawView() {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageSize, setCurrentPageSize] = useState(20);
   const [isDrawOpen, setDrawnIsOpen] = React.useState(false);
+  const [isManageDrawOpen, setManageDrawnIsOpen] = React.useState(false);
   const [selectedEventId, setSelectedEventId] = React.useState<string | null>(
     null,
   );
@@ -109,7 +113,16 @@ function DrawView() {
         <span className="text-sm sm:text-lg transition-all font-gotham-black uppercase">
           DRAWS & WINNINGS
         </span>
-        <CreateDrawDrawer />
+        <div className="space-x-2">
+          <CreateDrawDrawer />
+          <Button
+            className="rounded-sm bg-black text-white text-xs font-gotham-bold"
+            size="md"
+            onClick={() => setManageDrawnIsOpen(true)}
+          >
+            Manage Draws
+          </Button>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-3 gap-3 shrink-0">
@@ -279,6 +292,10 @@ function DrawView() {
         onCloseTap={closeDrawer}
         eventId={selectedEventId}
         drawerMode={drawerMode}
+      />
+      <ManageDrawDrawer
+        isOpen={isManageDrawOpen}
+        onCloseTap={() => setManageDrawnIsOpen(false)}
       />
     </div>
   );

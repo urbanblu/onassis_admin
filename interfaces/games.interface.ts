@@ -104,3 +104,22 @@ export interface IDrawEvent {
 export interface ICreateDrawResultPayload {
   numbers: number[];
 }
+
+export interface IPendingApproval {
+  approval_id: string;
+  draw_event_id: string;
+  event_no: number;
+  event_name: string | null;
+  game_type: string;
+  draw_date: string;
+  numbers: number[];
+  submitted_by: string;
+  submitted_at: string;
+  confirm_url: string;
+  reject_url: string;
+}
+
+export interface IPendingApprovalsResponse {
+  count: number;
+  pending: IPendingApproval[];
+}

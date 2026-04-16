@@ -54,7 +54,6 @@ function GlobalNavbar({ children }: { children: React.ReactNode }) {
     { label: "Reports", href: "/reports" },
     { label: "LMCs", href: "/lmcs" },
     { label: "Retailers", href: "/retailers" },
-    { label: "Players", href: "/players" },
   ];
 
   return (

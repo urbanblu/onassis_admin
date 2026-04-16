@@ -13,8 +13,10 @@ import { useQuery } from "@tanstack/react-query";
 import LmcService from "@/api/lmc";
 import { useMemo, useState } from "react";
 import ToastService from "@/utils/toast-service";
+import { useRouter } from "next/navigation";
 
 function Lmcs() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const { data: cards = [], isPending } = useQuery({
     queryKey: ["lmc", "detail-cards"],
@@ -76,7 +78,7 @@ function Lmcs() {
       <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-3 gap-y-3">
         {isPending && (
           <div className="flex flex-row justify-center mt-10">
-            <Spinner />
+            <Spinner size="sm" />
           </div>
         )}
         {!isPending &&
@@ -85,15 +87,16 @@ function Lmcs() {
             return (
               <div
                 key={card.id}
-                className="border rounded-sm flex flex-col items-center py-3"
+                className="border rounded-sm flex flex-col items-center py-3 cursor-pointer"
+                onClick={() => router.push(`/lmcs/${card.id}`)}
               >
-                <Avatar size="lg" className="w-20 h-20">
+                <Avatar size="sm" className="w-17 h-17">
                   <Avatar.Image alt="" src={card.photo_url ?? ""} />
                   <Avatar.Fallback className="bg-[#F8A824] text-2xl font-gotham-bold">
                     {initial}
                   </Avatar.Fallback>
                 </Avatar>
-                <span className="font-gotham-bold text-center px-2">
+                <span className="font-gotham-bold text-center px-2 mt-2">
                   {card.name}
                 </span>
                 <span className="font-jura-medium text-xs mb-2">

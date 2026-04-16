@@ -97,7 +97,7 @@ function TeamMembers() {
       <div className="md:flex-1 md:min-h-0 overflow-y-auto custom-scrollbar pr-1 space-y-3">
         {isPending ? (
           <div className="w-full flex flex-row justify-center mt-3">
-            <Spinner size="md" />
+            <Spinner size="sm" />
           </div>
         ) : filteredAdmins.length === 0 ? (
           <div className="w-full flex flex-row justify-center mt-3 text-xs">
