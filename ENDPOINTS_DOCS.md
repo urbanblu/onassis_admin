@@ -2818,12 +2818,22 @@ These endpoints power the summary cards shown in the admin/operator UI. Each ret
       "event_id": 828,
       "event_name": "Morning VAG",
       "event_no": 828,
+      "game_type": {
+        "id": "",
+        "name": "Morning VAG",
+        "code": "MVG"
+      },
       "winning_numbers": [43, 5, 90, 56, 70]
     },
     {
       "event_id": 135,
       "event_name": "5/90 Noonrush",
       "event_no": 135,
+      "game_type": {
+        "id": "",
+        "name": "Morning VAG",
+        "code": "MVG"
+      },
       "winning_numbers": [78, 55, 41, 4, 8]
     }
   ]

@@ -69,6 +69,11 @@ export interface IWinningEvent {
   event_name: string;
   event_no: number;
   winning_numbers: number[];
+  game_type?: {
+    id: string;
+    name: string;
+    code: string;
+  };
 }
 
 export interface IWinningEventsResponse {

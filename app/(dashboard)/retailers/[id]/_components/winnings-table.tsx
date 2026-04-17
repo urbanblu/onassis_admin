@@ -50,7 +50,6 @@ function WinningsTable({ writerId }: { writerId: string }) {
       <CustomTable
         columns={[
           { key: "ticket", label: "Ticket #", sortable: true },
-          { key: "ticket", label: "Ticket #", sortable: true },
           { key: "event", label: "Event #", sortable: false },
           { key: "game", label: "Game", sortable: true },
           { key: "play", label: "Play", sortable: false },

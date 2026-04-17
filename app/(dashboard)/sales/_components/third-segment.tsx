@@ -46,7 +46,7 @@ function ThirdSalesSegment() {
     return [
       { key: "all", label: "All" },
       ...gameTypes.map((g) => ({
-        key: g.code,
+        key: g.id,
         label: g.name,
       })),
     ];
@@ -58,16 +58,8 @@ function ThirdSalesSegment() {
   const visibleEvents = useMemo(() => {
     const events = winningEvents?.events ?? [];
     if (selectedGameKey === "all") return events;
-    return events.filter((event) => {
-      const finalGameName =
-        selectedGameName.toLowerCase() == "noonrush"
-          ? "noon rush"
-          : selectedGameName.toLowerCase();
-      const finalEventName = event?.event_name?.toLowerCase();
-
-      return finalEventName?.includes(finalGameName);
-    });
-  }, [winningEvents?.events, selectedGameKey, selectedGameName]);
+    return events.filter((event) => event.game_type?.id === selectedGameKey);
+  }, [winningEvents?.events, selectedGameKey]);
 
   const visibleWinners = useMemo(() => {
     const winners = winnersList?.winners ?? [];
