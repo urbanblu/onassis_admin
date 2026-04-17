@@ -52,9 +52,6 @@ function ThirdSalesSegment() {
     ];
   }, [gameTypes]);
 
-  const selectedGameName =
-    gameOptions.find((g) => g.key === selectedGameKey)?.label ?? "All";
-
   const visibleEvents = useMemo(() => {
     const events = winningEvents?.events ?? [];
     if (selectedGameKey === "all") return events;
@@ -64,10 +61,9 @@ function ThirdSalesSegment() {
   const visibleWinners = useMemo(() => {
     const winners = winnersList?.winners ?? [];
     if (selectedGameKey === "all") return winners;
-    return winners.filter((winner) =>
-      winner.event_name.toLowerCase().includes(selectedGameName.toLowerCase()),
-    );
-  }, [winnersList?.winners, selectedGameKey, selectedGameName]);
+    const visibleEventNos = new Set(visibleEvents.map((e) => e.event_no));
+    return winners.filter((winner) => visibleEventNos.has(winner.event_no));
+  }, [winnersList?.winners, selectedGameKey, visibleEvents]);
 
   return (
     <div className="flex flex-col space-y-3 md:min-h-0 md:overflow-hidden">
