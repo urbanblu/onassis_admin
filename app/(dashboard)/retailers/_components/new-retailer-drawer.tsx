@@ -5,7 +5,14 @@ import LmcService from "@/api/lmc";
 import WritersService from "@/api/writers";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import ToastService from "@/utils/toast-service";
-import { Button, CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
+import {
+  Button,
+  CloseButton,
+  CloseIcon,
+  Drawer,
+  Form,
+  Spinner,
+} from "@heroui/react";
 import { DateValue, getLocalTimeZone, today } from "@internationalized/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -146,7 +153,7 @@ function NewRetailerDrawer(payload: Props) {
                   <span className="text-lg font-gotham-black">
                     Add New Retailer
                   </span>
-                  <div className="space-y-4">
+                  <div className="space-y-4 mt-4">
                     <InputComponent />
                     <div className="w-full flex justify-center">
                       <div
@@ -259,8 +266,17 @@ function NewRetailerDrawer(payload: Props) {
                     className="rounded-sm bg-black w-full text-xs font-gotham-black mt-2"
                     type="submit"
                     isDisabled={writerPending}
+                    isPending={writerPending}
                   >
-                    {writerPending ? "Saving..." : "Save"}
+                    {({ isPending }) => (
+                      <>
+                        {isPending ? (
+                          <Spinner color="current" size="sm" />
+                        ) : (
+                          "Save"
+                        )}
+                      </>
+                    )}
                   </Button>
                 </div>
               </Form>

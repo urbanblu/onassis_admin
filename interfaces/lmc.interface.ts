@@ -1,3 +1,11 @@
+export interface ILmcEditPayload {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  photo?: File | null;
+}
+
 export interface IAvailableLmcOwner {
   id: string;
   email: string;

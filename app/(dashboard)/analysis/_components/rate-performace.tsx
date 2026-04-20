@@ -37,7 +37,13 @@ const getBarColor = (value: number) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderCustomLabel = (props: any) => {
-  const { x = 0, y = 0, width = 0, height = 0, value = 0 } = props as {
+  const {
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    value = 0,
+  } = props as {
     x: number;
     y: number;
     width: number;
@@ -190,7 +196,7 @@ function RetentionRatePerformance() {
               label="Liquidation"
               value={liquidationCard?.total_liquidation ?? "N/A"}
               subLabel="Unclaimed Tickets"
-              subValue={liquidationCard?.unclaimed_tickets ?? "N/A"}
+              subValue={liquidationCard?.unclaimed_coupons ?? "N/A"}
             />
             <PrimaryCard
               label="Settlements"

@@ -104,12 +104,8 @@ function SecondSalesSegment() {
           </div>
         </div>
       ),
-      topUp: (
-        <span className="font-jura-bold text-sm">{row.topup}</span>
-      ),
-      sales: (
-        <span className="font-jura-bold text-sm">{row.sales}</span>
-      ),
+      topUp: <span className="font-jura-bold text-sm">{row.topup}</span>,
+      sales: <span className="font-jura-bold text-sm">{row.sales}</span>,
     };
   });
 

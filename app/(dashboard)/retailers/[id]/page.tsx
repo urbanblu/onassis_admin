@@ -15,6 +15,7 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
 import { formatGhs } from "@/utils/currency";
+import EditRetailerUserDrawer from "../_components/edit-retailer-user-drawer";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -38,15 +39,11 @@ function RetailerDetailView() {
   });
 
   if (!writerId) {
-    return (
-      <div className="p-6 text-sm text-gray-600">Invalid writer id.</div>
-    );
+    return <div className="p-6 text-sm text-gray-600">Invalid writer id.</div>;
   }
 
   if (isPending || !profile) {
-    return (
-      <div className="p-6 text-sm text-gray-600">Loading writer…</div>
-    );
+    return <div className="p-6 text-sm text-gray-600">Loading writer…</div>;
   }
 
   const initial = profile.name.charAt(0).toUpperCase();
@@ -62,13 +59,26 @@ function RetailerDetailView() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 px-3">
                 <Avatar size="md" className="w-12 h-12">
-                  <Avatar.Image alt="" src="" />
+                  <Avatar.Image alt={profile.lmc_name} src="" />
                   <Avatar.Fallback className="bg-[#F8A824] text-lg text-white font-gotham-bold">
                     {initial}
                   </Avatar.Fallback>
                 </Avatar>
-                <span className="text-sm font-gotham-black">{profile.name}</span>
-                <FaRegEdit className="w-3.5 h-3.5 text-blue-500" />
+                <div className="space-0 gap-0">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-gotham-black">
+                      {profile.name}
+                    </span>
+                    <EditRetailerUserDrawer writerId={writerId} />
+                  </div>
+                  <div className="space-x-1 text-[10px] text-gray-500 font-gotham-medium">
+                    <span>{`under`}</span>
+                    <span className="font-gotham-black">
+                      {profile.lmc_name}
+                    </span>
+                    <span>{`Mgmt`}</span>
+                  </div>
+                </div>
               </div>
 
               <LeftInfoItem title="ID:" value={profile.writer_id_display} />
@@ -134,10 +144,14 @@ function RetailerDetailView() {
               value={formatGhs(Number.isFinite(ytdSalesNum) ? ytdSalesNum : 0)}
               subtitle={
                 <div className="flex space-x-1 text-gray-500">
-                  <span className="font-gotham-black text-xs">{"This month"}</span>
+                  <span className="font-gotham-black text-xs">
+                    {"This month"}
+                  </span>
                   <span className="font-jura-bold text-xs">
                     {formatGhs(
-                      Number.isFinite(thisMonthSalesNum) ? thisMonthSalesNum : 0,
+                      Number.isFinite(thisMonthSalesNum)
+                        ? thisMonthSalesNum
+                        : 0,
                     )}
                   </span>
                 </div>
@@ -155,9 +169,13 @@ function RetailerDetailView() {
               value={formatGhs(parseFloat(String(profile.ytd_topups)) || 0)}
               subtitle={
                 <div className="flex space-x-1 text-gray-500">
-                  <span className="font-gotham-black text-xs">{"This month"}</span>
+                  <span className="font-gotham-black text-xs">
+                    {"This month"}
+                  </span>
                   <span className="font-jura-bold text-xs">
-                    {formatGhs(parseFloat(String(profile.this_month_topups)) || 0)}
+                    {formatGhs(
+                      parseFloat(String(profile.this_month_topups)) || 0,
+                    )}
                   </span>
                 </div>
               }
@@ -174,7 +192,9 @@ function RetailerDetailView() {
               value={formatGhs(parseFloat(String(profile.ytd_winnings)) || 0)}
               subtitle={
                 <div className="flex space-x-1 text-gray-500">
-                  <span className="font-gotham-black text-xs">{"This month"}</span>
+                  <span className="font-gotham-black text-xs">
+                    {"This month"}
+                  </span>
                   <span className="font-jura-bold text-xs">
                     {formatGhs(
                       parseFloat(String(profile.this_month_winnings)) || 0,
@@ -188,7 +208,9 @@ function RetailerDetailView() {
               value={profile.ranking_tier}
               subtitle={
                 <div className="flex space-x-1 text-gray-500">
-                  <span className="font-gotham-black text-xs">{"Avg. Top-Up"}</span>
+                  <span className="font-gotham-black text-xs">
+                    {"Avg. Top-Up"}
+                  </span>
                   <span className="font-jura-bold text-xs">
                     {formatGhs(Number.isFinite(avgTop) ? avgTop : 0)}
                   </span>

@@ -34,8 +34,6 @@ class AuthService {
         },
       });
 
-      console.log("response", response);
-
       return response.data.data;
     } catch (error) {
       throw handleApiError(error);
@@ -47,15 +45,11 @@ class AuthService {
   };
 
   static fetchProfile = async (): Promise<IUser> => {
-    const { auth } = useAuth.getState();
-    console.log("auth", auth);
     try {
       const response = await Axios({
         url: `/api/v1/auth/me`,
         method: "GET",
       });
-
-      console.log("response", response);
 
       return response.data as unknown as IUser;
     } catch (error) {

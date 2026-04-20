@@ -99,8 +99,8 @@ export interface IWinsCard {
 export interface ILiquidationCard {
   total_liquidation: string;
   total_liquidation_amount: number;
-  unclaimed_tickets: string;
-  unclaimed_tickets_amount: number;
+  unclaimed_coupons: string;
+  unclaimed_coupons_amount: number;
   currency: string;
 }
 

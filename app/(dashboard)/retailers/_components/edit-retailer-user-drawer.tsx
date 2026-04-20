@@ -1,7 +1,7 @@
 "use client";
 
 import CustomInputComponent from "@/components/custom-input-component";
-import LmcService from "@/api/lmc";
+import WritersService from "@/api/writers";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import ToastService from "@/utils/toast-service";
 import {
@@ -12,20 +12,14 @@ import {
   Form,
   Spinner,
 } from "@heroui/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import React from "react";
 import { IoCameraOutline } from "react-icons/io5";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import type { ILmcSummaryInfo } from "@/interfaces/lmc.interface";
+import { FaRegEdit } from "react-icons/fa";
 
-function EditLmcUserDrawer({
-  lmcId,
-  info,
-}: {
-  lmcId: string;
-  info?: ILmcSummaryInfo;
-}) {
+function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
   const [drawerIsOpen, setDrawerOpen] = React.useState(false);
   const queryClient = useQueryClient();
 
@@ -44,27 +38,29 @@ function EditLmcUserDrawer({
     },
   });
 
-  const nameParts = info?.name?.split(" ") ?? [];
-  const defaultFirstName = nameParts[0] ?? "";
-  const defaultLastName = nameParts.slice(1).join(" ");
+  const { data: writerDetail } = useQuery({
+    queryKey: ["writers", writerId, "detail"],
+    queryFn: () => WritersService.fetchWriterDetail(writerId),
+    enabled: drawerIsOpen && !!writerId,
+  });
 
-  const { mutateAsync: editLmc, isPending } = useMutation({
-    mutationKey: ["lmc", lmcId, "edit"],
-    mutationFn: (payload: Parameters<typeof LmcService.editLmc>[1]) =>
-      LmcService.editLmc(lmcId, payload),
+  const { mutateAsync: editWriter, isPending } = useMutation({
+    mutationKey: ["writers", writerId, "edit"],
+    mutationFn: (payload: Parameters<typeof WritersService.editWriter>[1]) =>
+      WritersService.editWriter(writerId, payload),
     onSuccess: async () => {
-      ToastService.success({ text: "LMC updated successfully" });
+      ToastService.success({ text: "Retailer updated successfully" });
       await queryClient.invalidateQueries({
-        queryKey: ["lmc", lmcId, "summary"],
+        queryKey: ["writers", "profile", writerId],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["lmc", "detail-cards"],
+        queryKey: ["writers", writerId, "detail"],
       });
       clearFiles();
       setDrawerOpen(false);
     },
     onError: () => {
-      ToastService.error({ text: "Failed to update LMC" });
+      ToastService.error({ text: "Failed to update retailer" });
     },
   });
 
@@ -73,9 +69,10 @@ function EditLmcUserDrawer({
   ) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
-    await editLmc({
+    await editWriter({
       first_name: String(data.firstName ?? ""),
       last_name: String(data.lastName ?? ""),
+      email: String(data.email ?? ""),
       phone: String(data.phoneNumber ?? ""),
       photo: selfieFiles[0] ?? null,
     });
@@ -83,12 +80,10 @@ function EditLmcUserDrawer({
 
   return (
     <Drawer>
-      <span
-        className="text-blue-500 font-gotham-regular cursor-pointer"
+      <FaRegEdit
+        className="w-3.5 h-3.5 text-blue-500 cursor-pointer"
         onClick={() => setDrawerOpen(true)}
-      >
-        EDIT
-      </span>
+      />
       <Drawer.Backdrop
         variant="blur"
         className="backdrop-blur-xs"
@@ -108,24 +103,41 @@ function EditLmcUserDrawer({
             <Drawer.Body className="text-black">
               <Form onSubmit={handleSubmit}>
                 <div className="flex flex-col space-y-3">
-                  <span className="text-lg font-gotham-black">Edit LMC</span>
-                  <div key={info?.name ?? "loading"} className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-gotham-black">
+                      Edit Retailer
+                    </span>
+                  </div>
+                  <div
+                    key={writerDetail ? writerDetail.email : "loading"}
+                    className="space-y-4 mt-4"
+                  >
                     <SelfieInputComponent />
                     <div className="w-full flex justify-center">
                       <div
-                        className={`relative rounded-full w-35 h-35 ${selfieFiles.length === 0 ? "border" : ""} justify-center flex flex-col`}
+                        className={`relative rounded-full w-35 h-35 ${selfieFiles.length === 0 && !writerDetail?.photo_url ? "border" : ""} justify-center flex flex-col`}
                         onClick={onSelfieUploadClick}
                       >
                         <div
-                          className={`flex flex-col items-center ${selfieFiles.length === 0 ? "p-3" : ""} space-y-2`}
+                          className={`flex flex-col items-center ${selfieFiles.length === 0 && !writerDetail?.photo_url ? "p-3" : ""} space-y-2`}
                         >
                           {selfieFiles.length === 0 ? (
-                            <>
-                              <IoCameraOutline size={25} />
-                              <span className="text-center text-xs">
-                                Click to add photo
-                              </span>
-                            </>
+                            writerDetail?.photo_url ? (
+                              <Image
+                                src={writerDetail.photo_url}
+                                alt="Profile"
+                                className="w-35 h-35 object-cover rounded-full"
+                                width={140}
+                                height={140}
+                              />
+                            ) : (
+                              <>
+                                <IoCameraOutline size={25} />
+                                <span className="text-center text-xs">
+                                  Click to add photo
+                                </span>
+                              </>
+                            )
                           ) : (
                             <div className="relative w-35 h-35 rounded-full overflow-hidden">
                               <Image
@@ -154,22 +166,32 @@ function EditLmcUserDrawer({
                       label="First Name"
                       className="p-0 border rounded-sm border-gray-300"
                       name="firstName"
-                      defaultValue={defaultFirstName}
+                      defaultValue={writerDetail?.first_name}
                       isRequired
                     />
                     <CustomInputComponent
                       label="Last Name"
                       className="p-0 border rounded-sm border-gray-300"
                       name="lastName"
-                      defaultValue={defaultLastName}
+                      defaultValue={writerDetail?.last_name}
                       isRequired
+                    />
+                    <CustomInputComponent
+                      label="Email"
+                      className="p-0 border rounded-sm border-gray-300"
+                      name="email"
+                      type="email"
+                      showPreficIcon={false}
+                      showPlaceholder={false}
+                      isRequired={false}
+                      defaultValue={writerDetail?.email}
                     />
                     <CustomInputComponent
                       label="Phone Number"
                       className="p-0 border rounded-sm border-gray-300"
                       name="phoneNumber"
                       type="tel"
-                      defaultValue={info?.phone}
+                      defaultValue={writerDetail?.phone}
                     />
                   </div>
                   <Button
@@ -189,4 +211,4 @@ function EditLmcUserDrawer({
   );
 }
 
-export default EditLmcUserDrawer;
+export default EditRetailerUserDrawer;

@@ -2,6 +2,7 @@ import Axios from "@/api";
 import {
   IAvailableLmcOwner,
   ILmcDetailCard,
+  ILmcEditPayload,
   ILmcOwnerOption,
   ILmcRegisterResponse,
   ILmcSummary,
@@ -81,6 +82,7 @@ class LmcService {
         url: `/api/v1/lmc/register/`,
         method: "POST",
         data,
+        headers: hasPhoto ? { "Content-Type": undefined } : undefined,
       });
       return response.data as {
         user: {
@@ -145,6 +147,39 @@ class LmcService {
         params,
       });
       return response.data as IPaginatedResults<ILmcWriterOverviewRow>;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static editLmc = async (
+    lmcId: string,
+    payload: ILmcEditPayload,
+  ): Promise<unknown> => {
+    try {
+      const hasPhoto = payload.photo instanceof File;
+      let data: FormData | ILmcEditPayload;
+
+      if (hasPhoto) {
+        const formData = new FormData();
+        if (payload.first_name)
+          formData.append("first_name", payload.first_name);
+        if (payload.last_name) formData.append("last_name", payload.last_name);
+        if (payload.email) formData.append("email", payload.email);
+        if (payload.phone) formData.append("phone", payload.phone);
+        formData.append("photo", payload.photo as File);
+        data = formData;
+      } else {
+        data = payload;
+      }
+
+      const response = await Axios({
+        url: `/api/v1/lmc/${lmcId}/`,
+        method: "PATCH",
+        data,
+        headers: hasPhoto ? { "Content-Type": undefined } : undefined,
+      });
+      return response.data;
     } catch (error) {
       throw handleApiError(error);
     }

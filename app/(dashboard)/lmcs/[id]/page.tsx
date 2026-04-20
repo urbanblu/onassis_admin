@@ -60,7 +60,7 @@ function LmcDetailView() {
             {info?.name ?? "—"}
           </span>
           <span className="text-gray-500">/</span>
-          <EditLmcUserDrawer />
+          <EditLmcUserDrawer lmcId={lmcId} info={summary?.lmc_info} />
         </div>
       </div>
 

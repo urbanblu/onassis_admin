@@ -3,7 +3,14 @@ import { useFileUpload } from "@/hooks/use-file-upload";
 import LmcService from "@/api/lmc";
 import ToastService from "@/utils/toast-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
+import {
+  Button,
+  CloseButton,
+  CloseIcon,
+  Drawer,
+  Form,
+  Spinner,
+} from "@heroui/react";
 import Image from "next/image";
 import React from "react";
 import { IoCameraOutline } from "react-icons/io5";
@@ -34,44 +41,14 @@ function NewLmcDrawer(payload: Props) {
     },
   });
 
-  // const {
-  //   files: ghanaCardFront,
-  //   onClick: onFrontGhanaCardUploadClick,
-  //   InputComponent: FrontGhanaCardInput,
-  //   removeFile: removeFrontGhanaCard,
-  // } = useFileUpload({
-  //   accept: "image/*",
-  //   multiple: false,
-  //   maxSize: 10 * 1024 * 1024, // 10MB
-  //   onMaxFileSizeDetected: () => {
-  //     ToastService.info({
-  //       text: "Maximum file size exceeded",
-  //     });
-  //   },
-  // });
-
-  // const {
-  //   files: ghanaCardBack,
-  //   onClick: onBackGhanaCardUploadClick,
-  //   InputComponent: BackGhanaCardInput,
-  //   removeFile: removeBackGhanaCard,
-  // } = useFileUpload({
-  //   accept: "image/*",
-  //   multiple: false,
-  //   maxSize: 10 * 1024 * 1024, // 10MB
-  //   onMaxFileSizeDetected: () => {
-  //     ToastService.info({
-  //       text: "Maximum file size exceeded",
-  //     });
-  //   },
-  // });
-
   const { mutateAsync: registerLmc, isPending } = useMutation({
     mutationKey: ["lmc", "register-onboarding"],
     mutationFn: LmcService.registerLmcOnboarding,
     onSuccess: async () => {
       ToastService.success({ text: "LMC registered successfully" });
-      await queryClient.invalidateQueries({ queryKey: ["lmc", "detail-cards"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["lmc", "detail-cards"],
+      });
       setDrawerOpen(false);
     },
   });
@@ -138,7 +115,10 @@ function NewLmcDrawer(payload: Props) {
                     });
                   } catch (error) {
                     ToastService.error({
-                      text: error instanceof Error ? error.message : "Failed to register LMC",
+                      text:
+                        error instanceof Error
+                          ? error.message
+                          : "Failed to register LMC",
                     });
                   }
                 }}
@@ -229,89 +209,28 @@ function NewLmcDrawer(payload: Props) {
                       label="Confirm Password"
                       validate={(val) => {
                         if (!val) return "This field is required";
-                        if (val !== passwordValue) return "Passwords do not match";
+                        if (val !== passwordValue)
+                          return "Passwords do not match";
                         return null;
                       }}
                       className="p-0 border rounded-sm border-gray-300"
                     />
-                    {/* <span className="text-xs">Ghana Card - Front</span>
-                    <FrontGhanaCardInput />
-                    <div className="relative w-full">
-                      <Button
-                        className="w-full border rounded-sm h-30 bg-transparent p-0 mt-0.5"
-                        onPress={onFrontGhanaCardUploadClick}
-                      >
-                        {ghanaCardFront.length > 0 ? (
-                          <div className="relative w-full h-full">
-                            <Image
-                              src={URL.createObjectURL(ghanaCardFront[0])}
-                              alt="ghana-card-front"
-                              className="w-full h-full"
-                              width={0}
-                              height={0}
-                            />
-                            <div className="absolute top-1 right-1 p-1">
-                              <CloseButton
-                                className="bg-white"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeFrontGhanaCard(0);
-                                }}
-                              >
-                                <RiDeleteBin6Line className="text-red-500 w-4 h-4" />
-                              </CloseButton>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center">
-                            <IoAddCircleSharp className="text-black h-7 w-7" />
-                          </div>
-                        )}
-                      </Button>
-                    </div>
-                    <span className="text-xs">Ghana Card - Back</span>
-                    <div className="relative w-full">
-                      <Button
-                        className="w-full border rounded-sm h-30 bg-transparent mt-0.5"
-                        onPress={onBackGhanaCardUploadClick}
-                      >
-                        {ghanaCardBack.length > 0 ? (
-                          <div className="relative w-full h-full">
-                            <Image
-                              src={URL.createObjectURL(ghanaCardBack[0])}
-                              alt="ghana-card-back"
-                              className="w-full h-full"
-                              width={0}
-                              height={0}
-                            />
-                            <div className="absolute top-1 right-1 p-1">
-                              <CloseButton
-                                className="bg-white"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeBackGhanaCard(0);
-                                }}
-                              >
-                                <RiDeleteBin6Line className="text-red-500 w-4 h-4" />
-                              </CloseButton>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center">
-                            <IoAddCircleSharp className="text-black h-7 w-7" />
-                          </div>
-                        )}
-                      </Button>
-                    </div>
-
-                    <BackGhanaCardInput /> */}
                   </div>
                   <Button
                     className="rounded-sm bg-black w-full text-xs font-gotham-black mt-2"
                     type="submit"
                     isDisabled={isPending}
+                    isPending={isPending}
                   >
-                    {isPending ? "Saving..." : "Save"}
+                    {({ isPending }) => (
+                      <>
+                        {isPending ? (
+                          <Spinner color="current" size="sm" />
+                        ) : (
+                          "Save"
+                        )}
+                      </>
+                    )}
                   </Button>
                 </div>
               </Form>

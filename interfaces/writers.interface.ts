@@ -71,6 +71,7 @@ export interface IWriterListRow {
   ytd_topups: string;
   last_transaction_date: string;
   status: string;
+  photo_url?: string | null;
 }
 
 export interface IPaginatedResults<T> {
@@ -80,11 +81,28 @@ export interface IPaginatedResults<T> {
   results: T[];
 }
 
+export interface IWriterEditData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  photo_url: string | null;
+}
+
+export interface IWriterEditPayload {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  photo?: File | null;
+}
+
 export interface IWriterProfile {
   id: string;
   writer_id_display: string;
   name: string;
   gender: string;
+  lmc_name: string;
   date_of_birth: string;
   mobile: string;
   email: string;

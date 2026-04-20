@@ -305,8 +305,6 @@ function formatDayLabel(isoDay: string) {
 }
 
 function ActiveWritersStackedBarChart({ days }: { days: ActiveWriterDay[] }) {
-  console.log(days);
-
   const deployedColor = "#2ECC71";
   const activeColor = "#18A2B8";
   const gridColor = "#E5E7EB";

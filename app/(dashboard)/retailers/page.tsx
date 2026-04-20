@@ -89,7 +89,7 @@ function RetailersView() {
       name: (
         <div className="text-xs flex items-center gap-x-2">
           <Avatar size="sm" className="w-6 h-6">
-            <Avatar.Image alt="" src="" />
+            <Avatar.Image alt={initial} src={w.photo_url ?? ""} />
             <Avatar.Fallback className="bg-[#F8A824] text-sm font-gotham-bold text-white">
               {initial}
             </Avatar.Fallback>

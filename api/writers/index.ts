@@ -8,6 +8,8 @@ import {
   ITodayTopUp,
   ITop10Writer,
   IWriterCashoutRow,
+  IWriterEditData,
+  IWriterEditPayload,
   IWriterListRow,
   IWriterProfile,
   IWriterSaleRow,
@@ -120,10 +122,12 @@ class WritersService {
               total_writers: m.total_writers,
               active_writers: m.active_writers,
             }))
-        : Array.isArray((payload as { results?: unknown } | undefined)?.results)
-          ? ((payload as { results: IActiveWriterDailyStats["days"] }).results ??
-            [])
-          : [];
+          : Array.isArray(
+                (payload as { results?: unknown } | undefined)?.results,
+              )
+            ? ((payload as { results: IActiveWriterDailyStats["days"] })
+                .results ?? [])
+            : [];
 
       return {
         totals: base.totals ?? {
@@ -169,6 +173,7 @@ class WritersService {
         url: `/api/v1/writers/${writerId}/profile/`,
         method: "GET",
       });
+
       return response.data as IWriterProfile;
     } catch (error) {
       throw handleApiError(error);
@@ -239,6 +244,54 @@ class WritersService {
     }
   };
 
+  static fetchWriterDetail = async (
+    writerId: string,
+  ): Promise<IWriterEditData> => {
+    try {
+      const response = await Axios({
+        url: `/api/v1/writers/${writerId}/`,
+        method: "GET",
+      });
+
+      return response.data as IWriterEditData;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
+  static editWriter = async (
+    writerId: string,
+    payload: IWriterEditPayload,
+  ): Promise<IWriterEditData> => {
+    try {
+      const hasPhoto = payload.photo instanceof File;
+      let data: FormData | IWriterEditPayload;
+
+      if (hasPhoto) {
+        const formData = new FormData();
+        if (payload.first_name)
+          formData.append("first_name", payload.first_name);
+        if (payload.last_name) formData.append("last_name", payload.last_name);
+        if (payload.email) formData.append("email", payload.email);
+        if (payload.phone) formData.append("phone", payload.phone);
+        formData.append("photo", payload.photo as File);
+        data = formData;
+      } else {
+        data = payload;
+      }
+
+      const response = await Axios({
+        url: `/api/v1/writers/${writerId}/`,
+        method: "PATCH",
+        data,
+        headers: hasPhoto ? { "Content-Type": undefined } : undefined,
+      });
+      return response.data as IWriterEditData;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  };
+
   static registerWriter = async (
     payload: IRegisterWriterPayload,
   ): Promise<IRegisterWriterResponse> => {
@@ -262,6 +315,7 @@ class WritersService {
         url: `/api/v1/writers/register/`,
         method: "POST",
         data: formData,
+        headers: { "Content-Type": undefined },
       });
       return response.data as IRegisterWriterResponse;
     } catch (error) {

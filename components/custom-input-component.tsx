@@ -217,6 +217,47 @@ function CustomInputComponent({
                 minLength={minLength}
                 placeholder={placeholderText}
                 onChange={onChange}
+                onKeyDown={
+                  type === "tel"
+                    ? (e) => {
+                        const allowed = /^[0-9+\-\s()]$/;
+                        if (
+                          !allowed.test(e.key) &&
+                          !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab", "Home", "End"].includes(e.key) &&
+                          !e.metaKey &&
+                          !e.ctrlKey
+                        ) {
+                          e.preventDefault();
+                        }
+                      }
+                    : undefined
+                }
+                onPaste={
+                  type === "tel"
+                    ? (e) => {
+                        e.preventDefault();
+                        const pasted = e.clipboardData.getData("text");
+                        const sanitized = pasted.replace(/[^0-9+\-\s()]/g, "");
+                        const el = e.currentTarget;
+                        const start = el.selectionStart ?? el.value.length;
+                        const end = el.selectionEnd ?? el.value.length;
+                        const next =
+                          el.value.slice(0, start) +
+                          sanitized +
+                          el.value.slice(end);
+                        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                          window.HTMLInputElement.prototype,
+                          "value",
+                        )?.set;
+                        nativeInputValueSetter?.call(el, next);
+                        el.dispatchEvent(new Event("input", { bubbles: true }));
+                        el.setSelectionRange(
+                          start + sanitized.length,
+                          start + sanitized.length,
+                        );
+                      }
+                    : undefined
+                }
                 className="placeholder:text-xs focus:outline-none focus:ring-0 shadow-none text-xs"
               />
               {!!endContent && endContent}
