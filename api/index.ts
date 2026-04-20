@@ -59,6 +59,7 @@ Axios.interceptors.response.use(
 
         // Add the new token to the request header
         originalRequest.headers.Authorization = `Bearer ${newTokens.access}`;
+
         setAuth({
           ...(auth as IAuth),
           access: newTokens.access,

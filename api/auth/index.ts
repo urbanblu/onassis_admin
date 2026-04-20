@@ -34,7 +34,7 @@ class AuthService {
         },
       });
 
-      return response.data.data;
+      return response.data;
     } catch (error) {
       throw handleApiError(error);
     }
