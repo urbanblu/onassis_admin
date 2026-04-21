@@ -38,7 +38,7 @@ Axios.interceptors.response.use(
     // if refresh token expires
     if (
       error?.response?.status === 401 &&
-      originalRequest.url?.includes("/auth/token/refresh/")
+      originalRequest.url?.includes("/auth/token/refresh")
     ) {
       logout();
       return Promise.reject(error);
