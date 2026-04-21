@@ -14,6 +14,7 @@ import AdminUsersService from "@/api/admin-users";
 import ToastService from "@/utils/toast-service";
 import { FaRegEdit } from "react-icons/fa";
 import type { IAdminUser } from "@/interfaces/admin-users.interface";
+import ApiError from "@/utils/api_error";
 
 type Props = {
   user: IAdminUser;
@@ -39,6 +40,11 @@ function EditUserDrawer(payload: Props) {
       });
       payload.onEdited?.();
       setDrawerOpen(false);
+    },
+    onError: (error: ApiError) => {
+      ToastService.error({
+        text: error?.message ?? "Failed to update team member",
+      });
     },
   });
 

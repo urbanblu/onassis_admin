@@ -18,6 +18,7 @@ import React from "react";
 import { IoCameraOutline } from "react-icons/io5";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEdit } from "react-icons/fa";
+import ApiError from "@/utils/api_error";
 
 function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
   const [drawerIsOpen, setDrawerOpen] = React.useState(false);
@@ -59,8 +60,10 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
       clearFiles();
       setDrawerOpen(false);
     },
-    onError: () => {
-      ToastService.error({ text: "Failed to update retailer" });
+    onError: (error: ApiError) => {
+      ToastService.error({
+        text: error?.message ?? "Failed to update retailer",
+      });
     },
   });
 

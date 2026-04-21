@@ -12,6 +12,7 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AdminUsersService from "@/api/admin-users";
 import ToastService from "@/utils/toast-service";
+import ApiError from "@/utils/api_error";
 
 type Props = {
   onCreated?: () => void;
@@ -32,6 +33,11 @@ function NewUserDrawer(payload: Props) {
       });
       payload.onCreated?.();
       setDrawerOpen(false);
+    },
+    onError: (error: ApiError) => {
+      ToastService.error({
+        text: error?.message ?? "Unable to create admin",
+      });
     },
   });
 
@@ -143,7 +149,8 @@ function NewUserDrawer(payload: Props) {
                       showPlaceholder={false}
                       validate={(val) => {
                         if (!val) return "This field is required";
-                        if (val !== passwordValue) return "Passwords do not match";
+                        if (val !== passwordValue)
+                          return "Passwords do not match";
                         return null;
                       }}
                       showSuffixIcon={false}

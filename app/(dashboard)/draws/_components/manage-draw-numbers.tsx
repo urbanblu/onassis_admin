@@ -22,6 +22,7 @@ import { IPendingApproval } from "@/interfaces/games.interface";
 import ToastService from "@/utils/toast-service";
 import React from "react";
 import CustomSelectComponent from "@/components/custom-select-component";
+import ApiError from "@/utils/api_error";
 
 type PendingAction = {
   type: "confirm" | "reject";
@@ -97,8 +98,10 @@ function ManageDrawDrawer({
       setPendingAction(null);
       queryClient.invalidateQueries({ queryKey: ["pending-approvals"] });
     },
-    onError: () => {
-      ToastService.error({ text: "Action failed. Please try again." });
+    onError: (error: ApiError) => {
+      ToastService.error({
+        text: error?.message ?? "Action failed. Please try again.",
+      });
     },
   });
 

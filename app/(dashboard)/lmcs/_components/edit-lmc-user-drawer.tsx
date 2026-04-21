@@ -18,6 +18,7 @@ import React from "react";
 import { IoCameraOutline } from "react-icons/io5";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import type { ILmcSummaryInfo } from "@/interfaces/lmc.interface";
+import ApiError from "@/utils/api_error";
 
 function EditLmcUserDrawer({
   lmcId,
@@ -63,8 +64,10 @@ function EditLmcUserDrawer({
       clearFiles();
       setDrawerOpen(false);
     },
-    onError: () => {
-      ToastService.error({ text: "Failed to update LMC" });
+    onError: (error: ApiError) => {
+      ToastService.error({
+        text: error?.message ?? "Failed to update LMC",
+      });
     },
   });
 

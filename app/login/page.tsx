@@ -20,7 +20,7 @@ function LoginView() {
     mutationFn: AuthService.fetchProfile,
     onMutate: () => {},
     onError: (error) => {
-      ToastService.error({ text: error.message });
+      ToastService.error({ text: error?.message ?? "Unable to fetch profile" });
     },
     onSuccess: async (result) => {
       setAuth({ user: result!, access: auth!.access, refresh: auth!.refresh });
@@ -39,7 +39,7 @@ function LoginView() {
       }
     },
     onError: (error) => {
-      ToastService.error({ text: error.message });
+      ToastService.error({ text: error?.message ?? "Unable to login" });
     },
   });
 

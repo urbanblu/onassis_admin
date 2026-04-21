@@ -14,6 +14,7 @@ import {
 } from "@heroui/react";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import ApiError from "@/utils/api_error";
 
 const NUMBERS_COUNT = 5;
 const today = new Date().toISOString().split("T")[0];
@@ -67,6 +68,11 @@ function CreateDrawDrawer() {
         queryKey: ["games", "draws-and-winnings-table"],
       });
       handleClose();
+    },
+    onError: (error: ApiError) => {
+      ToastService.error({
+        text: error?.message ?? "Action failed. Please try again.",
+      });
     },
   });
 
@@ -130,19 +136,10 @@ function CreateDrawDrawer() {
                     return;
                   }
 
-                  try {
-                    await createResult({
-                      eventId: selectedEventId,
-                      nums: parsed,
-                    });
-                  } catch (error) {
-                    ToastService.error({
-                      text:
-                        error instanceof Error
-                          ? error.message
-                          : "Failed to submit draw result",
-                    });
-                  }
+                  await createResult({
+                    eventId: selectedEventId,
+                    nums: parsed,
+                  });
                 }}
               >
                 <div className="flex flex-col space-y-4">

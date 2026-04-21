@@ -18,6 +18,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { IoMailOutline } from "react-icons/io5";
 import { RiDownloadLine } from "react-icons/ri";
+import ApiError from "@/utils/api_error";
 
 const PAGE_SIZE = 10;
 
@@ -45,6 +46,11 @@ function ReportsView() {
       reportId: number;
       filters: Record<string, string | number>;
     }) => FinancialsService.executeReport(payload.reportId, payload.filters),
+    onError: (error: ApiError) => {
+      ToastService.error({
+        text: error?.message ?? "Unable to generate report",
+      });
+    },
   });
 
   const previewRows = useMemo(

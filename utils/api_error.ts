@@ -9,7 +9,7 @@ export default class ApiError extends Error {
 }
 
 export const handleApiError = (
-  error: Error | AxiosError | string | unknown
+  error: Error | AxiosError | string | unknown,
 ): ApiError => {
   let message = "An error occurred, please try again later";
 
@@ -27,7 +27,10 @@ export const handleApiError = (
       message = responseData.error.join(", ");
     } else if (typeof responseData?.error === "string" && responseData.error) {
       message = responseData.error;
-    } else if (responseData?.errors && typeof responseData.errors === "object") {
+    } else if (
+      responseData?.errors &&
+      typeof responseData.errors === "object"
+    ) {
       const flattened = Object.entries(responseData.errors).flatMap(
         ([field, value]) => {
           if (Array.isArray(value)) {

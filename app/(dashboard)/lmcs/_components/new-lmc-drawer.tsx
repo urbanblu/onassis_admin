@@ -15,6 +15,7 @@ import Image from "next/image";
 import React from "react";
 import { IoCameraOutline } from "react-icons/io5";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import ApiError from "@/utils/api_error";
 
 type Props = {
   onFilterTap?: (payload: { name: string; phoneNumber: string }) => void;
@@ -50,6 +51,11 @@ function NewLmcDrawer(payload: Props) {
         queryKey: ["lmc", "detail-cards"],
       });
       setDrawerOpen(false);
+    },
+    onError: (error: ApiError) => {
+      ToastService.error({
+        text: error?.message ?? "Failed to create new LMC",
+      });
     },
   });
 
