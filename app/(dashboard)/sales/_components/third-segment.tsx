@@ -230,7 +230,7 @@ const PermItem = ({ winner }: { winner: IWinnerRow }) => {
       <Separator className="my-3" />
       <div className="flex justify-between px-5 mt-5">
         <div className="flex flex-col">
-          <div className="flex space-x-2 items-center">
+          <div className="flex flex-wrap gap-2 items-center max-w-56">
             {firstLine.map((num, index) => (
               <div
                 key={`${num}-${index}`}
@@ -247,6 +247,7 @@ const PermItem = ({ winner }: { winner: IWinnerRow }) => {
             </span>
           </div>
         </div>
+
         <div className="flex flex-col items-end">
           <span className="font-jura-bold text-sm mb-1">
             {formatGhs(winner.win_amount)}
