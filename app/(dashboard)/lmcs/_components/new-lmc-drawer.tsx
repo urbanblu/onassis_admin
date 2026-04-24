@@ -105,28 +105,20 @@ function NewLmcDrawer(payload: Props) {
                     return;
                   }
 
-                  try {
-                    await registerLmc({
-                      email: String(data.email ?? ""),
-                      first_name: String(data.firstName ?? ""),
-                      last_name: String(data.lastName ?? ""),
-                      phone: String(data.phoneNumber ?? ""),
-                      password,
-                      address: String(data.location ?? ""),
-                      photo: files[0],
-                    });
-                    payload.onFilterTap?.({
-                      name: String(data.firstName ?? ""),
-                      phoneNumber: String(data.phoneNumber ?? ""),
-                    });
-                  } catch (error) {
-                    ToastService.error({
-                      text:
-                        error instanceof Error
-                          ? error.message
-                          : "Failed to register LMC",
-                    });
-                  }
+                  await registerLmc({
+                    email: String(data.email ?? ""),
+                    first_name: String(data.firstName ?? ""),
+                    last_name: String(data.lastName ?? ""),
+                    phone: String(data.phoneNumber ?? ""),
+                    password,
+                    address: String(data.location ?? ""),
+                    photo: files[0],
+                  });
+
+                  payload.onFilterTap?.({
+                    name: String(data.firstName ?? ""),
+                    phoneNumber: String(data.phoneNumber ?? ""),
+                  });
                 }}
               >
                 <div className="flex flex-col space-y-3">
