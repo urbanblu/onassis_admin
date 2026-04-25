@@ -83,6 +83,7 @@ export interface IWinningEventsResponse {
 
 export interface IWinnerRow {
   numbers_staked: number[][];
+  winning_lines: number[][];
   win_amount: number;
   player_phone: string;
   writer_name: string;

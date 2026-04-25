@@ -224,14 +224,14 @@ const MiniEventInfo = ({
 };
 
 const PermItem = ({ winner }: { winner: IWinnerRow }) => {
-  const firstLine = winner.numbers_staked?.[0] ?? [];
+  // const firstLine = winner.numbers_staked?.[0] ?? [];
   return (
     <div>
       <Separator className="my-3" />
       <div className="flex justify-between px-5 mt-5">
         <div className="flex flex-col">
           <div className="flex flex-wrap gap-2 items-center max-w-56">
-            {firstLine.map((num, index) => (
+            {winner.winning_lines[0].map((num, index) => (
               <div
                 key={`${num}-${index}`}
                 className="border p-1 font-jura-bold text-xs min-w-[24px] text-center rounded-sm"

@@ -84,13 +84,16 @@ class SalesService {
     }
   };
 
-  static fetchWinnersList = async (date?: string): Promise<IWinnersListResponse> => {
+  static fetchWinnersList = async (
+    date?: string,
+  ): Promise<IWinnersListResponse> => {
     try {
       const response = await Axios({
         url: `/api/v1/sales/wins/winners_list/`,
         method: "GET",
         params: date ? { date } : undefined,
       });
+
       return response.data as IWinnersListResponse;
     } catch (error) {
       throw handleApiError(error);
