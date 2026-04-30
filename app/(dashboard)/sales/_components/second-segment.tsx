@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
+import FinancialsService from "@/api/financials";
 
 function SecondSalesSegment() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,6 +27,11 @@ function SecondSalesSegment() {
   const { data: availableFloat, isPending: floatPending } = useQuery({
     queryKey: ["writers", "available-float"],
     queryFn: WritersService.fetchAvailableFloat,
+  });
+
+  const { data: writersAtWork } = useQuery({
+    queryKey: ["financials", "writers-at-work"],
+    queryFn: FinancialsService.fetchWritersAtWorkCard,
   });
 
   const writers = useMemo(() => stats?.writers ?? [], [stats?.writers]);
@@ -76,7 +82,9 @@ function SecondSalesSegment() {
   const loading = statsPending || topUpPending || floatPending;
 
   const tradingCount =
-    stats != null ? `${filteredWriters.length} of ${stats.totalwriters}` : "—";
+    writersAtWork != null
+      ? `${writersAtWork.active_writers} of ${writersAtWork.total_writers}`
+      : "—";
 
   const topUpDisplay = todayTopUp?.total_topup ?? "—";
 
@@ -115,7 +123,7 @@ function SecondSalesSegment() {
         <div className="p-3 flex flex-col">
           <div>
             <span className="font-jura-bold">{tradingCount}</span>
-            <span className="font-jura-light">{" retailers trading"}</span>
+            <span className="font-jura-light">{" writers trading"}</span>
           </div>
           <div className="my-2 w-full">
             <CustomInputComponent
